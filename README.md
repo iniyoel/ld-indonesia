@@ -12,6 +12,7 @@ Karena project ini dibuat di lingkungan tanpa akses ke Packagist, folder `vendor
 
 ```bash
 composer install
+(kalau error atau warning, jalanin "composer update --no-security-blocking --ignore-platform-reqs")
 cp .env.example .env
 php artisan key:generate
 ```
