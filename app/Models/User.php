@@ -26,6 +26,7 @@ class User extends Authenticatable
         'level',
         'status',
         'profile_photo_path',
+        'description',
         'password_generated',
         'aktif_sampai',
         'diperpanjang_oleh',

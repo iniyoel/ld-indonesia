@@ -349,8 +349,8 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
 .facility-card p{ font-size: 0.88rem; color: var(--gray-600); }
 
 /* ============ TUTOR ============ */
-.tutor-wrap { position: relative; }
-.tutor-track {
+.tutor-wrap{ position: relative; }
+.tutor-track{
   display: flex;
   gap: 20px;
   overflow-x: auto;
@@ -360,72 +360,47 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-.tutor-track::-webkit-scrollbar { display: none; }
-
-/* --- YANG BERUBAH MULAI DARI SINI --- */
-
-.tutor-card {
+.tutor-track::-webkit-scrollbar{ display: none; }
+.tutor-card{
   scroll-snap-align: start;
-  flex: 0 0 320px; /* Diperlebar sedikit dari 260px agar teks dan gambar di kiri-kanan tidak kesempitan */
+  flex: 0 0 260px;
   background: var(--white);
   border: 1px solid var(--gray-100);
   border-radius: var(--radius-md);
+  overflow: hidden;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
-  
-  /* Layout Kiri-Kanan */
+}
+.tutor-card:hover{ box-shadow: var(--shadow-md); transform: translateY(-4px); }
+.tutor-photo{
+  height: 150px;
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 20px; /* Padding dipindah ke card agar mengelilingi gambar dan teks */
-}
-.tutor-card:hover { box-shadow: var(--shadow-md); transform: translateY(-4px); }
-
-.tutor-photo {
-  /* Membentuk Lingkaran */
-  width: 80px;
-  height: 80px;
-  flex-shrink: 0; /* Mencegah gambar gepeng saat layar mengecil */
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex; 
-  align-items: center; 
   justify-content: center;
+  overflow: hidden;
 }
-
-/* Memastikan gambar masuk sempurna ke lingkaran */
-.tutor-photo img {
+.tutor-photo img{
   width: 100%;
   height: 100%;
+  display: block;
   object-fit: cover;
-  object-position: center;
-  border-radius: 50%;
+  object-position: center center;
 }
-
-.tutor-photo svg { 
-  width: 60%; 
-  height: 60%; 
+.tutor-photo svg{
+  width: 100%;
+  height: 100%;
 }
+.tutor-info{ padding: 18px 20px 22px; }
+.tutor-info h3{ font-size: 1rem; margin-bottom: 2px; }
+.tutor-role{ color: var(--pink-dark); font-weight: 700; font-size: 0.78rem; margin-bottom: 8px; display: block; }
+.tutor-info p{ font-size: 0.85rem; color: var(--gray-600); }
 
-.tutor-info { 
-  /* Padding dihapus karena sudah ada di .tutor-card */
-  padding: 0; 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.tutor-info h3 { font-size: 1rem; margin-bottom: 2px; }
-.tutor-role { color: var(--pink-dark); font-weight: 700; font-size: 0.78rem; margin-bottom: 8px; display: block; }
-.tutor-info p { font-size: 0.85rem; color: var(--gray-600); margin: 0; line-height: 1.4; }
-
-/* --- YANG BERUBAH SAMPAI SINI --- */
-
-.tutor-nav {
+.tutor-nav{
   display: flex;
   justify-content: center;
   gap: 12px;
   margin-top: 22px;
 }
-.tutor-nav-btn {
+.tutor-nav-btn{
   width: 44px; height: 44px;
   border-radius: 50%;
   background: var(--white);
@@ -434,9 +409,9 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
   color: var(--navy);
   transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
-.tutor-nav-btn:hover { background: var(--pink-pale); border-color: var(--pink); color: var(--pink-dark); }
-.tutor-nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-.tutor-nav-btn:disabled:hover { background: var(--white); border-color: var(--gray-200); color: var(--navy); }
+.tutor-nav-btn:hover{ background: var(--pink-pale); border-color: var(--pink); color: var(--pink-dark); }
+.tutor-nav-btn:disabled{ opacity: 0.35; cursor: not-allowed; }
+.tutor-nav-btn:disabled:hover{ background: var(--white); border-color: var(--gray-200); color: var(--navy); }
 
 /* ============ PAKET ============ */
 .paket-grid{
@@ -812,41 +787,57 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
       </div>
 
       <div class="tutor-wrap">
-        <ul class="tutor-track" id="tutorTrack" role="list">
-    @php
-        $tutorCardColors = ['#FCE3EC', '#ECE9FB', '#FDECD9', '#DEF4E8', '#FDE7EF'];
-        $tutorIconColors = ['#D63D79', '#6558C9', '#D98A2B', '#2C9E6C', '#E0507B'];
-        $displayTutors = $tutors->values();
-    @endphp
-
-    @foreach($displayTutors as $index => $tutor)
+          <ul class="tutor-track" id="tutorTrack" role="list">
       @php
-          $cardColor = $tutorCardColors[$index % count($tutorCardColors)];
-          $iconColor = $tutorIconColors[$index % count($tutorIconColors)];
-          $photoPath = $tutor->profile_photo ?? $tutor->profile_photo_path;
+          $tutorCardColors = ['#FCE3EC', '#ECE9FB', '#FDECD9', '#DEF4E8', '#FDE7EF'];
+          $tutorIconColors = ['#D63D79', '#6558C9', '#D98A2B', '#2C9E6C', '#E0507B'];
+          $displayTutors = $tutors->values();
       @endphp
-      
-      <li class="tutor-card" role="listitem">
-        {{-- Container Foto di Sebelah Kiri --}}
-        <div class="tutor-photo-circle" style="background: {{ $cardColor }};">
-          @if($photoPath)
-            <img src="{{ asset('storage/' . str_replace('public/', '', $photoPath)) }}" alt="{{ $tutor->name }}">
-          @else
-            <svg viewBox="0 0 100 100" aria-hidden="true">
-              <circle cx="50" cy="38" r="18" fill="{{ $iconColor }}"/>
-              <path d="M15 92c0-19 15-34 35-34s35 15 35 34" fill="{{ $iconColor }}"/>
-            </svg>
-          @endif
-        </div>
 
-        {{-- Container Informasi di Sebelah Kanan --}}
-        <div class="tutor-info">
-          <h3>{{ $tutor->name }}</h3>
-          <span class="tutor-role">Tutor aktif</span>
-        </div>
-      </li>
-    @endforeach
-</ul>
+      @foreach($displayTutors as $index => $tutor)
+        @php
+            $cardColor = $tutorCardColors[$index % count($tutorCardColors)];
+            $iconColor = $tutorIconColors[$index % count($tutorIconColors)];
+            $photoPath = $tutor->profile_photo_path;
+        @endphp
+        
+        <li class="tutor-card" role="listitem">
+          <div class="tutor-photo" style="background:{{ $cardColor }};">
+              @if($photoPath)
+                  <img
+                      src="{{ asset('storage/' . $photoPath) }}"
+                      alt="{{ $tutor->name }}"
+                  >
+              @else
+                  <svg viewBox="0 0 100 100" aria-hidden="true">
+                      <circle
+                          cx="50"
+                          cy="38"
+                          r="18"
+                          fill="{{ $iconColor }}"
+                      />
+                      <path
+                          d="M15 92c0-19 15-34 35-34s35 15 35 34"
+                          fill="{{ $iconColor }}"
+                      />
+                  </svg>
+              @endif
+          </div>
+
+          <div class="tutor-info">
+              <h3>{{ $tutor->name }}</h3>
+
+              <span class="tutor-role">
+                  Tutor aktif
+              </span>
+
+              <p>
+                  {{ $tutor->description ?: 'Tutor profesional LD Indonesia siap membantu perjalanan belajar bahasa Jerman.' }}
+              </p>
+          </div>
+        </li>
+      @endforeach
+  </ul>
         <div class="tutor-nav">
           <button class="tutor-nav-btn" id="tutorPrev" aria-label="Lihat tutor sebelumnya">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>

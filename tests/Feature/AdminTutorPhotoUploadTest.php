@@ -21,8 +21,15 @@ class AdminTutorPhotoUploadTest extends TestCase
             'name' => 'Tutor Baru',
             'email' => 'tutor.baru@example.com',
             'role' => 'tutor',
+            'description' => 'Tutor bahasa Jerman berpengalaman untuk persiapan ujian A1 sampai B2.',
             'generate_password' => true,
             'photo' => $photo,
+        ]);
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'tutor.baru@example.com',
+            'role' => 'tutor',
+            'description' => 'Tutor bahasa Jerman berpengalaman untuk persiapan ujian A1 sampai B2.',
         ]);
 
         $response->assertStatus(201);

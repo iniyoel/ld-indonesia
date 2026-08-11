@@ -9,15 +9,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('profile_photo_path')->nullable()->after('status');
-            $table->boolean('password_generated')->default(false)->after('profile_photo_path');
+            $table->text('description')
+                ->nullable()
+                ->after('profile_photo_path');
         });
     }
 
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['profile_photo_path', 'password_generated']);
+            $table->dropColumn('description');
         });
     }
 };

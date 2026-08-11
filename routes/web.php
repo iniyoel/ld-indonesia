@@ -104,6 +104,7 @@ Route::middleware('auth')->group(function () {
             'email' => ['required', 'email', 'unique:users,email'],
             'role' => ['required', 'string', 'in:admin,tutor,siswa'],
             'level' => ['nullable', 'string', 'in:A1,A2,B1,B2'],
+            'description' => ['nullable', 'string', 'max:2000'],
             'generate_password' => ['nullable', 'boolean'],
             'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ]);
@@ -123,7 +124,7 @@ Route::middleware('auth')->group(function () {
         if (!empty($data['photo'])) {
             $photoPath = $data['photo']->store('profile-photos', 'public');
         }
-
+        
         $user = \App\Models\User::create([
             'name' => $data['name'],
             'email' => $data['email'],
@@ -131,6 +132,9 @@ Route::middleware('auth')->group(function () {
             'role' => $role,
             'level' => $role === 'siswa' ? ($data['level'] ?? null) : null,
             'profile_photo_path' => $photoPath,
+            'description' => $role === 'tutor'
+                ? ($data['description'] ?? null)
+                : null,
             'password_generated' => $generatePassword,
             'status' => 'aktif',
             'aktif_sampai' => $role === 'siswa' ? now()->addMonth() : null,

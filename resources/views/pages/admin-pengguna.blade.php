@@ -372,6 +372,121 @@ td.col-name{ font-weight: 600; color: var(--navy); }
   .modal-head, .modal-body{ padding-left: 20px; padding-right: 20px; }
   .toast{ left: 16px; right: 16px; max-width: none; }
 }
+
+/* =========================
+   FOTO TUTOR - CROP MODAL
+   ========================= */
+
+.crop-modal-overlay{
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(30, 42, 71, 0.65);
+}
+
+.crop-modal-overlay.show{
+    display: flex;
+}
+
+.crop-modal{
+    width: min(620px, 100%);
+    max-height: 90vh;
+    overflow: auto;
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(30,42,71,.25);
+}
+
+.crop-modal-head{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.crop-modal-head h3{
+    font-size: 1.1rem;
+}
+
+.crop-modal-close{
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.crop-modal-close:hover{
+    background: var(--gray-100);
+}
+
+.crop-editor{
+    padding: 22px;
+}
+
+.crop-stage{
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    aspect-ratio: 13 / 7;
+    margin: 0 auto;
+    overflow: hidden;
+    background: #111;
+    border-radius: 12px;
+    cursor: grab;
+    touch-action: none;
+}
+
+.crop-stage:active{
+    cursor: grabbing;
+}
+
+#cropImage{
+    position: absolute;
+    max-width: none;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.crop-overlay{
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border: 2px solid rgba(255,255,255,.9);
+    box-shadow: 0 0 0 9999px rgba(0,0,0,.28);
+    border-radius: 4px;
+}
+
+.crop-help{
+    text-align: center;
+    margin-top: 12px;
+    color: var(--gray-600);
+    font-size: .85rem;
+}
+
+.crop-zoom{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.crop-zoom input{
+    flex: 1;
+}
+
+.crop-modal-actions{
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 22px 22px;
+}
 </style>
 </head>
 <body>
@@ -619,6 +734,30 @@ td.col-name{ font-weight: 600; color: var(--navy); }
         </p>
       </div>
 
+      <div class="modal-field" id="newUserDescriptionField" style="margin-bottom:16px; display:none;">
+          <label for="newUserDescription">Deskripsi Tutor</label>
+
+          <textarea
+              id="newUserDescription"
+              rows="4"
+              maxlength="2000"
+              placeholder="Tuliskan deskripsi singkat tutor..."
+              style="width:100%;padding:12px;border:1px solid var(--gray-300);border-radius:10px;background:var(--white);resize:vertical;"
+          ></textarea>
+
+          <p class="modal-field-help" style="margin-top:8px;font-size:0.9rem;color:var(--gray-600);">
+              Deskripsi ini akan ditampilkan pada kartu tutor di landing page.
+          </p>
+
+          <p class="modal-field-error" id="newUserDescriptionError">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 8v5M12 16h.01"/>
+              </svg>
+              <span>Deskripsi tutor wajib diisi.</span>
+          </p>
+      </div>
+
       <div class="modal-field" style="margin-bottom:16px;">
         <label class="checkbox-label" style="display:flex;align-items:center;gap:10px;cursor:pointer;">
           <input type="checkbox" id="generatePassword" name="generate_password" checked>
@@ -661,7 +800,77 @@ td.col-name{ font-weight: 600; color: var(--navy); }
     </form>
   </div>
 </div>
+<div class="crop-modal-overlay" id="cropModal" role="dialog" aria-modal="true" aria-labelledby="cropModalTitle">
+    <div class="crop-modal">
 
+        <div class="crop-modal-head">
+            <h3 id="cropModalTitle">Sesuaikan Foto Tutor</h3>
+
+            <button
+                type="button"
+                class="crop-modal-close"
+                id="cropModalClose"
+                aria-label="Tutup"
+            >
+                ×
+            </button>
+        </div>
+
+        <div class="crop-editor">
+
+            <div class="crop-stage" id="cropStage">
+                <img
+                    id="cropImage"
+                    src=""
+                    alt="Preview foto tutor"
+                    draggable="false"
+                >
+
+                <div class="crop-overlay"></div>
+            </div>
+
+            <p class="crop-help">
+                Geser foto agar wajah berada di tengah. Gunakan slider untuk memperbesar atau memperkecil.
+            </p>
+
+            <div class="crop-zoom">
+                <span>−</span>
+
+                <input
+                    type="range"
+                    id="cropZoom"
+                    min="1"
+                    max="3"
+                    step="0.01"
+                    value="1"
+                    aria-label="Zoom foto"
+                >
+
+                <span>+</span>
+            </div>
+
+        </div>
+
+        <div class="crop-modal-actions">
+            <button
+                type="button"
+                class="btn-cancel"
+                id="cropCancelBtn"
+            >
+                Batal
+            </button>
+
+            <button
+                type="button"
+                class="btn-save-user"
+                id="cropApplyBtn"
+            >
+                Gunakan Foto
+            </button>
+        </div>
+
+    </div>
+</div>
 <!-- ============ MODAL: DETAIL PENGGUNA ============ -->
 <div class="modal-overlay" id="viewUserModal" role="dialog" aria-modal="true" aria-labelledby="viewModalTitle">
   <div class="modal-card">
@@ -992,6 +1201,32 @@ td.col-name{ font-weight: 600; color: var(--navy); }
   var photoField = document.getElementById('newUserPhotoField');
   var photoError = document.getElementById('newUserPhotoError');
   var photoHelp = document.getElementById('newUserPhotoHelp');
+
+  var descriptionInput = document.getElementById('newUserDescription');
+  var descriptionField = document.getElementById('newUserDescriptionField');
+  var descriptionError = document.getElementById('newUserDescriptionError');
+
+  /* Crop */
+  var cropModal = document.getElementById('cropModal');
+  var cropStage = document.getElementById('cropStage');
+  var cropImage = document.getElementById('cropImage');
+  var cropZoom = document.getElementById('cropZoom');
+  var cropApplyBtn = document.getElementById('cropApplyBtn');
+  var cropCancelBtn = document.getElementById('cropCancelBtn');
+  var cropModalClose = document.getElementById('cropModalClose');
+
+  var cropState = {
+      scale: 1,
+      x: 0,
+      y: 0,
+      dragging: false,
+      startX: 0,
+      startY: 0,
+      startImageX: 0,
+      startImageY: 0
+  };
+
+  var croppedPhotoBlob = null;
   var generatePasswordCheckbox = document.getElementById('generatePassword');
   var levelField = document.getElementById('newUserLevelField');
   var levelSelect = document.getElementById('newUserLevel');
@@ -1008,12 +1243,51 @@ td.col-name{ font-weight: 600; color: var(--navy); }
     document.getElementById(errorId).classList.toggle('show', show);
   }
   function resetForm(){
-    addUserForm.reset();
-    setFieldError('newUserName', 'newUserNameError', false);
-    setFieldError('newUserEmail', 'newUserEmailError', false);
-    setFieldError('newUserRole', 'newUserRoleError', false);
-    setFieldError('newUserLevel', 'newUserLevelError', false);
-    levelField.style.display = 'none';
+      addUserForm.reset();
+
+      croppedPhotoBlob = null;
+
+      setFieldError(
+          'newUserName',
+          'newUserNameError',
+          false
+      );
+
+      setFieldError(
+          'newUserEmail',
+          'newUserEmailError',
+          false
+      );
+
+      setFieldError(
+          'newUserRole',
+          'newUserRoleError',
+          false
+      );
+
+      setFieldError(
+          'newUserLevel',
+          'newUserLevelError',
+          false
+      );
+
+      setFieldError(
+          'newUserDescription',
+          'newUserDescriptionError',
+          false
+      );
+
+      photoError.classList.remove('show');
+
+      levelField.style.display = 'none';
+      descriptionField.style.display = 'none';
+
+      cropState.scale = 1;
+      cropState.x = 0;
+      cropState.y = 0;
+      cropZoom.value = '1';
+
+      closeCropModal();
   }
 
   function toggleLevelField(){
@@ -1025,15 +1299,258 @@ td.col-name{ font-weight: 600; color: var(--navy); }
     }
   }
   function togglePhotoRequirement(){
-    var isTutor = roleSelect.value === 'Tutor';
-    photoHelp.textContent = isTutor ? 'Wajib untuk tutor agar foto tampil di landing page.' : 'Opsional untuk siswa/admin.';
-    photoField.style.display = 'block';
+      var isTutor = roleSelect.value === 'Tutor';
+
+      photoHelp.textContent = isTutor
+          ? 'Wajib untuk tutor. Setelah memilih foto, Anda dapat mengatur posisi wajah sebelum menyimpan.'
+          : 'Opsional untuk siswa/admin.';
+
+      photoField.style.display = 'block';
+
+      descriptionField.style.display = isTutor ? 'block' : 'none';
+
+      if (!isTutor) {
+          descriptionInput.value = '';
+          setFieldError(
+              'newUserDescription',
+              'newUserDescriptionError',
+              false
+          );
+      }
   }
-  roleSelect.addEventListener('change', function(){
-    toggleLevelField();
-    togglePhotoRequirement();
-  });
   togglePhotoRequirement();
+
+  roleSelect.addEventListener('change', function(){
+      toggleLevelField();
+      togglePhotoRequirement();
+  });
+
+function openCropModal(file){
+    var reader = new FileReader();
+
+    reader.onload = function(e){
+        cropImage.onload = function(){
+            cropState.scale = 1;
+            cropState.x = 0;
+            cropState.y = 0;
+
+            cropZoom.value = '1';
+
+            updateCropImage();
+
+            cropModal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        };
+
+        cropImage.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+}
+
+function closeCropModal(){
+    cropModal.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+  function updateCropImage(){
+      if (!cropImage.naturalWidth || !cropImage.naturalHeight) {
+          return;
+      }
+
+      var stageWidth = cropStage.clientWidth;
+      var stageHeight = cropStage.clientHeight;
+
+      /*
+      * Foto harus menutup seluruh area crop.
+      */
+      var baseScale = Math.max(
+          stageWidth / cropImage.naturalWidth,
+          stageHeight / cropImage.naturalHeight
+      );
+
+      var scale = baseScale * cropState.scale;
+
+      var width = cropImage.naturalWidth * scale;
+      var height = cropImage.naturalHeight * scale;
+
+      /*
+      * Posisi default berada di tengah.
+      */
+      var x = (stageWidth - width) / 2 + cropState.x;
+      var y = (stageHeight - height) / 2 + cropState.y;
+
+      cropImage.style.width = width + 'px';
+      cropImage.style.height = height + 'px';
+      cropImage.style.left = x + 'px';
+      cropImage.style.top = y + 'px';
+  }
+
+  photoInput.addEventListener('change', function(){
+      var file = this.files && this.files[0];
+
+      if (!file) {
+          return;
+      }
+
+      if (!file.type.startsWith('image/')) {
+          this.value = '';
+          return;
+      }
+
+      openCropModal(file);
+  });
+
+  cropZoom.addEventListener('input', function(){
+      cropState.scale = parseFloat(this.value);
+      updateCropImage();
+  });
+
+  cropStage.addEventListener('pointerdown', function(e){
+      cropState.dragging = true;
+
+      cropState.startX = e.clientX;
+      cropState.startY = e.clientY;
+
+      cropState.startImageX = cropState.x;
+      cropState.startImageY = cropState.y;
+
+      cropStage.setPointerCapture(e.pointerId);
+  });
+
+  cropStage.addEventListener('pointermove', function(e){
+      if (!cropState.dragging) {
+          return;
+      }
+
+      cropState.x =
+          cropState.startImageX +
+          (e.clientX - cropState.startX);
+
+      cropState.y =
+          cropState.startImageY +
+          (e.clientY - cropState.startY);
+
+      updateCropImage();
+  });
+
+  cropStage.addEventListener('pointerup', function(){
+      cropState.dragging = false;
+  });
+
+  cropStage.addEventListener('pointercancel', function(){
+      cropState.dragging = false;
+  });
+
+
+  function createCroppedPhoto(callback){
+      var canvas = document.createElement('canvas');
+
+      /*
+      * Ratio dibuat sama dengan area foto tutor
+      * di landing page: 260 x 150.
+      */
+      var outputWidth = 1040;
+      var outputHeight = 600;
+
+      canvas.width = outputWidth;
+      canvas.height = outputHeight;
+
+      var ctx = canvas.getContext('2d');
+
+      var stageWidth = cropStage.clientWidth;
+      var stageHeight = cropStage.clientHeight;
+
+      var baseScale = Math.max(
+          stageWidth / cropImage.naturalWidth,
+          stageHeight / cropImage.naturalHeight
+      );
+
+      var scale = baseScale * cropState.scale;
+
+      var renderedWidth = cropImage.naturalWidth * scale;
+      var renderedHeight = cropImage.naturalHeight * scale;
+
+      var imageX =
+          (stageWidth - renderedWidth) / 2 +
+          cropState.x;
+
+      var imageY =
+          (stageHeight - renderedHeight) / 2 +
+          cropState.y;
+
+      /*
+      * Konversi koordinat area crop dari tampilan browser
+      * ke koordinat gambar asli.
+      */
+      var sourceX = (-imageX) / scale;
+      var sourceY = (-imageY) / scale;
+
+      var sourceWidth = stageWidth / scale;
+      var sourceHeight = stageHeight / scale;
+
+      sourceX = Math.max(
+          0,
+          Math.min(sourceX, cropImage.naturalWidth - sourceWidth)
+      );
+
+      sourceY = Math.max(
+          0,
+          Math.min(sourceY, cropImage.naturalHeight - sourceHeight)
+      );
+
+      sourceWidth = Math.min(
+          sourceWidth,
+          cropImage.naturalWidth - sourceX
+      );
+
+      sourceHeight = Math.min(
+          sourceHeight,
+          cropImage.naturalHeight - sourceY
+      );
+
+      ctx.drawImage(
+          cropImage,
+          sourceX,
+          sourceY,
+          sourceWidth,
+          sourceHeight,
+          0,
+          0,
+          outputWidth,
+          outputHeight
+      );
+
+      canvas.toBlob(function(blob){
+          callback(blob);
+      }, 'image/jpeg', 0.90);
+  }
+
+  cropApplyBtn.addEventListener('click', function(){
+      cropApplyBtn.disabled = true;
+      cropApplyBtn.textContent = 'Memproses...';
+
+      createCroppedPhoto(function(blob){
+          croppedPhotoBlob = blob;
+
+          cropApplyBtn.disabled = false;
+          cropApplyBtn.textContent = 'Gunakan Foto';
+
+          closeCropModal();
+      });
+  });
+
+  cropCancelBtn.addEventListener('click', function(){
+      photoInput.value = '';
+      croppedPhotoBlob = null;
+      closeCropModal();
+  });
+
+  cropModalClose.addEventListener('click', function(){
+      photoInput.value = '';
+      croppedPhotoBlob = null;
+      closeCropModal();
+  });
 
   function openModal(){
     modal.classList.add('show');
@@ -1162,14 +1679,25 @@ td.col-name{ font-weight: 600; color: var(--navy); }
     var emailOk = isValidEmail(emailInput.value.trim());
     var roleOk = roleSelect.value !== '';
     var isSiswa = roleSelect.value === 'Siswa';
-    var levelOk = !isSiswa || levelSelect.value !== '';
+    var isTutor = roleSelect.value === 'Tutor';
+
+    var levelOk =
+        !isSiswa ||
+        levelSelect.value !== '';
+
+    var descriptionOk =
+      !isTutor ||
+      descriptionInput.value.trim().length > 0;
 
     setFieldError('newUserName', 'newUserNameError', !nameOk);
     setFieldError('newUserEmail', 'newUserEmailError', !emailOk);
     setFieldError('newUserRole', 'newUserRoleError', !roleOk);
     setFieldError('newUserLevel', 'newUserLevelError', isSiswa && !levelOk);
+    setFieldError('newUserDescription', 'newUserDescriptionError', isTutor && !descriptionOk);
 
-    if (!nameOk || !emailOk || !roleOk || !levelOk) return;
+    if (!nameOk || !emailOk || !roleOk || !levelOk || !descriptionOk) {
+      return;
+    }
 
     saveBtn.disabled = true;
     saveBtn.classList.add('is-loading');
@@ -1180,15 +1708,39 @@ td.col-name{ font-weight: 600; color: var(--navy); }
     var role = roleSelect.value;
     var level = isSiswa ? levelSelect.value : null;
 
+    var description = role === 'Tutor'
+        ? descriptionInput.value.trim()
+        : '';
+
     var formData = new FormData();
+
     formData.append('name', name);
     formData.append('email', email);
     formData.append('role', role.toLowerCase());
     formData.append('level', level || '');
-    formData.append('generate_password', generatePasswordCheckbox.checked ? '1' : '0');
+    formData.append('description', description);
 
-    if (photoInput.files && photoInput.files[0]) {
-      formData.append('photo', photoInput.files[0]);
+    formData.append(
+        'generate_password',
+        generatePasswordCheckbox.checked ? '1' : '0'
+    );
+
+    if (role === 'Tutor') {
+        if (!croppedPhotoBlob) {
+            photoError.classList.add('show');
+
+            saveBtn.disabled = false;
+            saveBtn.classList.remove('is-loading');
+            saveBtnLabel.textContent = 'Simpan';
+
+            return;
+        }
+
+        formData.append(
+            'photo',
+            croppedPhotoBlob,
+            'tutor-profile.jpg'
+        );
     }
 
     fetch('/admin-pengguna', {

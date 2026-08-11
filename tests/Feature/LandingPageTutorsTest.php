@@ -18,6 +18,7 @@ class LandingPageTutorsTest extends TestCase
             'role' => 'tutor',
             'status' => 'aktif',
             'profile_photo_path' => 'profile-photos/alpha.jpg',
+            'description' => 'Tutor Alpha mengajar bahasa Jerman untuk level A1 dan A2.',
         ]);
 
         User::factory()->create([
@@ -26,7 +27,16 @@ class LandingPageTutorsTest extends TestCase
             'role' => 'tutor',
             'status' => 'aktif',
             'profile_photo_path' => 'profile-photos/beta.jpg',
+            'description' => 'Tutor Beta fokus pada persiapan ujian bahasa Jerman B1 dan B2.',
         ]);
+
+        $response->assertSee(
+            'Tutor Alpha mengajar bahasa Jerman untuk level A1 dan A2.'
+        );
+
+        $response->assertSee(
+            'Tutor Beta fokus pada persiapan ujian bahasa Jerman B1 dan B2.'
+        );
 
         $response = $this->get('/');
 
