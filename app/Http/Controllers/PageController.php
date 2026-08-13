@@ -36,6 +36,17 @@ class PageController extends Controller
                 ->get();
         }
 
+        if ($page === 'dashboard-admin') {
+            $viewData['totalSiswaAktif'] = \App\Models\User::query()
+                ->where('role', 'siswa')
+                ->where('status', 'aktif')
+                ->where(function ($query) {
+                    $query->whereNull('aktif_sampai')
+                        ->orWhereDate('aktif_sampai', '>=', now()->toDateString());
+                })
+                ->count();
+        }
+
         return view($view, $viewData);
     }
 }

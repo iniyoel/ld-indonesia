@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class QuestionOption extends Model
 {
@@ -15,25 +14,22 @@ class QuestionOption extends Model
         'question_id',
         'teks',
         'file_path',
+        'file_type',
         'is_correct',
         'urutan_tampil',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'is_correct' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'is_correct' => 'boolean',
+    ];
 
+    /*
+    |--------------------------------------------------------------------------
+    | SOAL INDUK
+    |--------------------------------------------------------------------------
+    */
     public function question(): BelongsTo
     {
         return $this->belongsTo(Question::class);
-    }
-
-    /** Jawaban siswa yang memilih opsi ini. */
-    public function answers(): HasMany
-    {
-        return $this->hasMany(Answer::class);
     }
 }

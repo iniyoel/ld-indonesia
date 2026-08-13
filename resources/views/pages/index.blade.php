@@ -363,36 +363,110 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
 .tutor-track::-webkit-scrollbar{ display: none; }
 .tutor-card{
   scroll-snap-align: start;
-  flex: 0 0 260px;
+  flex: 0 0 420px;
+
+  display: flex;
+  align-items: center;
+
+  min-height: 150px;
+  padding: 18px;
+
   background: var(--white);
   border: 1px solid var(--gray-100);
   border-radius: var(--radius-md);
+
   overflow: hidden;
+
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
-.tutor-card:hover{ box-shadow: var(--shadow-md); transform: translateY(-4px); }
+
+.tutor-card:hover{
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+
+
+/* FOTO TUTOR */
 .tutor-photo{
-  height: 150px;
+  width: 110px;
+  height: 110px;
+
+  flex: 0 0 110px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   overflow: hidden;
+
+  border-radius: 50%;
 }
+
+
+/* FOTO ASLI */
 .tutor-photo img{
   width: 100%;
   height: 100%;
+
   display: block;
+
   object-fit: cover;
   object-position: center center;
+
+  border-radius: 50%;
 }
+
+
+/* FOTO DEFAULT / SVG */
 .tutor-photo svg{
   width: 100%;
   height: 100%;
+
+  display: block;
+
+  border-radius: 50%;
 }
-.tutor-info{ padding: 18px 20px 22px; }
-.tutor-info h3{ font-size: 1rem; margin-bottom: 2px; }
-.tutor-role{ color: var(--pink-dark); font-weight: 700; font-size: 0.78rem; margin-bottom: 8px; display: block; }
-.tutor-info p{ font-size: 0.85rem; color: var(--gray-600); }
+
+
+/* INFORMASI TUTOR */
+.tutor-info{
+  flex: 1;
+
+  min-width: 0;
+
+  padding: 0 0 0 18px;
+}
+
+.tutor-info h3{
+  font-size: 1.05rem;
+  margin: 0 0 2px;
+
+  color: var(--navy);
+}
+
+.tutor-role{
+  color: var(--pink-dark);
+  font-weight: 700;
+  font-size: 0.78rem;
+
+  margin-bottom: 8px;
+
+  display: block;
+}
+
+.tutor-info p{
+  font-size: 0.85rem;
+  line-height: 1.55;
+
+  color: var(--gray-600);
+
+  margin: 0;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
 .tutor-nav{
   display: flex;
@@ -628,6 +702,29 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
   .footer-grid{ grid-template-columns: 1fr; gap: 28px; }
   .section{ padding: 64px 0; }
   .hero{ padding: 48px 0 64px; }
+  .tutor-card{
+  flex-basis: 330px;
+  padding: 14px;
+}
+
+.tutor-photo{
+  width: 90px;
+  height: 90px;
+  flex-basis: 90px;
+}
+
+.tutor-info{
+  padding-left: 14px;
+}
+
+.tutor-info h3{
+  font-size: 0.95rem;
+}
+
+.tutor-info p{
+  font-size: 0.8rem;
+  -webkit-line-clamp: 3;
+}
 }
 </style>
 </head>
@@ -645,7 +742,6 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
       </svg>
       <span class="brand-text">
         <strong>LD <span>INDONESIA</span></strong>
-        <small>Belajar Bahasa Jerman Dengan Mudah</small>
       </span>
     </a>
 
@@ -798,6 +894,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
         @php
             $cardColor = $tutorCardColors[$index % count($tutorCardColors)];
             $iconColor = $tutorIconColors[$index % count($tutorIconColors)];
+
             $photoPath = $tutor->profile_photo_path;
         @endphp
         
@@ -806,7 +903,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
               @if($photoPath)
                   <img
                       src="{{ asset('storage/' . $photoPath) }}"
-                      alt="{{ $tutor->name }}"
+                      alt="Foto {{ $tutor->name }}"
                   >
               @else
                   <svg viewBox="0 0 100 100" aria-hidden="true">
@@ -826,11 +923,6 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
 
           <div class="tutor-info">
               <h3>{{ $tutor->name }}</h3>
-
-              <span class="tutor-role">
-                  Tutor aktif
-              </span>
-
               <p>
                   {{ $tutor->description ?: 'Tutor profesional LD Indonesia siap membantu perjalanan belajar bahasa Jerman.' }}
               </p>

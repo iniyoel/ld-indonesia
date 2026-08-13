@@ -193,10 +193,37 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 .dropzone-title{ font-weight: 700; font-size: 0.96rem; color: var(--navy); margin-bottom: 6px; }
 .dropzone-or{ font-size: 0.86rem; color: var(--gray-400); margin-bottom: 14px; }
 .dropzone-btn{
-  background: var(--pink-pale); color: var(--pink-dark); font-weight: 700; font-size: 0.9rem;
-  padding: 10px 26px; border-radius: var(--radius-pill);
+  background: var(--pink-pale); 
+  color: var(--pink-dark); 
+  font-weight: 700; 
+  font-size: 0.9rem;
+  padding: 10px 26px; 
+  border-radius: var(--radius-pill);
+  display: inline-block;
+  cursor: pointer;
 }
 .dropzone-btn:hover{ background: var(--pink-light); }
+.dropzone.file-selected{
+    border-color: var(--green);
+    background: var(--green-bg);
+}
+
+.dropzone.file-selected .dropzone-icon{
+    color: var(--green);
+}
+
+.dropzone.file-selected .dropzone-title{
+    color: var(--green);
+}
+
+.dropzone-file-name{
+    margin-top: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--navy);
+    max-width: 100%;
+    word-break: break-all;
+}
 .upload-hint{ font-size: 0.82rem; color: var(--gray-500); margin-top: 12px; }
 
 .file-chip{
@@ -329,14 +356,32 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
       <div class="page-heading">
         <h1>Tambah Modul</h1>
       </div>
+      @if ($errors->any())
+          <div style="
+              margin-bottom: 20px;
+              padding: 16px 18px;
+              border-radius: 12px;
+              background: var(--red-bg);
+              border: 1px solid #f5c2c0;
+              color: var(--red);
+          ">
+              <strong>Form belum dapat disimpan:</strong>
 
-      <form class="form-panel" id="modulForm" novalidate>
+              <ul style="margin: 8px 0 0 20px;">
+                  @foreach ($errors->all() as $error)
+                      <li>{{ $error }}</li>
+                  @endforeach
+              </ul>
+          </div>
+      @endif
+      <form id="modulForm" action="{{ route('modul.store') }}" method="POST" enctype="multipart/form-data">
+         @csrf
         <div class="form-grid">
           <!-- ============ KOLOM KIRI: DATA MODUL ============ -->
           <div>
             <div class="field">
               <label for="judulModul">Judul Modul</label>
-              <input type="text" id="judulModul" name="judul" placeholder="Contoh: Artikel Der, Das, Die" aria-describedby="judulError">
+              <input type="text" id="judulModul" name="judul" placeholder="Contoh: Artikel Der, Das, Die" value="{{ old('judul') }}" aria-describedby="judulError">
               <p class="field-error" id="judulError">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
                 <span>Judul modul wajib diisi.</span>
@@ -367,11 +412,11 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
                 <div class="select-wrap">
                   <select id="kategoriModul" name="kategori" required aria-describedby="kategoriError">
                     <option value="" selected disabled>Pilih Kategori</option>
-                    <option value="Materi">Materi</option>
-                    <option value="Simulasi Hören">Simulasi Hören</option>
-                    <option value="Simulasi Lesen">Simulasi Lesen</option>
-                    <option value="Simulasi Schreiben">Simulasi Schreiben</option>
-                    <option value="Simulasi Sprechen">Simulasi Sprechen</option>
+                    <option value="materi">Materi</option>
+                    <option value="simulasi_horen">Simulasi Hören</option>
+                    <option value="simulasi_lesen">Simulasi Lesen</option>
+                    <option value="simulasi_schreiben">Simulasi Schreiben</option>
+                    <option value="simulasi_sprechen">Simulasi Sprechen</option>
                   </select>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
                 </div>
@@ -384,7 +429,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
             <div class="field" style="margin-bottom:0;">
               <label for="deskripsiModul">Deskripsi</label>
-              <textarea id="deskripsiModul" name="deskripsi" placeholder="Tuliskan deskripsi singkat mengenai modul ini..."></textarea>
+              <textarea id="deskripsiModul" name="deskripsi" placeholder="Tuliskan deskripsi singkat mengenai modul ini...">{{ old('deskripsi') }}</textarea>
             </div>
           </div>
 
@@ -392,13 +437,52 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
           <div>
             <div class="upload-panel-label" id="uploadLabel">Upload File</div>
 
-            <div class="dropzone" id="dropzone">
-              <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4.5 4.5 0 0 1-1.4-8.8A5.5 5.5 0 0 1 16.3 7 4 4 0 0 1 17 15"/><path d="M12 12v8"/><path d="m9 15 3-3 3 3"/></svg>
-              <div class="dropzone-title">Drag &amp; drop file di sini</div>
-              <div class="dropzone-or">atau</div>
-              <button type="button" class="dropzone-btn" id="chooseFileBtn">Pilih</button>
-              <input type="file" id="fileInput" accept=".pdf,.docx,.pptx,.mp4,.mp3" hidden>
-            </div>
+          <div class="dropzone" id="dropzone">
+              <svg class="dropzone-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true">
+                  <path d="M7 18a4.5 4.5 0 0 1-1.4-8.8A5.5 5.5 0 0 1 16.3 7 4 4 0 0 1 17 15"/>
+                  <path d="M12 12v8"/>
+                  <path d="m9 15 3-3 3 3"/>
+              </svg>
+
+              <div class="dropzone-title" id="dropzoneTitle">
+                  Drag &amp; drop file di sini
+              </div>
+
+              <div
+                  class="dropzone-file-name"
+                  id="dropzoneFileName"
+                  style="display: none;"
+              >
+              </div>
+              
+              <div class="dropzone-or" id="dropzoneOr">
+                  atau
+              </div>
+
+              <label
+                  for="fileInput"
+                  class="dropzone-btn"
+                  id="chooseFileBtn"
+              >
+                  Pilih
+              </label>
+
+              <input
+                  type="file"
+                  id="fileInput"
+                  name="file"
+                  accept=".pdf,application/pdf"
+                  hidden
+              >
+
+          </div>
 
             <div class="file-chip" id="fileChip">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
@@ -408,7 +492,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
               </button>
             </div>
 
-            <p class="upload-hint" id="uploadHint">Format yang didukung: PDF, DOCX, PPTX, MP4, MP3</p>
+            <p class="upload-hint" id="uploadHint">Format yang didukung: PDF. Maksimal 10 MB.</p>
 
             <!-- Muncul otomatis saat Kategori = salah satu Simulasi -->
             <div class="upload-skip-note" id="uploadSkipNote">
@@ -419,7 +503,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
         </div>
 
         <div class="form-actions">
-          <a href="admin-modul-pembelajaran.html" class="back-link">
+          <a href="{{ route('modul.index') }}" class="back-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
             Kembali
           </a>
@@ -459,40 +543,67 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   var uploadHint = document.getElementById('uploadHint');
   var uploadSkipNote = document.getElementById('uploadSkipNote');
   var fileInput = document.getElementById('fileInput');
-  var chooseFileBtn = document.getElementById('chooseFileBtn');
+  var dropzoneFileName = document.getElementById('dropzoneFileName');
   var fileChipName = document.getElementById('fileChipName');
   var fileChipRemove = document.getElementById('fileChipRemove');
   var selectedFile = null;
 
-  function isSimulasi(value){ return value.indexOf('Simulasi') === 0; }
-
-  function updateUploadVisibility(){
-    var value = kategoriSelect.value;
-    var showUpload = value === 'Materi';
-    var showSkipNote = isSimulasi(value);
-
-    uploadLabel.style.display = showUpload ? 'block' : 'none';
-    dropzone.style.display = showUpload ? 'flex' : 'none';
-    uploadHint.style.display = showUpload ? 'block' : 'none';
-    if (!showUpload) fileChip.classList.remove('show');
-    else fileChip.classList.toggle('show', !!selectedFile);
-
-    uploadSkipNote.classList.toggle('show', showSkipNote);
+  function isSimulasi(value) {
+      return value === 'simulasi_horen' ||
+            value === 'simulasi_lesen' ||
+            value === 'simulasi_schreiben' ||
+            value === 'simulasi_sprechen';
   }
+
+  function updateUploadVisibility() {
+      var value = kategoriSelect.value;
+
+      var showUpload = value === 'materi';
+      var showSkipNote = isSimulasi(value);
+
+      uploadLabel.style.display = showUpload ? 'block' : 'none';
+      dropzone.style.display = showUpload ? 'flex' : 'none';
+      uploadHint.style.display = showUpload ? 'block' : 'none';
+
+      if (!showUpload) {
+          fileChip.classList.remove('show');
+      } else {
+          fileChip.classList.toggle('show', !!selectedFile);
+      }
+
+      uploadSkipNote.classList.toggle('show', showSkipNote);
+  }
+
   kategoriSelect.addEventListener('change', updateUploadVisibility);
   updateUploadVisibility();
 
   function setSelectedFile(file){
-    selectedFile = file;
-    if (file){
-      fileChipName.textContent = file.name;
-      fileChip.classList.add('show');
-    } else {
-      fileChip.classList.remove('show');
-    }
+      selectedFile = file;
+
+      if (file){
+          // Tampilkan nama file di dalam dropzone
+          dropzoneFileName.textContent = file.name;
+          dropzoneFileName.style.display = 'block';
+
+          // Tampilkan juga file chip di bawah dropzone
+          fileChipName.textContent = file.name;
+          fileChip.classList.add('show');
+
+          // Tandai dropzone bahwa file sudah dipilih
+          dropzone.classList.add('file-selected');
+      } else {
+          // Sembunyikan nama file
+          dropzoneFileName.textContent = '';
+          dropzoneFileName.style.display = 'none';
+
+          // Sembunyikan file chip
+          fileChip.classList.remove('show');
+
+          // Kembalikan tampilan dropzone
+          dropzone.classList.remove('file-selected');
+      }
   }
 
-  chooseFileBtn.addEventListener('click', function(){ fileInput.click(); });
   fileInput.addEventListener('change', function(){
     if (fileInput.files && fileInput.files[0]) setSelectedFile(fileInput.files[0]);
   });
@@ -513,9 +624,23 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
       dropzone.classList.remove('is-dragover');
     });
   });
+
   dropzone.addEventListener('drop', function(e){
-    var files = e.dataTransfer && e.dataTransfer.files;
-    if (files && files[0]) setSelectedFile(files[0]);
+      var files = e.dataTransfer && e.dataTransfer.files;
+
+      if (files && files[0]) {
+          try {
+              var dataTransfer = new DataTransfer();
+
+              dataTransfer.items.add(files[0]);
+
+              fileInput.files = dataTransfer.files;
+
+              setSelectedFile(files[0]);
+          } catch (error) {
+              console.error('Gagal memasukkan file hasil drag & drop:', error);
+          }
+      }
   });
 
   /* ---- Validasi form ---- */
@@ -524,42 +649,54 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   var levelSelect = document.getElementById('levelModul');
 
   function setFieldError(inputId, errorId, show){
-    document.getElementById(inputId).setAttribute('aria-invalid', show ? 'true' : 'false');
-    document.getElementById(errorId).classList.toggle('show', show);
+      document
+          .getElementById(inputId)
+          .setAttribute('aria-invalid', show ? 'true' : 'false');
+
+      document
+          .getElementById(errorId)
+          .classList.toggle('show', show);
   }
 
   form.addEventListener('submit', function(e){
-    e.preventDefault();
 
-    var judulOk = judulInput.value.trim().length > 0;
-    var levelOk = levelSelect.value !== '';
-    var kategoriOk = kategoriSelect.value !== '';
+      var judulOk = judulInput.value.trim().length > 0;
+      var levelOk = levelSelect.value !== '';
+      var kategoriOk = kategoriSelect.value !== '';
 
-    setFieldError('judulModul', 'judulError', !judulOk);
-    setFieldError('levelModul', 'levelError', !levelOk);
-    setFieldError('kategoriModul', 'kategoriError', !kategoriOk);
+      setFieldError(
+          'judulModul',
+          'judulError',
+          !judulOk
+      );
 
-    if (!judulOk || !levelOk || !kategoriOk) return;
+      setFieldError(
+          'levelModul',
+          'levelError',
+          !levelOk
+      );
 
-    // TODO: kirim data form (termasuk file jika kategori Materi) ke backend di sini.
-    var params = new URLSearchParams({
-      judul: judulInput.value.trim(),
-      level: levelSelect.value,
-      kategori: kategoriSelect.value
-    });
-    window.location.href = 'admin-modul-soal.html?' + params.toString();
+      setFieldError(
+          'kategoriModul',
+          'kategoriError',
+          !kategoriOk
+      );
+
+      if (!judulOk || !levelOk || !kategoriOk) {
+          e.preventDefault();
+          return;
+      }
+
+      /*
+      * Jangan e.preventDefault() kalau valid.
+      *
+      * Biarkan browser mengirim form ke:
+      * route('modul.store')
+      *
+      * Laravel kemudian menjalankan:
+      * ModuleController@store
+      */
   });
-
-  var sidebar = document.getElementById('sidebar');
-  var menuToggle = document.getElementById('menuToggle');
-  var sidebarClose = document.getElementById('sidebarClose');
-  var backdrop = document.getElementById('backdrop');
-  function openSidebar(){ sidebar.classList.add('open'); backdrop.classList.add('show'); menuToggle.setAttribute('aria-expanded', 'true'); }
-  function closeSidebar(){ sidebar.classList.remove('open'); backdrop.classList.remove('show'); menuToggle.setAttribute('aria-expanded', 'false'); }
-  menuToggle.addEventListener('click', openSidebar);
-  sidebarClose.addEventListener('click', closeSidebar);
-  backdrop.addEventListener('click', closeSidebar);
-})();
 </script>
 </body>
 </html>

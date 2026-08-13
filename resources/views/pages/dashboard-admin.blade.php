@@ -301,7 +301,7 @@ td.col-nilai.is-pending{ color: var(--gray-400); font-weight: 600; }
           </div>
           <div>
             <div class="summary-label">Total Siswa</div>
-            <div class="summary-value">100</div>
+            <div class="summary-value">{{ $totalSiswaAktif }}</div>
             <div class="summary-sub">Siswa Aktif</div>
           </div>
         </div>

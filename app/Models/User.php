@@ -108,13 +108,23 @@ class User extends Authenticatable
         return $this->hasMany(Module::class, 'dibuat_oleh');
     }
 
+    /**
+     * Modul yang terakhir diperbarui oleh user ini.
+     */
+    public function modulesUpdated(): HasMany
+    {
+        return $this->hasMany(Module::class, 'diperbarui_oleh');
+    }
+
     /** Riwayat pengerjaan modul (khusus siswa). */
     public function attempts(): HasMany
     {
         return $this->hasMany(Attempt::class);
     }
 
-    /** Pengerjaan Simulasi Schreiben yang sudah dinilai oleh user ini (tutor/admin). */
+    /**
+     * Attempt yang dinilai oleh user ini.
+     */
     public function gradedAttempts(): HasMany
     {
         return $this->hasMany(Attempt::class, 'dinilai_oleh');

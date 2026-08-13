@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\PageController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -200,6 +201,22 @@ Route::middleware('auth')->group(function () {
             'message' => 'Pengguna berhasil dihapus.',
         ]);
     })->middleware('can:admin');
+
+    // ------------------------------------------------------------------
+    // Modul — Admin & Tutor
+    // ------------------------------------------------------------------
+
+    Route::get('/modul', [ModuleController::class, 'index'])
+        ->name('modul.index')
+        ->middleware('can:manage-modules');
+
+    Route::get('/modul/tambah', [ModuleController::class, 'create'])
+        ->name('modul.create')
+        ->middleware('can:manage-modules');
+
+    Route::post('/modul', [ModuleController::class, 'store'])
+        ->name('modul.store')
+        ->middleware('can:manage-modules');
 
     Route::get('/{page}', [PageController::class, 'show'])
         ->where('page', '[A-Za-z0-9\-]+')

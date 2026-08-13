@@ -7,61 +7,68 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Module extends Model
+class Attempt extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'judul',
-        'deskripsi',
-        'level',
-        'kategori',
-        'file_path',
-        'file_type',
-        'teks_bacaan',
-        'topik_sprechen',
-        'dibuat_oleh',
-        'diperbarui_oleh',
+        'user_id',
+        'module_id',
+        'status',
+        'nilai',
+        'selesai_dilatih',
+        'catatan_tutor',
+        'dinilai_oleh',
+        'dinilai_pada',
+        'dimulai_pada',
+        'selesai_pada',
+    ];
+
+    protected $casts = [
+        'nilai' => 'decimal:2',
+        'selesai_dilatih' => 'boolean',
+        'dinilai_pada' => 'datetime',
+        'dimulai_pada' => 'datetime',
+        'selesai_pada' => 'datetime',
     ];
 
     /*
     |--------------------------------------------------------------------------
-    | PEMBUAT MODUL
+    | SISWA
     |--------------------------------------------------------------------------
     */
-    public function creator(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'dibuat_oleh');
+        return $this->belongsTo(User::class);
     }
 
     /*
     |--------------------------------------------------------------------------
-    | USER YANG TERAKHIR MEMPERBARUI
+    | MODUL YANG DIKERJAKAN
     |--------------------------------------------------------------------------
     */
-    public function updater(): BelongsTo
+    public function module(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'diperbarui_oleh');
+        return $this->belongsTo(Module::class);
     }
 
     /*
     |--------------------------------------------------------------------------
-    | SOAL DALAM MODUL
+    | JAWABAN
     |--------------------------------------------------------------------------
     */
-    public function questions(): HasMany
+    public function answers(): HasMany
     {
-        return $this->hasMany(Question::class)
-            ->orderBy('urutan');
+        return $this->hasMany(Answer::class);
     }
 
     /*
     |--------------------------------------------------------------------------
-    | RIWAYAT PENGERJAAN SISWA
+    | TUTOR / ADMIN YANG MENILAI
     |--------------------------------------------------------------------------
     */
-    public function attempts(): HasMany
+    public function grader(): BelongsTo
     {
-        return $this->hasMany(Attempt::class);
+        return $this->belongsTo(User::class, 'dinilai_oleh');
     }
 }
