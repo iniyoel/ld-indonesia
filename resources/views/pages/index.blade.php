@@ -752,10 +752,9 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
     <nav class="main-nav" id="mainNav" aria-label="Navigasi utama">
       <ul>
         <li><a href="#beranda" class="active" data-nav>Beranda</a></li>
-        <li><a href="#paket" data-nav>Paket</a></li>
-        <li><a href="#tutor" data-nav>Tutor</a></li>
         <li><a href="#fasilitas" data-nav>Fasilitas</a></li>
-        <li><a href="#faq" data-nav>FAQ</a></li>
+        <li><a href="#tutor" data-nav>Tutor</a></li>
+        <li><a href="#paket" data-nav>Paket</a></li>
       </ul>
     </nav>
 
@@ -1065,43 +1064,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
     </div>
   </section>
 
-  <!-- ============ FAQ ============ -->
-  <section class="section" id="faq" aria-labelledby="faq-title">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">FAQ</span>
-        <h2 id="faq-title">Pertanyaan yang Sering Diajukan</h2>
-        <p>Beberapa hal yang sering ditanyakan calon siswa LD Indonesia.</p>
-      </div>
-
-      <div class="faq-list">
-        <details class="faq-item" open>
-          <summary>Apakah saya bisa belajar dari nol tanpa dasar bahasa Jerman sama sekali?
-            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-          </summary>
-          <p>Tentu bisa. Paket A1 dirancang khusus untuk pemula tanpa dasar sama sekali, dimulai dari pengenalan huruf, ucapan, dan kosakata dasar.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Berapa lama durasi belajar untuk setiap paket?
-            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-          </summary>
-          <p>Durasi belajar disesuaikan dengan level dan kecepatan belajar masing-masing siswa, dengan akses materi dan latihan soal yang fleksibel.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Apakah tersedia latihan soal yang mirip dengan ujian asli?
-            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-          </summary>
-          <p>Ya, setiap paket dilengkapi dengan bank latihan soal yang disusun menyerupai format ujian ASM sesuai levelnya.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Bagaimana cara mendaftar dan memulai kelas?
-            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-          </summary>
-          <p>Hubungi admin melalui WhatsApp, konsultasikan kebutuhanmu, lalu pilih paket yang sesuai untuk langsung mendapatkan akses belajar.</p>
-        </details>
-      </div>
-    </div>
-  </section>
+  
 
   <!-- ============ CTA BAND ============ -->
   <section class="section" style="padding-top:0;">
@@ -1142,14 +1105,11 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
       <div class="footer-col">
         <h4>Ikuti Kami di</h4>
         <div class="social-row">
-          <a class="social-btn" href="https://instagram.com/ldindonesia" target="_blank" rel="noopener" aria-label="Instagram LD Indonesia">
+          <a class="social-btn" href="https://www.instagram.com/ld.indonesia/" target="_blank" rel="noopener" aria-label="Instagram LD Indonesia">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
           </a>
-          <a class="social-btn" href="https://tiktok.com/@ldindonesia" target="_blank" rel="noopener" aria-label="TikTok LD Indonesia">
+          <a class="social-btn" href="https://www.tiktok.com/@ld_indonesia" target="_blank" rel="noopener" aria-label="TikTok LD Indonesia">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.6 2h-3.2v13.7a3 3 0 1 1-2.1-2.9V9.5a6.2 6.2 0 1 0 5.3 6.1V8.4a7.6 7.6 0 0 0 4.4 1.4V6.6a4.4 4.4 0 0 1-4.4-4.6z"/></svg>
-          </a>
-          <a class="social-btn" href="https://youtube.com/@ldindonesia" target="_blank" rel="noopener" aria-label="YouTube LD Indonesia">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12s0-3.4-.4-5a2.8 2.8 0 0 0-2-2C17.9 4.5 12 4.5 12 4.5s-5.9 0-7.6.5a2.8 2.8 0 0 0-2 2C2 8.6 2 12 2 12s0 3.4.4 5a2.8 2.8 0 0 0 2 2c1.7.5 7.6.5 7.6.5s5.9 0 7.6-.5a2.8 2.8 0 0 0 2-2c.4-1.6.4-5 .4-5z"/><path d="M10 15.5v-7l6 3.5z" fill="#FDEAF1"/></svg>
           </a>
         </div>
       </div>
