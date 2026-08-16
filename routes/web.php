@@ -5,29 +5,7 @@ use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\PageController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes — LD Indonesia
-|--------------------------------------------------------------------------
-|
-| Setiap halaman ditulis sebagai Blade view di resources/views/pages/,
-| dengan tautan internal berformat "nama-halaman" tanpa ekstensi .html
-| (baik lewat <a href="..."> maupun window.location.href di JavaScript).
-|
-| SATU route dinamis "/{page}" melayani SEMUA halaman yang butuh login
-| (siswa/tutor/admin). Middleware 'auth' memastikan sudah login;
-| PageController::show() yang menentukan apakah role user boleh membuka
-| halaman yang diminta atau tidak, berdasarkan config/page_access.php.
-|
-| URL lama dengan .html tetap didukung sebagai redirect ke versi tanpa
-| ekstensi agar tautan lama tidak rusak.
-|
-*/
-
-// ------------------------------------------------------------------
-// Halaman publik (tidak butuh login)
-// ------------------------------------------------------------------
+use App\Http\Controllers\QuestionController;
 
 Route::get('/', function () {
     $tutors = User::query()
@@ -218,7 +196,42 @@ Route::middleware('auth')->group(function () {
         ->name('modul.store')
         ->middleware('can:manage-modules');
 
+    Route::delete('/modul/{module}', [ModuleController::class, 'destroy'])
+        ->name('modul.destroy')
+        ->middleware('can:manage-modules');
+
+    Route::get('/modul/{module}/edit', [ModuleController::class, 'edit'])
+        ->name('modul.edit')
+        ->middleware('can:manage-modules');
+
+    Route::put('/modul/{module}', [ModuleController::class, 'update'])
+        ->name('modul.update')
+        ->middleware('can:manage-modules');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Soal — Admin & Tutor
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/modul/{module}/soal', [QuestionController::class, 'create'])
+        ->name('modul.soal.create')
+        ->middleware('can:manage-modules');
+
+    Route::post('/modul/{module}/soal', [QuestionController::class, 'store'])
+        ->name('modul.soal.store')
+        ->middleware('can:manage-modules');
+
+    Route::delete('/modul/{module}/soal/{question}', [QuestionController::class, 'destroy'])
+        ->name('modul.soal.destroy')
+        ->middleware('can:manage-modules');
+
+    Route::post('/modul/{module}/soal/selesai', [QuestionController::class, 'finish'])
+        ->name('modul.soal.finish')
+        ->middleware('can:manage-modules');
+
     Route::get('/{page}', [PageController::class, 'show'])
-        ->where('page', '[A-Za-z0-9\-]+')
-        ->name('page');
+    ->where('page', '[A-Za-z0-9\-]+')
+    ->name('page');
 });

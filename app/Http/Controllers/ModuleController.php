@@ -18,8 +18,9 @@ class ModuleController extends Controller
     */
     public function index()
     {
-        $modules = Module::with('creator')
-            ->latest()
+            $modules = \App\Models\Module::with(['creator'])
+            ->withCount('questions')
+            ->latest('updated_at')
             ->paginate(10);
 
         return view('pages.admin-modul-pembelajaran', compact('modules'));
@@ -36,7 +37,16 @@ class ModuleController extends Controller
         return view('pages.admin-modul-form');
     }
 
-
+    /*
+    |--------------------------------------------------------------------------
+    | FORM SOAL MODUL
+    |--------------------------------------------------------------------------
+    */
+    public function soal(Module $module)
+    {
+        return view('pages.admin-modul-soal', compact('module'));
+    }
+    
     /*
     |--------------------------------------------------------------------------
     | SIMPAN MODUL
@@ -124,7 +134,199 @@ class ModuleController extends Controller
         ]);
 
         return redirect()
-            ->route('modul.index')
-            ->with('success', 'Modul berhasil ditambahkan.');
+            ->route('modul.soal.create', ['module' => $module->id])
+            ->with('success', 'Modul berhasil ditambahkan. Silakan tambahkan soal.');
     }
+
+    /**
+     * Hapus modul beserta seluruh data yang berkaitan.
+     */
+    public function destroy(Module $module)
+    {
+        // Simpan informasi untuk activity log sebelum modul dihapus
+        $moduleId = $module->id;
+        $moduleTitle = $module->judul;
+        $moduleKategori = $module->kategori;
+        $moduleLevel = $module->level;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Hapus file PDF modul jika ada
+        |--------------------------------------------------------------------------
+        */
+        if ($module->file_path) {
+            Storage::disk('public')->delete($module->file_path);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Hapus file yang dimiliki oleh soal
+        |--------------------------------------------------------------------------
+        |
+        | Karena questions/options menggunakan cascadeOnDelete(),
+        | record database akan ikut terhapus ketika module dihapus.
+        |
+        | Tetapi file fisiknya tidak otomatis terhapus oleh database,
+        | sehingga kita hapus manual terlebih dahulu.
+        |
+        */
+        foreach ($module->questions()->with('options')->get() as $question) {
+
+            // File gambar/audio pada soal
+            if ($question->file_path) {
+                Storage::disk('public')->delete($question->file_path);
+            }
+
+            // File pada opsi jawaban
+            foreach ($question->options as $option) {
+                if ($option->file_path) {
+                    Storage::disk('public')->delete($option->file_path);
+                }
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Hapus modul
+        |--------------------------------------------------------------------------
+        |
+        | questions dan question_options akan ikut terhapus karena
+        | foreign key menggunakan cascadeOnDelete().
+        |
+        */
+        $module->delete();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Activity Log
+        |--------------------------------------------------------------------------
+        */
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'aksi' => 'hapus',
+            'target_table' => 'modules',
+            'target_id' => $moduleId,
+            'deskripsi' => 'Menghapus modul "' . $moduleTitle . '"',
+            'metadata' => [
+                'kategori' => $moduleKategori,
+                'level' => $moduleLevel,
+            ],
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Response
+        |--------------------------------------------------------------------------
+        */
+        return response()->json([
+            'message' => 'Modul "' . $moduleTitle . '" berhasil dihapus.',
+        ]);
+    }
+
+    public function edit(Module $module)
+    {
+        return view('pages.admin-modul-form', compact('module'));
+    }
+
+    public function update(Request $request, Module $module)
+    {
+        $validated = $request->validate([
+            'judul' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'deskripsi' => [
+                'required',
+                'string',
+            ],
+
+            'level' => [
+                'required',
+                'in:A1,A2,B1,B2',
+            ],
+
+            'kategori' => [
+                'required',
+                'in:materi,simulasi_horen,simulasi_lesen,simulasi_schreiben,simulasi_sprechen',
+            ],
+
+            'file' => [
+                'nullable',
+                'file',
+                'mimes:pdf',
+                'max:10240',
+                'required_if:kategori,materi',
+            ],
+
+            'teks_bacaan' => [
+                'nullable',
+                'string',
+                'required_if:kategori,simulasi_lesen',
+            ],
+
+            'topik_sprechen' => [
+                'nullable',
+                'string',
+                'required_if:kategori,simulasi_sprechen',
+            ],
+        ]);
+
+        // Simpan data lama untuk kebutuhan activity log
+        $judulLama = $module->judul;
+        $levelLama = $module->level;
+        $kategoriLama = $module->kategori;
+
+        // Update data utama
+        $module->judul = $validated['judul'];
+        $module->deskripsi = $validated['deskripsi'];
+        $module->level = $validated['level'];
+        $module->kategori = $validated['kategori'];
+
+        $module->teks_bacaan = $validated['teks_bacaan'] ?? null;
+        $module->topik_sprechen = $validated['topik_sprechen'] ?? null;
+
+        $module->diperbarui_oleh = Auth::id();
+
+        // Jika upload PDF baru
+        if ($request->hasFile('file')) {
+
+            // Hapus file lama jika ada
+            if ($module->file_path) {
+                Storage::disk('public')->delete($module->file_path);
+            }
+
+            $file = $request->file('file');
+
+            $path = $file->store('modules', 'public');
+
+            $module->file_path = $path;
+            $module->file_type = $file->getMimeType();
+        }
+
+        $module->save();
+
+        // Catat aktivitas admin
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'aksi' => 'ubah',
+            'target_table' => 'modules',
+            'target_id' => $module->id,
+            'deskripsi' => 'Mengubah modul "' . $module->judul . '"',
+            'metadata' => [
+                'judul_lama' => $judulLama,
+                'judul_baru' => $module->judul,
+                'level_lama' => $levelLama,
+                'level_baru' => $module->level,
+                'kategori_lama' => $kategoriLama,
+                'kategori_baru' => $module->kategori,
+            ],
+        ]);
+
+        return redirect()
+            ->route('modul.index')
+            ->with('success', 'Modul berhasil diperbarui.');
+    }
+
 }

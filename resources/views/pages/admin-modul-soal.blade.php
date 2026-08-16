@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <title>Buat Soal — Admin — LD Indonesia</title>
 <meta name="description" content="Form pembuatan soal modul pembelajaran dan simulasi — LD Indonesia.">
 <meta name="robots" content="noindex, nofollow">
@@ -209,6 +210,34 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 }
 .option-text:hover, .option-text:focus{ border-bottom-color: var(--gray-200); outline: none; }
 .option-text::placeholder{ color: var(--gray-400); }
+
+.option-image-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  flex-shrink:0;
+  min-height:34px;
+  padding:7px 11px;
+  border:1px solid var(--gray-200);
+  border-radius:9px;
+  background:var(--white);
+  color:var(--gray-600);
+  font-size:.78rem;
+  font-weight:700;
+  cursor:pointer;
+}
+.option-image-btn:hover{
+  background:var(--pink-pale);
+  border-color:var(--pink-light);
+  color:var(--pink-dark);
+}
+.option-image-btn.has-file{
+  background:var(--green-bg);
+  border-color:#B7E4CB;
+  color:var(--green);
+}
+.option-image-btn svg{width:15px;height:15px;flex-shrink:0;}
 .option-remove{ width: 26px; height: 26px; border-radius: 50%; color: var(--gray-400); flex-shrink: 0; visibility: hidden; }
 .option-row:hover .option-remove{ visibility: visible; }
 .option-remove:hover{ background: var(--red-bg); color: var(--red); }
@@ -275,6 +304,14 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   .control-rail{ flex-direction: row; }
 }
 @media (max-width: 640px){ .user-meta{ display: none; } }
+
+.module-info{background:var(--white);border:1px solid var(--gray-100);border-left:4px solid var(--pink);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);padding:16px 20px;margin-bottom:22px;}
+.question-note{padding:12px 14px;border-radius:var(--radius-sm);background:var(--pink-pale);color:var(--gray-600);font-size:.83rem;line-height:1.55;margin-bottom:18px;}
+.dropzone-file-name{font-size:.84rem;color:var(--gray-600);overflow-wrap:anywhere;}
+.add-option-btn{margin-top:10px;color:var(--pink-dark);font-size:.88rem;font-weight:700;}
+.add-option-btn:hover{text-decoration:underline;}
+.form-actions{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:8px;}
+.btn-save:disabled{opacity:.6;cursor:not-allowed;transform:none;}
 </style>
 </head>
 <body>
@@ -310,7 +347,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
           </a>
         </li>
         <li>
-          <a href="admin-modul-pembelajaran.html" class="nav-link active" aria-current="page">
+          <a href="{{ route('modul.index') }}" class="nav-link active" aria-current="page">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C2 4.7 2.7 4 4.7 4c2.6 0 5.3 1 7.3 2.5C14 4.9 16.7 4 19.3 4c2 0 2.7.7 2.7 1.5v13c0-.8-.7-1.5-2.7-1.5-2.6 0-5.3.9-7.3 2.5-2-1.6-4.7-2.5-7.3-2.5C2.7 17 2 17.7 2 18.5z"/><path d="M12 6.5V20"/></svg>
             Modul Pembelajaran
           </a>
@@ -354,29 +391,51 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     </header>
 
     <main class="page-content" id="mainContent">
-      <a href="admin-modul-form.html" class="back-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-        Kembali
+      <a href="{{ route('modul.create') }}" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        Kembali ke Form Modul
       </a>
 
       <div class="page-heading">
-        <h1>Buat Soal</h1>
+        <h1>Tambah Soal</h1>
+        <p>Tambahkan soal sesuai kategori modul yang telah dipilih.</p>
       </div>
+
+      <div class="module-info" style="background:var(--white);border:1px solid var(--gray-100);border-left:4px solid var(--pink);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);padding:16px 20px;margin-bottom:22px;">
+        <strong>{{ $module->judul }}</strong>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+          <span style="display:inline-flex;padding:5px 10px;border-radius:999px;background:var(--pink-pale);color:var(--pink-dark);font-size:.78rem;font-weight:700;">{{ $module->level }}</span>
+          <span style="display:inline-flex;padding:5px 10px;border-radius:999px;background:var(--gray-100);color:var(--gray-600);font-size:.78rem;font-weight:700;">
+            @switch($module->kategori)
+              @case('materi') Materi @break
+              @case('simulasi_horen') Simulasi Hören @break
+              @case('simulasi_lesen') Simulasi Lesen @break
+              @case('simulasi_schreiben') Simulasi Schreiben @break
+              @case('simulasi_sprechen') Simulasi Sprechen @break
+              @default {{ $module->kategori }}
+            @endswitch
+          </span>
+        </div>
+      </div>
+
+      <div id="errorAlert" style="display:none;margin-bottom:18px;padding:14px 16px;border-radius:16px;background:var(--red-bg);border:1px solid #f5c2c0;color:var(--red);font-size:.88rem;"></div>
+      <div id="successAlert" style="display:none;margin-bottom:18px;padding:14px 16px;border-radius:16px;background:var(--green-bg);border:1px solid #B7E4CB;color:var(--green);font-size:.88rem;"></div>
 
       <div id="questionsContainer"></div>
 
       <div class="empty-questions" id="emptyQuestions" hidden>
         <p>Belum ada pertanyaan. Klik tombol di bawah untuk menambahkan pertanyaan pertama.</p>
         <button type="button" class="empty-add-btn" id="emptyAddBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
           Tambah Pertanyaan
         </button>
       </div>
 
       <div class="form-actions">
+        <a href="{{ route('modul.create') }}" class="back-link" style="margin-bottom:0;">Kembali</a>
         <button type="button" class="btn-save" id="saveBtn">
-          Simpan
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+          Simpan Semua Soal
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
         </button>
       </div>
     </main>
@@ -387,292 +446,271 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 (function(){
   "use strict";
 
-  /* ==================================================================
-     CATATAN INTEGRASI BACKEND
-     - Seluruh state soal (questions[]) di bawah ini hanya disimpan di
-       memori (variabel JS) selama halaman terbuka — belum dikirim ke
-       server. Saat tombol "Simpan" ditekan, TODO: kirim questions[]
-       (termasuk file gambar/audio yang dipilih) ke backend, mis.
-       fetch('/api/admin/modul/{id}/soal', {method:'POST', body: formData}).
-     - Sesuai ketentuan: urutan opsi pilihan ganda akan DIACAK oleh
-       backend saat disimpan ke database — pengacakan TIDAK dilakukan
-       di sisi front-end ini.
-     - Maksimal 4 opsi per soal pilihan ganda, dengan satu opsi
-       ditandai benar lewat radio button.
-     - Ikon gambar di sebelah pertanyaan & tiap opsi menerima file
-       gambar ATAU audio (mis. untuk soal Simulasi Hören yang butuh
-       berkas audio, atau opsi jawaban bergambar).
-  ================================================================== */
-
-  var nextId = 3;
-  var questions = [
-    {
-      id: 1, type: 'pg', text: '',
-      questionFile: null,
-      options: [ { text: 'Opsi 1', file: null } ],
-      correct: 0
-    },
-    {
-      id: 2, type: 'paragraf', text: '',
-      questionFile: null,
-      options: [],
-      correct: null
-    }
-  ];
-
+  /* Bentuk soal ditentukan oleh kategori modul:
+     Materi             = Pilihan Ganda
+     Hören              = Pilihan Ganda + Audio
+     Lesen              = Pilihan Ganda + Teks Bacaan pada modul
+     Schreiben          = Paragraf/Essay
+     Sprechen           = Pertanyaan/Topik Berbicara
+  */
+  var category = @json($module->kategori);
+  var configMap = {
+    materi: { type: 'pilihan_ganda', label: 'Pilihan Ganda', note: 'Isi 4 pilihan jawaban dan tandai satu jawaban yang benar.' },
+    simulasi_horen: { type: 'pilihan_ganda', label: 'Pilihan Ganda + Audio', note: 'Upload audio untuk setiap soal Hören. Pilihan jawaban berjumlah 4.' },
+    simulasi_lesen: { type: 'pilihan_ganda', label: 'Pilihan Ganda + Teks Bacaan', note: 'Teks bacaan sudah tersimpan pada modul. Setiap soal memiliki 4 pilihan jawaban.' },
+    simulasi_schreiben: { type: 'paragraf', label: 'Paragraf / Essay', note: 'Siswa menjawab dengan tulisan panjang. Tidak ada pilihan ganda.' },
+    simulasi_sprechen: { type: 'paragraf', label: 'Pertanyaan / Topik Berbicara', note: 'Isi pertanyaan atau topik yang akan digunakan siswa untuk latihan berbicara.' }
+  };
+  var config = configMap[category] || configMap.materi;
+  var questions = [];
+  var nextId = 1;
   var container = document.getElementById('questionsContainer');
-  var emptyQuestions = document.getElementById('emptyQuestions');
+  var empty = document.getElementById('emptyQuestions');
+  var errorAlert = document.getElementById('errorAlert');
+  var successAlert = document.getElementById('successAlert');
 
-  function iconSvg(name){
-    var icons = {
-      image: '<path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="m21 15-5-5L5 21"/>',
-      check: '<path d="M20 6 9 17l-5-5"/>',
-      plus: '<path d="M12 5v14M5 12h14"/>',
-      copy: '<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
-      trash: '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
-      x: '<path d="M18 6 6 18M6 6l12 12"/>',
-      pg: '<circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/>',
-      para: '<path d="M3 6h18M3 12h18M3 18h12"/>',
-      chevron: '<path d="M6 9l6 6 6-6"/>'
-    };
-    return icons[name] || '';
+  function icon(name){
+    var x={
+      plus:'<path d="M12 5v14M5 12h14"/>',
+      copy:'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+      trash:'<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+      x:'<path d="M18 6 6 18M6 6l12 12"/>',
+      check:'<path d="M20 6 9 17l-5-5"/>',
+      upload:'<path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M5 20h14"/>',
+      pg:'<circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/>',
+      para:'<path d="M3 6h18M3 12h18M3 18h12"/>'
+    }; return x[name]||'';
+  }
+
+  function newQuestion(){
+    var q={id:nextId++,type:config.type,text:'',questionFile:null,options:[],correct:null,penjelasan:''};
+    if(config.type==='pilihan_ganda'){
+      q.options=[{text:'',file:null},{text:'',file:null},{text:'',file:null},{text:'',file:null}];
+      q.correct=0;
+    }
+    return q;
+  }
+
+  function alertError(msg){
+    successAlert.style.display='none'; errorAlert.textContent=msg; errorAlert.style.display='block';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function clearAlert(){errorAlert.style.display='none';successAlert.style.display='none';}
+
+  function fileBox(file, accept, buttonText, callback){
+    var box=document.createElement('div');
+    box.style.cssText='border:1.5px dashed var(--gray-300);border-radius:var(--radius-md);background:var(--gray-50);padding:16px;display:flex;align-items:center;gap:12px;';
+    box.innerHTML='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--pink-dark);flex-shrink:0;">'+icon('upload')+'</svg>';
+    var label=document.createElement('label'); label.className='dropzone-btn'; label.textContent=file? 'Ganti Audio':buttonText;
+    var input=document.createElement('input'); input.type='file'; input.accept=accept; input.hidden=true;
+    var name=document.createElement('span'); name.className='dropzone-file-name'; name.textContent=file?file.name:'Belum ada file dipilih';
+    if(file) name.style.color='var(--green)';
+    input.addEventListener('change',function(){if(input.files&&input.files[0])callback(input.files[0]);});
+    label.appendChild(input); box.appendChild(label); box.appendChild(name); return box;
   }
 
   function render(){
-    container.innerHTML = '';
-    emptyQuestions.hidden = questions.length > 0;
+    container.innerHTML=''; empty.hidden=questions.length>0;
+    questions.forEach(function(q,qi){
+      var row=document.createElement('div'); row.className='question-row';
+      var card=document.createElement('div'); card.className='question-card';
+      var h=document.createElement('h2'); h.textContent='Pertanyaan '+(qi+1); card.appendChild(h);
 
-    questions.forEach(function(q, qIndex){
-      var row = document.createElement('div');
-      row.className = 'question-row';
+      var note=document.createElement('div'); note.className='question-note'; note.textContent=config.note; card.appendChild(note);
 
-      var card = document.createElement('div');
-      card.className = 'question-card';
+      var label=document.createElement('label'); label.textContent=category==='simulasi_sprechen'?'Pertanyaan / Topik Berbicara':'Pertanyaan';
+      label.style.cssText='display:block;font-family:var(--font-display);font-weight:700;font-size:1rem;color:var(--navy);margin-bottom:8px;';
+      var textarea=document.createElement('textarea'); textarea.className='qtext-input'; textarea.placeholder=category==='simulasi_sprechen'?'Contoh: Perkenalkan diri Anda dan ceritakan kegiatan sehari-hari.':'Tulis pertanyaan di sini...'; textarea.value=q.text;
+      textarea.style.cssText='width:100%;min-height:110px;padding:12px 14px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);resize:vertical;';
+      textarea.addEventListener('input',function(){q.text=textarea.value;});
+      card.appendChild(label); card.appendChild(textarea);
 
-      var heading = document.createElement('h2');
-      heading.textContent = 'Pertanyaan ' + (qIndex + 1);
-      card.appendChild(heading);
+      var typeLabel=document.createElement('label'); typeLabel.textContent='Bentuk Soal'; typeLabel.style.cssText='display:block;font-family:var(--font-display);font-weight:700;font-size:1rem;color:var(--navy);margin:18px 0 8px;';
+      var type=document.createElement('div'); type.className='type-select-wrap'; type.style.width='100%';
+      type.innerHTML='<svg class="type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'+icon(config.type==='pilihan_ganda'?'pg':'para')+'</svg><select disabled><option>'+config.label+'</option></select>';
+      card.appendChild(typeLabel); card.appendChild(type);
 
-      /* ---- Baris teks pertanyaan + upload + tipe soal ---- */
-      var qtextRow = document.createElement('div');
-      qtextRow.className = 'qtext-row';
-
-      var qtextBox = document.createElement('div');
-      qtextBox.className = 'qtext-box';
-      qtextBox.innerHTML =
-        '<div class="qtext-input" contenteditable="true" data-role="qtext"></div>' +
-        '<div class="qtext-toolbar">' +
-          '<button type="button" class="tb-btn" data-cmd="bold"><b>B</b></button>' +
-          '<button type="button" class="tb-btn" data-cmd="italic"><i>I</i></button>' +
-          '<button type="button" class="tb-btn" data-cmd="underline"><u>U</u></button>' +
-          '<div class="tb-sep"></div>' +
-          '<button type="button" class="tb-btn" title="Ukuran teks">A <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="width:11px;height:11px;margin-left:2px;">' + iconSvg('chevron') + '</svg></button>' +
-          '<button type="button" class="tb-btn" title="Perataan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">' + iconSvg('para') + '</svg></button>' +
-          '<button type="button" class="tb-btn" data-cmd="insertOrderedList" title="Daftar bernomor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11M4 6h1M4 10v1h1M4 18h2"/></svg></button>' +
-          '<button type="button" class="tb-btn" data-cmd="insertUnorderedList" title="Daftar bullet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="4" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="4" cy="18" r="1" fill="currentColor" stroke="none"/><path d="M9 6h11M9 12h11M9 18h11"/></svg></button>' +
-          '<button type="button" class="tb-btn" data-cmd="indent" title="Indentasi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 4h18M3 20h18M3 10h11M3 15h11M15 7.5 19 12l-4 4.5"/></svg></button>' +
-        '</div>';
-      var qtextInput = qtextBox.querySelector('[data-role="qtext"]');
-      qtextInput.innerHTML = q.text;
-      qtextInput.addEventListener('input', function(){ q.text = qtextInput.innerHTML; });
-      qtextBox.querySelectorAll('.tb-btn[data-cmd]').forEach(function(btn){
-        btn.addEventListener('click', function(){
-          qtextInput.focus();
-          document.execCommand(btn.getAttribute('data-cmd'), false, null);
-        });
-      });
-
-      var qImageBtn = buildFileIconButton(q.questionFile, 'image/*,audio/*', 'Upload gambar atau audio untuk pertanyaan', function(file){
-        q.questionFile = file;
-        render();
-      });
-
-      var typeWrap = document.createElement('div');
-      typeWrap.className = 'type-select-wrap';
-      typeWrap.innerHTML =
-        '<svg class="type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">' + iconSvg(q.type === 'pg' ? 'pg' : 'para') + '</svg>' +
-        '<select data-role="typeSelect">' +
-          '<option value="pg"' + (q.type === 'pg' ? ' selected' : '') + '>Pilihan Ganda</option>' +
-          '<option value="paragraf"' + (q.type === 'paragraf' ? ' selected' : '') + '>Paragraf</option>' +
-        '</select>' +
-        '<svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">' + iconSvg('chevron') + '</svg>';
-      typeWrap.querySelector('select').addEventListener('change', function(e){
-        q.type = e.target.value;
-        if (q.type === 'pg' && q.options.length === 0){
-          q.options.push({ text: 'Opsi 1', file: null });
-          q.correct = 0;
-        }
-        render();
-      });
-
-      qtextRow.appendChild(qtextBox);
-      qtextRow.appendChild(qImageBtn);
-      qtextRow.appendChild(typeWrap);
-      card.appendChild(qtextRow);
-
-      /* ---- Body: Pilihan Ganda atau Paragraf ---- */
-      if (q.type === 'pg'){
-        var optionsList = document.createElement('div');
-        optionsList.className = 'options-list';
-
-        q.options.forEach(function(opt, oIndex){
-          var optRow = document.createElement('div');
-          optRow.className = 'option-row' + (q.correct === oIndex ? ' is-correct' : '');
-
-          var radio = document.createElement('button');
-          radio.type = 'button';
-          radio.className = 'option-radio';
-          radio.setAttribute('aria-label', 'Tandai opsi ' + (oIndex + 1) + ' sebagai jawaban benar');
-          radio.innerHTML = '<span class="dot"></span>';
-          radio.addEventListener('click', function(){ q.correct = oIndex; render(); });
-
-          var textInput = document.createElement('input');
-          textInput.type = 'text';
-          textInput.className = 'option-text';
-          textInput.placeholder = 'Opsi ' + (oIndex + 1);
-          textInput.value = opt.text;
-          textInput.addEventListener('input', function(){ opt.text = textInput.value; });
-
-          var imgBtn = buildFileIconButton(opt.file, 'image/*,audio/*', 'Upload gambar untuk opsi ' + (oIndex + 1), function(file){
-            opt.file = file;
-            render();
-          });
-
-          var removeBtn = document.createElement('button');
-          removeBtn.type = 'button';
-          removeBtn.className = 'option-remove';
-          removeBtn.setAttribute('aria-label', 'Hapus opsi ' + (oIndex + 1));
-          removeBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">' + iconSvg('x') + '</svg>';
-          removeBtn.addEventListener('click', function(){
-            q.options.splice(oIndex, 1);
-            if (q.correct === oIndex) q.correct = q.options.length ? 0 : null;
-            else if (q.correct > oIndex) q.correct--;
-            render();
-          });
-
-          optRow.appendChild(radio);
-          optRow.appendChild(textInput);
-          optRow.appendChild(imgBtn);
-          optRow.appendChild(removeBtn);
-          optionsList.appendChild(optRow);
-        });
-
-        if (q.options.length < 4){
-          var addRow = document.createElement('div');
-          addRow.className = 'add-option-row';
-          addRow.innerHTML =
-            '<span class="option-radio"><span class="dot"></span></span>' +
-            '<button type="button" class="add-option-btn">Tambahkan opsi</button>';
-          addRow.querySelector('.add-option-btn').addEventListener('click', function(){
-            q.options.push({ text: 'Opsi ' + (q.options.length + 1), file: null });
-            render();
-          });
-          optionsList.appendChild(addRow);
-        }
-
-        card.appendChild(optionsList);
-      } else {
-        var preview = document.createElement('div');
-        preview.className = 'paragraf-preview';
-        preview.innerHTML = '<div class="paragraf-preview-line">Teks jawaban panjang</div>';
-        card.appendChild(preview);
+      if(category==='simulasi_horen'){
+        var audioLabel=document.createElement('label'); audioLabel.textContent='Audio Soal (MP3/WAV/M4A)'; audioLabel.style.cssText='display:block;font-family:var(--font-display);font-weight:700;font-size:1rem;color:var(--navy);margin:18px 0 8px;';
+        card.appendChild(audioLabel);
+        card.appendChild(fileBox(q.questionFile,'audio/mpeg,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a',q.questionFile?'Ganti Audio':'Pilih Audio',function(file){q.questionFile=file;render();}));
       }
 
-      /* ---- Control rail ---- */
-      var rail = document.createElement('div');
-      rail.className = 'control-rail';
+      if(config.type==='pilihan_ganda'){
+        var optLabel=document.createElement('label'); optLabel.textContent='Pilihan Jawaban'; optLabel.style.cssText='display:block;font-family:var(--font-display);font-weight:700;font-size:1rem;color:var(--navy);margin-top:20px;'; card.appendChild(optLabel);
+        var list=document.createElement('div'); list.className='options-list';
+        q.options.forEach(function(opt,oi){
+          var r=document.createElement('div');
+          r.className='option-row'+(q.correct===oi?' is-correct':'');
 
-      var addBtn = document.createElement('button');
-      addBtn.type = 'button';
-      addBtn.className = 'rail-btn';
-      addBtn.setAttribute('aria-label', 'Tambah pertanyaan baru setelah Pertanyaan ' + (qIndex + 1));
-      addBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">' + iconSvg('plus') + '</svg>';
-      addBtn.addEventListener('click', function(){
-        questions.splice(qIndex + 1, 0, {
-          id: nextId++, type: 'pg', text: '', questionFile: null,
-          options: [{ text: 'Opsi 1', file: null }], correct: 0
+          var radio=document.createElement('button');
+          radio.type='button';
+          radio.className='option-radio';
+          radio.innerHTML='<span class="dot"></span>';
+          radio.title='Tandai jawaban benar';
+          radio.addEventListener('click',function(){
+            q.correct=oi;
+            render();
+          });
+
+          var input=document.createElement('input');
+          input.type='text';
+          input.className='option-text';
+          input.placeholder='Opsi '+(oi+1)+(category==='simulasi_horen'?' — teks atau gambar':'');
+          input.value=opt.text || '';
+          input.addEventListener('input',function(){
+            opt.text=input.value;
+            // Hören: jika memilih teks, gambar pada opsi tersebut dihapus.
+            if(category==='simulasi_horen' && input.value.trim() && opt.file){
+              opt.file=null;
+              render();
+            }
+          });
+
+          r.appendChild(radio);
+          r.appendChild(input);
+
+          // Hören: opsi jawaban dapat berupa teks ATAU gambar.
+          if(category==='simulasi_horen'){
+            var imageLabel=document.createElement('label');
+            imageLabel.className='option-image-btn'+(opt.file?' has-file':'');
+            imageLabel.title=opt.file?'Ganti gambar pilihan':'Upload gambar pilihan';
+
+            var imageInput=document.createElement('input');
+            imageInput.type='file';
+            imageInput.accept='image/jpeg,image/png,image/webp';
+            imageInput.hidden=true;
+
+            imageInput.addEventListener('change',function(){
+              if(imageInput.files && imageInput.files[0]){
+                opt.file=imageInput.files[0];
+                opt.text='';
+                render();
+              }
+            });
+
+            imageLabel.innerHTML=
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+
+              '<rect x="3" y="3" width="18" height="18" rx="2"/>'+
+              '<circle cx="8.5" cy="8.5" r="1.5"/>'+
+              '<path d="m21 15-5-5L5 21"/>'+
+              '</svg>'+
+              (opt.file?'Gambar dipilih':'Pilih gambar');
+
+            imageLabel.appendChild(imageInput);
+            r.appendChild(imageLabel);
+          }
+
+          var del=document.createElement('button');
+          del.type='button';
+          del.className='option-remove';
+          del.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">'+icon('x')+'</svg>';
+          del.addEventListener('click',function(){
+            if(q.options.length<=2){
+              alertError('Soal pilihan ganda minimal memiliki 2 opsi.');
+              return;
+            }
+            q.options.splice(oi,1);
+            if(q.correct===oi) q.correct=0;
+            else if(q.correct>oi) q.correct--;
+            render();
+          });
+
+          r.appendChild(del);
+          list.appendChild(r);
         });
-        render();
-      });
+        if(q.options.length<4){var add=document.createElement('button');add.type='button';add.className='add-option-btn';add.textContent='+ Tambahkan opsi';add.addEventListener('click',function(){q.options.push({text:'',file:null});render();});list.appendChild(add);}
+        card.appendChild(list);
+      }
 
-      var dupBtn = document.createElement('button');
-      dupBtn.type = 'button';
-      dupBtn.className = 'rail-btn';
-      dupBtn.setAttribute('aria-label', 'Duplikat Pertanyaan ' + (qIndex + 1));
-      dupBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + iconSvg('copy') + '</svg>';
-      dupBtn.addEventListener('click', function(){
-        var clone = JSON.parse(JSON.stringify(q));
-        clone.id = nextId++;
-        clone.options.forEach(function(o){ o.file = null; });
-        clone.questionFile = null;
-        questions.splice(qIndex + 1, 0, clone);
-        render();
-      });
+      var expLabel=document.createElement('label'); expLabel.textContent='Penjelasan Jawaban (opsional)'; expLabel.style.cssText='display:block;font-family:var(--font-display);font-weight:700;font-size:1rem;color:var(--navy);margin:20px 0 8px;';
+      var exp=document.createElement('textarea'); exp.placeholder='Penjelasan jawaban untuk halaman review siswa.'; exp.value=q.penjelasan; exp.style.cssText='width:100%;min-height:80px;padding:12px 14px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);resize:vertical;'; exp.addEventListener('input',function(){q.penjelasan=exp.value;});
+      card.appendChild(expLabel);card.appendChild(exp);
 
-      var delBtn = document.createElement('button');
-      delBtn.type = 'button';
-      delBtn.className = 'rail-btn is-delete';
-      delBtn.setAttribute('aria-label', 'Hapus Pertanyaan ' + (qIndex + 1));
-      delBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + iconSvg('trash') + '</svg>';
-      delBtn.addEventListener('click', function(){
-        questions.splice(qIndex, 1);
-        render();
-      });
-
-      rail.appendChild(addBtn);
-      rail.appendChild(dupBtn);
-      rail.appendChild(delBtn);
-
-      row.appendChild(card);
-      row.appendChild(rail);
-      container.appendChild(row);
+      var rail=document.createElement('div');rail.className='control-rail';
+      var addBtn=document.createElement('button');addBtn.type='button';addBtn.className='rail-btn';addBtn.title='Tambah pertanyaan';addBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">'+icon('plus')+'</svg>';addBtn.addEventListener('click',function(){questions.splice(qi+1,0,newQuestion());render();});
+      var dup=document.createElement('button');dup.type='button';dup.className='rail-btn';dup.title='Duplikat pertanyaan';dup.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+icon('copy')+'</svg>';dup.addEventListener('click',function(){var c={id:nextId++,type:q.type,text:q.text,questionFile:null,options:q.options.map(function(o){return{text:o.text,file:null};}),correct:q.correct,penjelasan:q.penjelasan};questions.splice(qi+1,0,c);render();});
+      var delQ=document.createElement('button');delQ.type='button';delQ.className='rail-btn is-delete';delQ.title='Hapus pertanyaan';delQ.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+icon('trash')+'</svg>';delQ.addEventListener('click',function(){if(questions.length===1){alertError('Minimal harus ada satu soal.');return;}questions.splice(qi,1);render();});
+      rail.appendChild(addBtn);rail.appendChild(dup);rail.appendChild(delQ);row.appendChild(card);row.appendChild(rail);container.appendChild(row);
     });
   }
 
-  function buildFileIconButton(file, accept, label, onChange){
-    var wrap = document.createElement('button');
-    wrap.type = 'button';
-    wrap.className = 'icon-btn-circle' + (file ? ' has-file' : '');
-    wrap.setAttribute('aria-label', label);
-    wrap.title = file ? file.name : label;
-    wrap.innerHTML =
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + iconSvg('image') + '</svg>' +
-      (file ? '<span class="file-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">' + iconSvg('check') + '</svg></span>' : '');
+  document.getElementById('emptyAddBtn').addEventListener('click',function(){questions.push(newQuestion());render();});
 
-    var input = document.createElement('input');
-    input.type = 'file';
-    input.accept = accept;
-    input.hidden = true;
-    input.addEventListener('change', function(){
-      if (input.files && input.files[0]) onChange(input.files[0]);
-    });
+  function validate(){
+    if(!questions.length){alertError('Minimal harus ada satu soal.');return false;}
+    for(var i=0;i<questions.length;i++){
+      var q=questions[i],n=i+1;
+      if(!q.text||!q.text.trim()){alertError('Pertanyaan '+n+' belum diisi.');return false;}
+      if(category==='simulasi_horen'&&!q.questionFile){alertError('Soal Hören nomor '+n+' wajib memiliki audio.');return false;}
+      if(q.type==='pilihan_ganda'){
+        if(q.options.length!==4){alertError('Soal nomor '+n+' harus memiliki tepat 4 opsi.');return false;}
+        for(var j=0;j<4;j++){
+          var option=q.options[j];
+          var hasText=!!(option.text && option.text.trim());
+          var hasImage=!!option.file;
 
-    wrap.appendChild(input);
-    wrap.addEventListener('click', function(){ input.click(); });
-    return wrap;
+          if(category==='simulasi_horen'){
+            if(!hasText && !hasImage){
+              alertError('Opsi '+(j+1)+' pada soal Hören nomor '+n+' harus diisi dengan teks atau gambar.');
+              return false;
+            }
+            if(hasText && hasImage){
+              alertError('Opsi '+(j+1)+' pada soal Hören nomor '+n+' hanya boleh berupa teks atau gambar.');
+              return false;
+            }
+          }else{
+            if(!hasText){
+              alertError('Opsi '+(j+1)+' pada soal nomor '+n+' belum diisi.');
+              return false;
+            }
+          }
+        }
+
+        if(q.correct===null||q.correct<0||q.correct>3){
+          alertError('Tentukan jawaban benar pada soal nomor '+n+'.');
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
-  document.getElementById('emptyAddBtn').addEventListener('click', function(){
-    questions.push({ id: nextId++, type: 'pg', text: '', questionFile: null, options: [{ text: 'Opsi 1', file: null }], correct: 0 });
-    render();
+  document.getElementById('saveBtn').addEventListener('click',async function(){
+    clearAlert(); if(!validate())return;
+    var btn=document.getElementById('saveBtn');btn.disabled=true;btn.textContent='Menyimpan...';
+    var csrf=document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    try{
+      for(var i=0;i<questions.length;i++){
+        var q=questions[i],fd=new FormData();
+        fd.append('tipe',q.type);fd.append('pertanyaan',q.text.trim());fd.append('penjelasan',q.penjelasan||'');
+        if(category==='simulasi_horen'&&q.questionFile)fd.append('file',q.questionFile);
+        if(q.type==='pilihan_ganda'){
+          q.options.forEach(function(o,index){
+            fd.append('options['+index+'][teks]',(o.text || '').trim());
+
+            if(category==='simulasi_horen' && o.file){
+              fd.append('options['+index+'][file]',o.file);
+            }
+          });
+          fd.append('correct_option',String(q.correct));
+        }
+        var response=await fetch("{{ route('modul.soal.store',$module) }}",{method:'POST',headers:{'X-CSRF-TOKEN':csrf,'Accept':'application/json'},body:fd});
+        if(!response.ok){var msg='Gagal menyimpan soal nomor '+(i+1)+'.';try{var data=await response.json();if(data.message)msg=data.message;if(data.errors){var key=Object.keys(data.errors)[0];if(key&&data.errors[key]&&data.errors[key][0])msg=data.errors[key][0];}}catch(e){}throw new Error(msg);}
+      }
+      var finish=await fetch("{{ route('modul.soal.finish',$module) }}",{method:'POST',headers:{'X-CSRF-TOKEN':csrf,'Accept':'application/json'}});
+      if(!finish.ok)throw new Error('Soal berhasil disimpan, tetapi modul gagal diselesaikan.');
+      successAlert.textContent='Semua soal berhasil disimpan.';successAlert.style.display='block';
+      setTimeout(function(){window.location.href="{{ route('modul.index') }}";},700);
+    }catch(error){console.error(error);alertError(error.message||'Terjadi kesalahan saat menyimpan soal.');btn.disabled=false;btn.textContent='Simpan Semua Soal';}
   });
 
-  document.getElementById('saveBtn').addEventListener('click', function(){
-    // TODO: kirim `questions` (dan file terlampir) ke backend di sini.
-    window.location.href = 'admin-modul-pembelajaran.html';
-  });
+  questions.push(newQuestion());render();
 
-  render();
-
-  var sidebar = document.getElementById('sidebar');
-  var menuToggle = document.getElementById('menuToggle');
-  var sidebarClose = document.getElementById('sidebarClose');
-  var backdrop = document.getElementById('backdrop');
-  function openSidebar(){ sidebar.classList.add('open'); backdrop.classList.add('show'); menuToggle.setAttribute('aria-expanded', 'true'); }
-  function closeSidebar(){ sidebar.classList.remove('open'); backdrop.classList.remove('show'); menuToggle.setAttribute('aria-expanded', 'false'); }
-  menuToggle.addEventListener('click', openSidebar);
-  sidebarClose.addEventListener('click', closeSidebar);
-  backdrop.addEventListener('click', closeSidebar);
+  var sidebar=document.getElementById('sidebar'),menuToggle=document.getElementById('menuToggle'),sidebarClose=document.getElementById('sidebarClose'),backdrop=document.getElementById('backdrop');
+  function openSidebar(){sidebar.classList.add('open');backdrop.classList.add('show');menuToggle.setAttribute('aria-expanded','true');}
+  function closeSidebar(){sidebar.classList.remove('open');backdrop.classList.remove('show');menuToggle.setAttribute('aria-expanded','false');}
+  menuToggle.addEventListener('click',openSidebar);sidebarClose.addEventListener('click',closeSidebar);backdrop.addEventListener('click',closeSidebar);
 })();
 </script>
 </body>

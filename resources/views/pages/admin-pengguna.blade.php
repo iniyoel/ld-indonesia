@@ -522,7 +522,7 @@ td.col-name{ font-weight: 600; color: var(--navy); }
           </a>
         </li>
         <li>
-          <a href="admin-modul-pembelajaran.html" class="nav-link">
+          <a href="{{ route('modul.index') }}" class="nav-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C2 4.7 2.7 4 4.7 4c2.6 0 5.3 1 7.3 2.5C14 4.9 16.7 4 19.3 4c2 0 2.7.7 2.7 1.5v13c0-.8-.7-1.5-2.7-1.5-2.6 0-5.3.9-7.3 2.5-2-1.6-4.7-2.5-7.3-2.5C2.7 17 2 17.7 2 18.5z"/><path d="M12 6.5V20"/></svg>
             Modul Pembelajaran
           </a>
