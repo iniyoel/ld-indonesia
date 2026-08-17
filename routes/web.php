@@ -103,7 +103,7 @@ Route::middleware('auth')->group(function () {
         if (!empty($data['photo'])) {
             $photoPath = $data['photo']->store('profile-photos', 'public');
         }
-        
+
         $user = \App\Models\User::create([
             'name' => $data['name'],
             'email' => $data['email'],
@@ -179,6 +179,16 @@ Route::middleware('auth')->group(function () {
             'message' => 'Pengguna berhasil dihapus.',
         ]);
     })->middleware('can:admin');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dashboard — Admin & Tutor
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/dashboard', [PageController::class, 'dashboard'])
+        ->name('dashboard.admin')
+        ->middleware('can:manage-modules');
 
     // ------------------------------------------------------------------
     // Modul — Admin & Tutor
@@ -262,5 +272,5 @@ Route::middleware('auth')->group(function () {
 
         return redirect()->route('login');
     })->name('logout');
-    
+
 });

@@ -12,15 +12,18 @@ use Illuminate\Support\Facades\DB;
 class PageController extends Controller
 {
     /**
-     * Halaman yang menampilkan data dashboard (statistik siswa, modul,
-     * penilaian, aktivitas). Datanya identik untuk admin & tutor — yang
-     * beda hanya sidebar/menu yang tersedia (diatur lewat page_access.php).
+     * Halaman dashboard tunggal untuk admin & tutor.
+     * Datanya identik untuk kedua role — yang beda hanya sidebar/menu
+     * yang tersedia, ditangani otomatis oleh <x-dashboard-sidebar>.
      */
-    private const DASHBOARD_PAGES = ['dashboard-admin', 'dashboard-tutor'];
+    public function dashboard(Request $request): View
+    {
+        return view('pages.dashboard-admin', $this->buildDashboardData());
+    }
 
     /**
-     * Render halaman pages.* dan menyiapkan data yang memang dibutuhkan
-     * oleh masing-masing halaman.
+     * Render halaman pages.* generik untuk halaman yang belum/tidak
+     * perlu controller khusus (mis. admin-pengguna).
      */
     public function show(Request $request, string $page): View
     {
@@ -42,17 +45,12 @@ class PageController extends Controller
                 ->get();
         }
 
-        if (in_array($page, self::DASHBOARD_PAGES, true)) {
-            $viewData = array_merge($viewData, $this->buildDashboardData());
-        }
-
         return view($view, $viewData);
     }
 
     /**
      * Kumpulkan seluruh data ringkasan dashboard (Total Siswa, Total
      * Modul, Ringkasan Modul, Perlu Dinilai, Aktivitas, Performa Siswa).
-     * Dipakai bersama oleh dashboard-admin & dashboard-tutor.
      */
     private function buildDashboardData(): array
     {
@@ -77,8 +75,6 @@ class PageController extends Controller
 
         // =============================================================
         // 3. RINGKASAN MODUL PER KATEGORI
-        //    (materi, simulasi_horen, simulasi_lesen, simulasi_schreiben,
-        //    simulasi_sprechen — lihat pemakaian di dashboard-admin.blade.php)
         // =============================================================
         $data['moduleSummary'] = Module::query()
             ->select('kategori', DB::raw('COUNT(*) as total'))
@@ -105,8 +101,6 @@ class PageController extends Controller
 
         // =============================================================
         // 5. AKTIVITAS ADMIN TERBARU
-        //    Sesuai dashboard-admin.blade.php: hanya aktivitas role admin
-        //    pada tabel modules yang ditampilkan di sini.
         // =============================================================
         $data['activities'] = DB::table('activity_logs')
             ->join('users', 'activity_logs.user_id', '=', 'users.id')

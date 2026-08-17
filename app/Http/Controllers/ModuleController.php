@@ -18,7 +18,7 @@ class ModuleController extends Controller
     */
     public function index()
     {
-            $modules = \App\Models\Module::with(['creator'])
+        $modules = Module::with(['creator'])
             ->withCount('questions')
             ->latest('updated_at')
             ->paginate(10);
@@ -46,7 +46,7 @@ class ModuleController extends Controller
     {
         return view('pages.admin-modul-soal', compact('module'));
     }
-    
+
     /*
     |--------------------------------------------------------------------------
     | SIMPAN MODUL

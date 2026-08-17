@@ -18,8 +18,8 @@ class AuthController extends Controller
      */
     public const ROLE_REDIRECTS = [
         'siswa' => 'dashboard-siswa',
-        'tutor' => 'dashboard-tutor',
-        'admin' => 'dashboard-admin',
+        'tutor' => 'dashboard',
+        'admin' => 'dashboard',
     ];
 
     /** Tampilkan halaman login (masuk.html). */
