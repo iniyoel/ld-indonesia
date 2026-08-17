@@ -6,6 +6,7 @@ use App\Http\Controllers\PageController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\AdminPerformanceController;
 
 Route::get('/', function () {
     $tutors = User::query()
@@ -232,6 +233,17 @@ Route::middleware('auth')->group(function () {
         ->middleware('can:manage-modules');
 
     Route::get('/{page}', [PageController::class, 'show'])
-    ->where('page', '[A-Za-z0-9\-]+')
-    ->name('page');
+        ->where('page', '[A-Za-z0-9\-]+')
+        ->name('page');
+
+
+    // Performa Siswa — Admin
+    Route::get('/admin/performa-siswa', [AdminPerformanceController::class, 'index'])
+        ->name('admin.performa.index');
+
+    Route::get('/admin/performa-siswa/{user}', [AdminPerformanceController::class, 'show'])
+    ->name('admin.siswa.detail')
+    ->middleware('can:admin');
+
+    
 });

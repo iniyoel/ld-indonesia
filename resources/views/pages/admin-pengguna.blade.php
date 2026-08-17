@@ -516,7 +516,7 @@ td.col-name{ font-weight: 600; color: var(--navy); }
     <nav class="sidebar-nav">
       <ul>
         <li>
-          <a href="dashboard-admin.html" class="nav-link">
+          <a href="{{ url('/dashboard-admin') }}" class="nav-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
             Dashboard
           </a>
@@ -528,7 +528,7 @@ td.col-name{ font-weight: 600; color: var(--navy); }
           </a>
         </li>
         <li>
-          <a href="admin-performa-siswa.html" class="nav-link">
+          <a href="{{ route('admin.performa.index') }}" class="nav-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12.5" y="8" width="3" height="10"/><rect x="18" y="5" width="3" height="13"/></svg>
             Performa Siswa
           </a>

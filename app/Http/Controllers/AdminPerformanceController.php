@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +27,8 @@ class AdminPerformanceController extends Controller
 
         $students = $this->studentPerformanceQuery()
             ->orderBy('users.name')
-            ->get();
+            ->paginate(15)
+            ->withQueryString();
 
         return view('pages.admin-performa-siswa', compact('students'));
     }
@@ -92,6 +94,61 @@ class AdminPerformanceController extends Controller
                 $lastActivity->selectRaw('MAX(attempts.selesai_pada)'),
                 'aktivitas_terakhir'
             );
+    }
+
+    public function show(Request $request, int $user): View
+    {
+        abort_unless($request->user()?->role === 'admin', 403);
+
+        $student = DB::table('users')
+            ->where('id', $user)
+            ->where('role', 'siswa')
+            ->first();
+
+        abort_unless($student, 404);
+
+        $activities = DB::table('attempts')
+            ->leftJoin('modules', 'modules.id', '=', 'attempts.module_id')
+            ->where('attempts.user_id', $student->id)
+            ->where('attempts.status', 'selesai')
+            ->select([
+                'attempts.id',
+                'attempts.nilai',
+                'attempts.selesai_pada',
+                'modules.judul',
+                'modules.kategori',
+            ])
+            ->orderByDesc('attempts.selesai_pada')
+            ->get();
+
+        $totalLatihan = $activities->filter(function ($activity) {
+            return $activity->kategori === 'materi';
+        })->count();
+
+        $totalSimulasi = $activities->filter(function ($activity) {
+            return in_array($activity->kategori, [
+                'simulasi_horen',
+                'simulasi_lesen',
+                'simulasi_schreiben',
+                'simulasi_sprechen',
+            ]);
+        })->count();
+
+        $nilaiActivities = $activities->filter(function ($activity) {
+            return $activity->nilai !== null;
+        });
+
+        $nilaiRataRata = $nilaiActivities->count()
+            ? $nilaiActivities->avg('nilai')
+            : null;
+
+        return view('pages.admin-siswa-detail', compact(
+            'student',
+            'activities',
+            'totalLatihan',
+            'totalSimulasi',
+            'nilaiRataRata'
+        ));
     }
 
     /**

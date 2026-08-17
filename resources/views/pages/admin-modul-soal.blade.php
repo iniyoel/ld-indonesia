@@ -341,7 +341,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     <nav class="sidebar-nav">
       <ul>
         <li>
-          <a href="dashboard-admin.html" class="nav-link">
+          <a href="{{ url('/dashboard-admin') }}" class="nav-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
             Dashboard
           </a>
@@ -353,13 +353,13 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
           </a>
         </li>
         <li>
-          <a href="admin-performa-siswa.html" class="nav-link">
+          <a href="{{ route('admin.performa.index') }}" class="nav-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12.5" y="8" width="3" height="10"/><rect x="18" y="5" width="3" height="13"/></svg>
             Performa Siswa
           </a>
         </li>
         <li>
-          <a href="admin-pengguna.html" class="nav-link">
+          <a href="{{ url('/admin-pengguna') }}" class="nav-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             Pengguna
           </a>

@@ -248,7 +248,7 @@ td.col-nilai.is-pending{ color: var(--gray-400); font-weight: 600; }
           </a>
         </li>
         <li>
-          <a href="{{ url('/admin-performa-siswa') }}" class="nav-link">
+          <a href="{{ route('admin.performa.index') }}" class="nav-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12.5" y="8" width="3" height="10"/><rect x="18" y="5" width="3" height="13"/></svg>
             Performa Siswa
           </a>

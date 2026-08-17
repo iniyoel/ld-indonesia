@@ -91,120 +91,149 @@ color:var(--navy);font-weight:700;font-size:.86rem;display:flex;align-items:cent
 </style>
 </head>
 <body>
-<a href="#mainContent" class="skip-link">Langsung ke konten utama</a>
+  <a href="#mainContent" class="skip-link">Langsung ke konten utama</a>
 
-<div class="app-shell">
-<div class="backdrop" id="backdrop"></div>
+  <div class="app-shell">
+  <div class="backdrop" id="backdrop"></div>
 
-<aside class="sidebar" id="sidebar" aria-label="Navigasi utama">
-<div class="sidebar-brand">
-<a href="{{ route('dashboard.admin') }}" style="display:flex;align-items:center;gap:10px;" aria-label="LD Indonesia — Dashboard Admin">
-<svg class="brand-mark" viewBox="0 0 48 48" fill="none"><path d="M24 4c-6 0-10 5-10 5s3 1 4 4c-3-1-6 0-7 3 3 0 5 1 6 3-3 1-5 3-5 6 3-1 5-1 7 0-1 3 0 6 2 8 1-3 2-5 3-6 1 1 2 3 3 6 2-2 3-5 2-8 2-1 4-1 7 0 0-3-2-5-5-6 1-2 3-3 6-3-1-3-4-4-7-3 1-3 4-4 4-4s-4-5-10-5z" fill="var(--maroon)"/><circle cx="24" cy="17" r="4" fill="var(--gold)"/></svg>
-<span class="brand-text"><strong>LD <span>INDONESIA</span></strong><small>Privat Bahasa Jerman</small></span>
-</a>
-<button class="sidebar-close" id="sidebarClose" aria-label="Tutup menu">×</button>
-</div>
-<nav class="sidebar-nav"><ul>
-<li><a href="{{ route('dashboard.admin') }}" class="nav-link">Dashboard</a></li>
-<li><a href="{{ route('modul.index') }}" class="nav-link">Modul Pembelajaran</a></li>
-<li><a href="{{ route('admin.performa-siswa') }}" class="nav-link active" aria-current="page">Performa Siswa</a></li>
-<li><a href="{{ route('admin.pengguna') }}" class="nav-link">Pengguna</a></li>
-</ul></nav>
-<div class="sidebar-footer">
-<form method="POST" action="{{ route('logout') }}">
-@csrf
-<button type="submit" class="logout-link" style="width:100%;text-align:left;">
-Keluar
-</button>
-</form>
-</div>
-</aside>
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="Navigasi utama">
+    <div class="sidebar-brand">
+      <a href="dashboard-admin.html" style="display:flex;align-items:center;gap:10px;" aria-label="LD Indonesia — Dashboard Admin">
+        <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M24 4c-6 0-10 5-10 5s3 1 4 4c-3-1-6 0-7 3 3 0 5 1 6 3-3 1-5 3-5 6 3-1 5-1 7 0-1 3 0 6 2 8 1-3 2-5 3-6 1 1 2 3 3 6 2-2 3-5 2-8 2-1 4-1 7 0 0-3-2-5-5-6 1-2 3-3 6-3-1-3-4-4-7-3 1-3 4-4 4-4s-4-5-10-5z" fill="var(--maroon)"/>
+          <circle cx="24" cy="17" r="4" fill="var(--gold)"/>
+        </svg>
+        <span class="brand-text">
+          <strong>LD <span>INDONESIA</span></strong>
+          <small>Privat Bahasa Jerman</small>
+        </span>
+      </a>
+      <button class="sidebar-close" id="sidebarClose" aria-label="Tutup menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
 
-<div class="main-col">
-<header class="topbar">
-<button class="menu-toggle" id="menuToggle" aria-label="Buka menu navigasi" aria-expanded="false">☰</button>
-<div class="user-summary">
-<div class="user-meta">
-<strong>{{ Auth::user()->name }}</strong><span>Admin</span>
-</div>
-<div class="user-avatar" aria-hidden="true">{{ strtoupper(substr(Auth::user()->name,0,1)) }}</div>
-</div>
-</header>
+    <nav class="sidebar-nav">
+      <ul>
+        <li>
+          <a href="{{ url('/dashboard-admin') }}" class="nav-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <a href="{{ route('modul.index') }}" class="nav-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C2 4.7 2.7 4 4.7 4c2.6 0 5.3 1 7.3 2.5C14 4.9 16.7 4 19.3 4c2 0 2.7.7 2.7 1.5v13c0-.8-.7-1.5-2.7-1.5-2.6 0-5.3.9-7.3 2.5-2-1.6-4.7-2.5-7.3-2.5C2.7 17 2 17.7 2 18.5z"/><path d="M12 6.5V20"/></svg>
+            Modul Pembelajaran
+          </a>
+        </li>
+        <li>
+          <a href="{{ route('admin.performa.index') }}" class="nav-link active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12.5" y="8" width="3" height="10"/><rect x="18" y="5" width="3" height="13"/></svg>
+            Performa Siswa
+          </a>
+        </li>
+        <li>
+          <a href="{{ url('/admin-pengguna') }}" class="nav-link" aria-current="page">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Pengguna
+          </a>
+        </li>
+      </ul>
+    </nav>
 
-<main class="page-content" id="mainContent">
-<div class="page-heading"><h1>Performa Siswa</h1></div>
+    <div class="sidebar-footer">
+      <a href="keluar.html" class="logout-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        Keluar
+      </a>
+    </div>
+  </aside>
 
-<div class="filter-bar">
-<div class="search-field">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-<input type="search" id="searchInput" placeholder="Cari nama siswa...">
-</div>
-<div class="select-field">
-<select id="levelFilter">
-<option value="">Semua Level</option><option value="A1">Level A1</option><option value="A2">Level A2</option><option value="B1">Level B1</option><option value="B2">Level B2</option>
-</select>
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-</div>
-<div class="filter-spacer"></div>
-<button type="button" class="btn-export" id="exportBtn">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v13"/><path d="m7 11 5 5 5-5"/><path d="M5 21h14"/></svg>
-<span id="exportBtnLabel">Ekspor Excel</span>
-</button>
-</div>
+  <div class="main-col">
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle" aria-label="Buka menu navigasi" aria-expanded="false">☰</button>
+      <div class="user-summary">
+        <div class="user-meta">
+          <strong>{{ Auth::user()->name }}</strong><span>Admin</span>
+        </div>
+        <div class="user-avatar" aria-hidden="true">{{ strtoupper(substr(Auth::user()->name,0,1)) }}</div>
+      </div>
+    </header>
 
-<section class="panel" aria-label="Aktivitas seluruh siswa">
-<div class="table-scroll">
-<table id="performaTable">
-<thead><tr>
-<th>Nama Pengguna</th>
-<th>Latihan Selesai</th>
-<th>Simulasi Selesai</th>
-<th>Level</th>
-<th>Nilai Rata-rata</th>
-<th>Aktivitas Terakhir</th>
-<th>Aksi</th>
-</tr></thead>
-<tbody id="performaTableBody">
-@forelse($students as $student)
-<tr data-name="{{ strtolower($student->name) }}" data-level="{{ $student->level ?? '' }}">
-<td class="col-name">{{ $student->name }}</td>
-<td><span class="activity-badge">{{ $student->latihan_selesai ?? 0 }}</span></td>
-<td><span class="activity-badge">{{ $student->simulasi_selesai ?? 0 }}</span></td>
-<td>{{ $student->level ?? '-' }}</td>
-<td class="col-nilai">{{ $student->nilai_rata_rata !== null ? number_format($student->nilai_rata_rata, 1) : '-' }}</td>
-<td class="activity-date">{{ $student->aktivitas_terakhir ? \Carbon\Carbon::parse($student->aktivitas_terakhir)->format('d M Y H:i') : 'Belum ada aktivitas' }}</td>
-<td>
-<a class="action-btn" href="{{ route('admin.siswa.detail', $student->id) }}" title="Lihat detail" aria-label="Lihat detail performa {{ $student->name }}">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-</a>
-</td>
-</tr>
-@empty
-<tr><td colspan="7"><div class="empty-state"><div class="empty-state-title">Belum ada data siswa</div><div>Belum ada aktivitas siswa yang dapat ditampilkan.</div></div></td></tr>
-@endforelse
-</tbody>
-</table>
-</div>
+  <main class="page-content" id="mainContent">
+    <div class="page-heading"><h1>Performa Siswa</h1></div>
 
-<div class="table-footer">
-<div class="rows-per-page">
-Menampilkan <strong>{{ $students->firstItem() ?? 0 }}–{{ $students->lastItem() ?? 0 }}</strong>
-dari <strong>{{ $students->total() ?? $students->count() }}</strong> siswa
-</div>
-@if(method_exists($students, 'links'))
-<nav class="pagination" aria-label="Navigasi halaman">
-@if($students->onFirstPage())<button class="page-btn" disabled>‹</button>
-@else<a class="page-btn" href="{{ $students->previousPageUrl() }}">‹</a>@endif
-@foreach($students->getUrlRange(1,$students->lastPage()) as $page=>$url)
-@if($page==$students->currentPage())<span class="page-btn active">{{ $page }}</span>
-@else<a class="page-btn" href="{{ $url }}">{{ $page }}</a>@endif
-@endforeach
-@if($students->hasMorePages())<a class="page-btn" href="{{ $students->nextPageUrl() }}">›</a>
-@else<button class="page-btn" disabled>›</button>@endif
-</nav>
-@endif
-</div>
-</section>
+    <div class="filter-bar">
+    <div class="search-field">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="search" id="searchInput" placeholder="Cari nama siswa...">
+    </div>
+    <div class="select-field">
+      <select id="levelFilter">
+        <option value="">Semua Level</option><option value="A1">Level A1</option><option value="A2">Level A2</option><option value="B1">Level B1</option><option value="B2">Level B2</option>
+      </select>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="filter-spacer"></div>
+      <button type="button" class="btn-export" id="exportBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v13"/><path d="m7 11 5 5 5-5"/><path d="M5 21h14"/></svg>
+        <span id="exportBtnLabel">Ekspor Excel</span>
+      </button>
+    </div>
+
+  <section class="panel" aria-label="Aktivitas seluruh siswa">
+    <div class="table-scroll">
+      <table id="performaTable">
+          <thead><tr>
+            <th>Nama Pengguna</th>
+            <th>Latihan Selesai</th>
+            <th>Simulasi Selesai</th>
+            <th>Level</th>
+            <th>Nilai Rata-rata</th>
+            <th>Aktivitas Terakhir</th>
+            <th>Aksi</th>
+          </tr></thead>
+        <tbody id="performaTableBody">
+          @forelse($students as $student)
+          <tr data-name="{{ strtolower($student->name) }}" data-level="{{ $student->level ?? '' }}">
+            <td class="col-name">{{ $student->name }}</td>
+            <td><span class="activity-badge">{{ $student->latihan_selesai ?? 0 }}</span></td>
+            <td><span class="activity-badge">{{ $student->simulasi_selesai ?? 0 }}</span></td>
+            <td>{{ $student->level ?? '-' }}</td>
+            <td class="col-nilai">{{ $student->nilai_rata_rata !== null ? number_format($student->nilai_rata_rata, 1) : '-' }}</td>
+            <td class="activity-date">{{ $student->aktivitas_terakhir ? \Carbon\Carbon::parse($student->aktivitas_terakhir)->format('d M Y H:i') : 'Belum ada aktivitas' }}</td>
+            <td>
+              <a class="action-btn" href="{{ route('admin.siswa.detail', $student->id) }}" title="Lihat detail" aria-label="Lihat detail performa {{ $student->name }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </a>
+            </td>
+          </tr>
+          @empty
+          <tr><td colspan="7"><div class="empty-state"><div class="empty-state-title">Belum ada data siswa</div><div>Belum ada aktivitas siswa yang dapat ditampilkan.</div></div></td></tr>
+          @endforelse
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-footer">
+        <div class="rows-per-page">Menampilkan <strong>{{ $students->firstItem() ?? 0 }}–{{ $students->lastItem() ?? 0 }}</strong>dari <strong>{{ $students->total() ?? $students->count() }}</strong> siswa
+        </div>
+          @if(method_exists($students, 'links'))
+          <nav class="pagination" aria-label="Navigasi halaman">
+            @if($students->onFirstPage())<button class="page-btn" disabled>‹</button>
+             @else<a class="page-btn" href="{{ $students->previousPageUrl() }}">‹</a>@endif
+             @foreach($students->getUrlRange(1,$students->lastPage()) as $page=>$url)
+               @if($page==$students->currentPage())<span class="page-btn active">{{ $page }}</span>
+               @else<a class="page-btn" href="{{ $url }}">{{ $page }}</a>@endif
+             @endforeach
+             @if($students->hasMorePages())<a class="page-btn" href="{{ $students->nextPageUrl() }}">›</a>
+             @else<button class="page-btn" disabled>›</button>@endif
+          </nav>
+          @endif
+        </div>
+  </section>
 </main>
 </div>
 </div>
