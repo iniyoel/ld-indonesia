@@ -283,7 +283,7 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
   <!-- ============ SIDEBAR ============ -->
   <aside class="sidebar" id="sidebar" aria-label="Navigasi utama">
     <div class="sidebar-brand">
-      <a href="dashboard-admin.html" style="display:flex;align-items:center;gap:10px;" aria-label="LD Indonesia — Dashboard Admin">
+      <a href="{ url('/dashboard-admin') }}" style="display:flex;align-items:center;gap:10px;" aria-label="LD Indonesia — Dashboard Admin">
         <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
           <path d="M24 4c-6 0-10 5-10 5s3 1 4 4c-3-1-6 0-7 3 3 0 5 1 6 3-3 1-5 3-5 6 3-1 5-1 7 0-1 3 0 6 2 8 1-3 2-5 3-6 1 1 2 3 3 6 2-2 3-5 2-8 2-1 4-1 7 0 0-3-2-5-5-6 1-2 3-3 6-3-1-3-4-4-7-3 1-3 4-4 4-4s-4-5-10-5z" fill="var(--maroon)"/>
           <circle cx="24" cy="17" r="4" fill="var(--gold)"/>
@@ -328,10 +328,18 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
     </nav>
 
     <div class="sidebar-footer">
-      <a href="keluar.html" class="logout-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
-        Keluar
-      </a>
+      <form method="POST" action="{{ route('logout') }}" style="margin: 0;" class="logout-link">
+          @csrf
+
+          <button type="submit" class="logout-link" style="width: 100%; border: none; background: none; text-align: left;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <path d="M16 17l5-5-5-5"/>
+                  <path d="M21 12H9"/>
+              </svg>
+              Keluar
+          </button>
+      </form>
     </div>
   </aside>
 
@@ -351,7 +359,7 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
     </header>
 
     <main class="page-content" id="mainContent">
-      <a href="admin-performa-siswa.html" class="back-link">
+      <a href="{{ route('admin.performa.index') }}" class="back-link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
         Kembali
       </a>
@@ -362,124 +370,223 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
 
       <!-- ============ PROFIL SISWA ============ -->
       <section class="profile-card" aria-label="Profil siswa">
-        <div class="profile-identity">
-          <div class="profile-avatar" aria-hidden="true">M</div>
-          <div>
-            <div class="profile-name">Maria Sitanggang</div>
-            <div class="profile-line">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
-              maria@gmail.com
-            </div>
-            <div class="profile-line">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-              Bergabung: 10 Mei 2026
-            </div>
-            <div class="profile-line">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              Peran: Siswa
-            </div>
-          </div>
-        </div>
 
-        <div class="profile-stat-group">
-          <div class="profile-stat">
-            <div class="profile-stat-label">Level</div>
-            <div class="profile-stat-value">A1</div>
-          </div>
-          <div class="profile-stat">
-            <div class="profile-stat-label">Status</div>
-            <div class="profile-stat-value">Aktif</div>
-          </div>
-        </div>
+          <div class="profile-identity">
 
-        <div class="profile-stat-group">
-          <div class="profile-stat">
-            <div class="profile-stat-label">Total Latihan Selesai</div>
-            <div class="profile-stat-value">5</div>
-          </div>
-          <div class="profile-stat">
-            <div class="profile-stat-label">Total Simulasi Selesai</div>
-            <div class="profile-stat-value">10</div>
-          </div>
-        </div>
+              <div class="profile-avatar" aria-hidden="true">
+                  {{ strtoupper(substr($student->name, 0, 1)) }}
+              </div>
 
-        <div class="profile-score">
-          <div class="profile-score-label">Nilai Rata-rata Keseluruhan</div>
-          <div class="profile-score-row">
-            <span class="profile-score-value">85</span>
-            <span class="profile-score-tag">Baik</span>
+              <div>
+
+                  <div class="profile-name">
+                      {{ $student->name }}
+                  </div>
+
+                  <div class="profile-line">
+                      <svg viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true">
+                          <rect x="2" y="4" width="20" height="16" rx="2"/>
+                          <path d="m2 7 10 6 10-6"/>
+                      </svg>
+
+                      {{ $student->email }}
+                  </div>
+
+                  <div class="profile-line">
+                      <svg viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true">
+                          <rect x="3" y="4" width="18" height="18" rx="2"/>
+                          <path d="M16 2v4M8 2v4M3 10h18"/>
+                      </svg>
+
+                      Bergabung:
+                      {{ $student->created_at
+                          ? \Carbon\Carbon::parse($student->created_at)->translatedFormat('d F Y')
+                          : '-' }}
+                  </div>
+
+                  <div class="profile-line">
+                      <svg viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                          <circle cx="12" cy="7" r="4"/>
+                      </svg>
+
+                      Peran: Siswa
+                  </div>
+
+              </div>
           </div>
-          <div class="profile-score-sub">Dari 15 aktivitas</div>
-        </div>
+
+
+          <div class="profile-stat-group">
+
+              <div class="profile-stat">
+                  <div class="profile-stat-label">
+                      Level
+                  </div>
+
+                  <div class="profile-stat-value">
+                      {{ $student->level ?? '-' }}
+                  </div>
+              </div>
+
+              <div class="profile-stat">
+                  <div class="profile-stat-label">
+                      Status
+                  </div>
+
+                  <div class="profile-stat-value">
+                      {{ ucfirst($student->status ?? '-') }}
+                  </div>
+              </div>
+
+          </div>
+
+
+          <div class="profile-stat-group">
+
+              <div class="profile-stat">
+                  <div class="profile-stat-label">
+                      Total Latihan Selesai
+                  </div>
+
+                  <div class="profile-stat-value">
+                      {{ $totalLatihan }}
+                  </div>
+              </div>
+
+              <div class="profile-stat">
+                  <div class="profile-stat-label">
+                      Total Simulasi Selesai
+                  </div>
+
+                  <div class="profile-stat-value">
+                      {{ $totalSimulasi }}
+                  </div>
+              </div>
+
+          </div>
+
+
+          <div class="profile-score">
+
+              <div class="profile-score-label">
+                  Nilai Rata-rata Keseluruhan
+              </div>
+
+              <div class="profile-score-row">
+
+                  <span class="profile-score-value">
+                      {{ $nilaiRataRata !== null ? $nilaiRataRata : '-' }}
+                  </span>
+
+                  <span class="profile-score-tag">
+                      {{ $nilaiStatus }}
+                  </span>
+
+              </div>
+
+              <div class="profile-score-sub">
+                  Dari {{ $activities->count() }} aktivitas
+              </div>
+
+          </div>
+
       </section>
 
       <!-- ============ RINGKASAN KATEGORI ============ -->
       <section class="panel" aria-label="Ringkasan kategori">
         <h2>Ringkasan Kategori</h2>
         <div class="category-grid">
-          <div class="category-card">
-            <div class="category-top">
-              <div class="category-icon-title">
-                <div class="category-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                </div>
-                <span class="category-title">Materi</span>
-              </div>
-              <div>
-                <div class="category-avg-label">Rata-rata</div>
-                <div class="category-avg-value">88</div>
-              </div>
-            </div>
-            <div class="category-sub">5 selesai</div>
-          </div>
 
-          <div class="category-card">
-            <div class="category-top">
-              <div class="category-icon-title">
-                <div class="category-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
-                </div>
-                <span class="category-title">Simulasi Hören</span>
-              </div>
-              <div>
-                <div class="category-avg-label">Rata-rata</div>
-                <div class="category-avg-value">88</div>
-              </div>
-            </div>
-            <div class="category-sub">3 selesai</div>
-          </div>
+            @foreach($categorySummaries as $kategori => $summary)
 
-          <div class="category-card">
-            <div class="category-top">
-              <div class="category-icon-title">
-                <div class="category-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C2 4.7 2.7 4 4.7 4c2.6 0 5.3 1 7.3 2.5C14 4.9 16.7 4 19.3 4c2 0 2.7.7 2.7 1.5v13c0-.8-.7-1.5-2.7-1.5-2.6 0-5.3.9-7.3 2.5-2-1.6-4.7-2.5-7.3-2.5C2.7 17 2 17.7 2 18.5z"/></svg>
-                </div>
-                <span class="category-title">Simulasi Lesen</span>
-              </div>
-              <div>
-                <div class="category-avg-label">Rata-rata</div>
-                <div class="category-avg-value">88</div>
-              </div>
-            </div>
-            <div class="category-sub">7 selesai</div>
-          </div>
+                <div class="category-card">
 
-          <div class="category-card">
-            <div class="category-top">
-              <div class="category-icon-title">
-                <div class="category-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 20 9-9-2-2-9 9-4 4z"/><path d="M2 22l3-1 1-3"/><path d="m14.5 6.5 3 3"/></svg>
+                    <div class="category-top">
+
+                        <div class="category-icon-title">
+
+                            <div class="category-icon">
+                                <svg viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true">
+
+                                    @if($kategori === 'materi')
+
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+
+                                    @elseif($kategori === 'simulasi_horen')
+
+                                        <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
+                                        <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/>
+                                        <path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+
+                                    @elseif($kategori === 'simulasi_lesen')
+
+                                        <path d="M2 5.5C2 4.7 2.7 4 4.7 4c2.6 0 5.3 1 7.3 2.5C14 4.9 16.7 4 19.3 4c2 0 2.7.7 2.7 1.5v13c0-.8-.7-1.5-2.7-1.5-2.6 0-5.3.9-7.3 2.5-2-1.6-4.7-2.5-7.3-2.5C2.7 17 2 17.7 2 18.5z"/>
+                                        <path d="M12 6.5V20"/>
+
+                                    @else
+
+                                        <path d="m12 20 9-9-2-2-9 9-4 4z"/>
+                                        <path d="M2 22l3-1 1-3"/>
+                                        <path d="m14.5 6.5 3 3"/>
+
+                                    @endif
+
+                                </svg>
+                            </div>
+
+                            <span class="category-title">
+                                {{ $summary['label'] }}
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <div class="category-avg-label">
+                                Rata-rata
+                            </div>
+
+                            <div class="category-avg-value">
+                                {{ $summary['rata_rata'] !== null ? $summary['rata_rata'] : '-' }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="category-sub">
+                        {{ $summary['selesai'] }} selesai
+                    </div>
+
                 </div>
-                <span class="category-title">Simulasi Schreiben</span>
-              </div>
-              <div>
-                <div class="category-avg-label">Rata-rata</div>
-                <div class="category-avg-value">88</div>
-              </div>
-            </div>
-            <div class="category-sub">10 selesai</div>
-          </div>
+
+            @endforeach
+
         </div>
       </section>
 
@@ -526,7 +633,62 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
                 <th scope="col">Tanggal &amp; Waktu</th>
               </tr>
             </thead>
-            <tbody id="riwayatBody"></tbody>
+            <tbody id="riwayatBody">
+
+                @forelse($activities as $index => $activity)
+
+                    <tr
+                        data-category="{{ $activity->kategori ?? '' }}"
+                        data-date="{{ $activity->selesai_pada ?? '' }}"
+                    >
+
+                        <td>
+                            {{ $index + 1 }}
+                        </td>
+
+                        <td class="col-modul">
+                            {{ $activity->judul ?? 'Modul tidak ditemukan' }}
+                        </td>
+
+                        <td>
+                            {{ $categorySummaries[$activity->kategori]['label'] ?? ($activity->kategori ?? '-') }}
+                        </td>
+
+                        <td class="col-nilai">
+
+                            @if($activity->nilai !== null)
+
+                                {{ number_format((float) $activity->nilai, 1) }}
+
+                            @else
+
+                                <span class="status-pill">
+                                    Belum Dinilai
+                                </span>
+
+                            @endif
+
+                        </td>
+
+                        <td>
+                            {{ $activity->selesai_pada
+                                ? \Carbon\Carbon::parse($activity->selesai_pada)->format('d M Y, H:i')
+                                : '-' }}
+                        </td>
+
+                    </tr>
+
+                @empty
+
+                    <tr>
+                        <td colspan="5" style="text-align:center;padding:30px;">
+                            Belum ada aktivitas siswa.
+                        </td>
+                    </tr>
+
+                @endforelse
+
+            </tbody>
           </table>
         </div>
 
@@ -578,60 +740,80 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
        sebagai file .xlsx asli memakai SheetJS), sama seperti pada
        halaman Performa Siswa.
   ================================================================== */
-  var RIWAYAT = [
-    { modul: 'Artikel Bestimte Der, Die, Das, Die', kategori: 'Materi', nilai: 80, waktu: '20 Jun 2026, 10:30' },
-    { modul: 'Modal Verben', kategori: 'Simulasi Hören', nilai: 70, waktu: '20 Jun 2026, 10:30' },
-    { modul: 'Pronomen', kategori: 'Simulasi Schreiben', nilai: null, waktu: '20 Jun 2026, 10:30' },
-    { modul: 'Adjektiv', kategori: 'Simulasi Lesen', nilai: 100, waktu: '20 Jun 2026, 10:30' },
-    { modul: 'Adjektiv Deklination', kategori: 'Simulasi Lesen', nilai: 100, waktu: '20 Jun 2026, 10:30' }
-  ];
+
 
   var tbody = document.getElementById('riwayatBody');
-  RIWAYAT.forEach(function(r, i){
-    var tr = document.createElement('tr');
-    var nilaiCell = r.nilai === null
-      ? '<span class="status-pill">Belum Dinilai</span>'
-      : r.nilai;
-    tr.innerHTML =
-      '<td>' + (i + 1) + '</td>' +
-      '<td class="col-modul">' + r.modul + '</td>' +
-      '<td>' + r.kategori + '</td>' +
-      '<td class="col-nilai">' + nilaiCell + '</td>' +
-      '<td>' + r.waktu + '</td>';
-    tbody.appendChild(tr);
-  });
 
   /* ---- Ekspor ke Excel (.xlsx) — fungsional, memakai SheetJS ---- */
   var exportBtn = document.getElementById('exportBtn');
   var exportBtnLabel = document.getElementById('exportBtnLabel');
 
   exportBtn.addEventListener('click', function(){
-    if (typeof XLSX === 'undefined'){
-      alert('Gagal memuat pustaka ekspor. Periksa koneksi internet Anda lalu coba lagi.');
-      return;
-    }
-    exportBtn.disabled = true;
-    exportBtnLabel.textContent = 'Mengekspor…';
 
-    var rows = RIWAYAT.map(function(r){
-      return {
-        'Modul': r.modul,
-        'Kategori': r.kategori,
-        'Nilai': r.nilai === null ? 'Belum Dinilai' : r.nilai,
-        'Tanggal & Waktu': r.waktu
-      };
-    });
+      if (typeof XLSX === 'undefined') {
+          alert('Gagal memuat pustaka ekspor. Periksa koneksi internet Anda lalu coba lagi.');
+          return;
+      }
 
-    var worksheet = XLSX.utils.json_to_sheet(rows);
-    worksheet['!cols'] = [{ wch: 30 }, { wch: 20 }, { wch: 14 }, { wch: 20 }];
-    var workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Riwayat Aktivitas');
+      exportBtn.disabled = true;
+      exportBtnLabel.textContent = 'Mengekspor…';
 
-    var today = new Date().toISOString().slice(0, 10);
-    XLSX.writeFile(workbook, 'riwayat-maria-sitanggang-' + today + '.xlsx');
+      var rows = [];
 
-    exportBtn.disabled = false;
-    exportBtnLabel.textContent = 'Ekspor';
+      document.querySelectorAll('#riwayatBody tr').forEach(function(row){
+
+          var cells = row.querySelectorAll('td');
+
+          if (cells.length < 5) {
+              return;
+          }
+
+          rows.push({
+              'No': cells[0].innerText.trim(),
+              'Modul': cells[1].innerText.trim(),
+              'Kategori': cells[2].innerText.trim(),
+              'Nilai': cells[3].innerText.trim(),
+              'Tanggal & Waktu': cells[4].innerText.trim()
+          });
+
+      });
+
+      var worksheet = XLSX.utils.json_to_sheet(rows);
+
+      worksheet['!cols'] = [
+          { wch: 8 },
+          { wch: 35 },
+          { wch: 25 },
+          { wch: 15 },
+          { wch: 25 }
+      ];
+
+      var workbook = XLSX.utils.book_new();
+
+      XLSX.utils.book_append_sheet(
+          workbook,
+          worksheet,
+          'Riwayat Aktivitas'
+      );
+
+      var studentName = @json($student->name);
+
+      var safeName = studentName
+          .replace(/[^a-z0-9]/gi, '-')
+          .toLowerCase();
+
+      var today = new Date()
+          .toISOString()
+          .slice(0, 10);
+
+      XLSX.writeFile(
+          workbook,
+          'riwayat-' + safeName + '-' + today + '.xlsx'
+      );
+
+      exportBtn.disabled = false;
+      exportBtnLabel.textContent = 'Ekspor';
+
   });
 
   var sidebar = document.getElementById('sidebar');

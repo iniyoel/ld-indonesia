@@ -100,13 +100,20 @@ class AdminPerformanceController extends Controller
     {
         abort_unless($request->user()?->role === 'admin', 403);
 
+        // Ambil data siswa
         $student = DB::table('users')
-            ->where('id', $user)
-            ->where('role', 'siswa')
+            ->where('users.id', $user)
+            ->where('users.role', 'siswa')
             ->first();
 
+        // Jika siswa tidak ditemukan
         abort_unless($student, 404);
 
+        /*
+        |--------------------------------------------------------------------------
+        | Ambil seluruh aktivitas siswa
+        |--------------------------------------------------------------------------
+        */
         $activities = DB::table('attempts')
             ->leftJoin('modules', 'modules.id', '=', 'attempts.module_id')
             ->where('attempts.user_id', $student->id)
@@ -121,33 +128,103 @@ class AdminPerformanceController extends Controller
             ->orderByDesc('attempts.selesai_pada')
             ->get();
 
-        $totalLatihan = $activities->filter(function ($activity) {
-            return $activity->kategori === 'materi';
-        })->count();
+        /*
+        |--------------------------------------------------------------------------
+        | Kategori aktivitas
+        |--------------------------------------------------------------------------
+        */
+        $kategoriMap = [
+            'materi' => 'Materi',
+            'simulasi_horen' => 'Simulasi Hören',
+            'simulasi_lesen' => 'Simulasi Lesen',
+            'simulasi_schreiben' => 'Simulasi Schreiben',
+            'simulasi_sprechen' => 'Simulasi Sprechen',
+        ];
 
-        $totalSimulasi = $activities->filter(function ($activity) {
-            return in_array($activity->kategori, [
-                'simulasi_horen',
-                'simulasi_lesen',
-                'simulasi_schreiben',
-                'simulasi_sprechen',
-            ]);
-        })->count();
+        /*
+        |--------------------------------------------------------------------------
+        | Total latihan dan simulasi
+        |--------------------------------------------------------------------------
+        */
+        $totalLatihan = $activities
+            ->where('kategori', 'materi')
+            ->count();
 
+        $totalSimulasi = $activities
+            ->filter(function ($activity) {
+                return in_array($activity->kategori, [
+                    'simulasi_horen',
+                    'simulasi_lesen',
+                    'simulasi_schreiben',
+                    'simulasi_sprechen',
+                ]);
+            })
+            ->count();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Nilai rata-rata keseluruhan
+        |--------------------------------------------------------------------------
+        */
         $nilaiActivities = $activities->filter(function ($activity) {
             return $activity->nilai !== null;
         });
 
         $nilaiRataRata = $nilaiActivities->count()
-            ? $nilaiActivities->avg('nilai')
+            ? round($nilaiActivities->avg('nilai'), 1)
             : null;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ringkasan masing-masing kategori
+        |--------------------------------------------------------------------------
+        */
+        $categorySummaries = [];
+
+        foreach ($kategoriMap as $kategori => $label) {
+
+            $kategoriActivities = $activities->filter(function ($activity) use ($kategori) {
+                return $activity->kategori === $kategori;
+            });
+
+            $nilaiKategori = $kategoriActivities->filter(function ($activity) {
+                return $activity->nilai !== null;
+            });
+
+            $categorySummaries[$kategori] = [
+                'label' => $label,
+                'selesai' => $kategoriActivities->count(),
+                'rata_rata' => $nilaiKategori->count()
+                    ? round($nilaiKategori->avg('nilai'), 1)
+                    : null,
+            ];
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Status nilai keseluruhan
+        |--------------------------------------------------------------------------
+        */
+        if ($nilaiRataRata === null) {
+            $nilaiStatus = 'Belum Dinilai';
+        } elseif ($nilaiRataRata >= 90) {
+            $nilaiStatus = 'Sangat Baik';
+        } elseif ($nilaiRataRata >= 80) {
+            $nilaiStatus = 'Baik';
+        } elseif ($nilaiRataRata >= 70) {
+            $nilaiStatus = 'Cukup';
+        } else {
+            $nilaiStatus = 'Perlu Ditingkatkan';
+        }
 
         return view('pages.admin-siswa-detail', compact(
             'student',
             'activities',
             'totalLatihan',
             'totalSimulasi',
-            'nilaiRataRata'
+            'nilaiRataRata',
+            'nilaiStatus',
+            'categorySummaries'
         ));
     }
 

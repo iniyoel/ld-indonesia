@@ -32,7 +32,6 @@ Route::get('/masuk', [AuthController::class, 'show'])->name('login');
 Route::post('/masuk', [AuthController::class, 'login'])->name('login.attempt');
 Route::redirect('/masuk.html', '/masuk');
 
-Route::get('/keluar', [AuthController::class, 'logout'])->name('logout');
 Route::redirect('/keluar.html', '/keluar');
 
 // ------------------------------------------------------------------
@@ -237,13 +236,31 @@ Route::middleware('auth')->group(function () {
         ->name('page');
 
 
-    // Performa Siswa — Admin
+   /*
+    |--------------------------------------------------------------------------
+    | Performa Siswa — Admin
+    |--------------------------------------------------------------------------
+    */
     Route::get('/admin/performa-siswa', [AdminPerformanceController::class, 'index'])
         ->name('admin.performa.index');
 
     Route::get('/admin/performa-siswa/{user}', [AdminPerformanceController::class, 'show'])
-    ->name('admin.siswa.detail')
-    ->middleware('can:admin');
+        ->name('admin.siswa.detail');
 
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Logout
+    |--------------------------------------------------------------------------
+    */
+    Route::post('/logout', function () {
+        Auth::logout();
+
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+
+        return redirect()->route('login');
+    })->name('logout');
     
 });
