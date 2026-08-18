@@ -27,12 +27,36 @@ return new class extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('module_id')->constrained()->cascadeOnDelete();
-            $table->enum('tipe', ['pilihan_ganda', 'paragraf'])->default('pilihan_ganda');
+
+            $table->foreignId('module_id')
+                ->constrained('modules')
+                ->cascadeOnDelete();
+
+            $table->enum('tipe', [
+                'pilihan_ganda',
+                'paragraf'
+            ])->default('pilihan_ganda');
+
             $table->text('pertanyaan');
-            $table->string('file_path')->nullable()->comment('Gambar/audio pendukung soal, mis. audio Hören');
-            $table->text('penjelasan')->nullable()->comment('Alasan jawaban benar, ditampilkan di halaman review (kecuali Hören)');
-            $table->unsignedSmallInteger('urutan')->default(0);
+
+            $table->text('teks_bacaan')
+                ->nullable()
+                ->comment('Khusus simulasi Lesen');
+
+            $table->text('topik_sprechen')
+                ->nullable()
+                ->comment('Khusus simulasi Sprechen');
+
+            $table->string('file_path')
+                ->nullable()
+                ->comment('Audio/gambar pendukung soal');
+
+            $table->text('penjelasan')
+                ->nullable();
+
+            $table->unsignedSmallInteger('urutan')
+                ->default(0);
+
             $table->timestamps();
 
             $table->index(['module_id', 'urutan']);

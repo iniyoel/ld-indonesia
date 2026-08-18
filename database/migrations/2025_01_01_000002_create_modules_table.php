@@ -42,15 +42,6 @@ return new class extends Migration
             $table->string('file_path')->nullable();
             $table->string('file_type', 20)->nullable();
 
-            // Khusus simulasi_lesen: teks bacaan yang dipakai bersama oleh semua soal dalam modul.
-            $table->text('teks_bacaan')->nullable();
-
-            // Khusus simulasi_schreiben: instruksi/Teil esai disimpan sebagai soal tipe "paragraf"
-            // pada tabel questions, sehingga bisa lebih dari satu Teil per modul.
-
-            // Khusus simulasi_sprechen: topik latihan bicara.
-            $table->text('topik_sprechen')->nullable();
-
             $table->foreignId('dibuat_oleh')->constrained('users')->cascadeOnDelete();
             $table->foreignId('diperbarui_oleh')->nullable()->constrained('users')->nullOnDelete();
 

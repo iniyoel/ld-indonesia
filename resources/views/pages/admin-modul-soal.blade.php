@@ -691,8 +691,11 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     try{
       for(var i=0;i<questions.length;i++){
         var q=questions[i],fd=new FormData();
-        fd.append('tipe',q.type);fd.append('pertanyaan',q.text.trim());fd.append('penjelasan',q.penjelasan||'');
-        if(category==='simulasi_horen'&&q.questionFile)fd.append('file',q.questionFile);
+        fd.append('tipe',q.type);
+        fd.append('pertanyaan',q.text.trim());
+        fd.append('penjelasan',q.penjelasan||'');
+        if(category==='simulasi_horen'&&q.questionFile)
+          fd.append('file',q.questionFile);
         if(q.type==='pilihan_ganda'){
           q.options.forEach(function(o,index){
             fd.append('options['+index+'][teks]',(o.text || '').trim());

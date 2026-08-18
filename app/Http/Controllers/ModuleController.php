@@ -83,18 +83,6 @@ class ModuleController extends Controller
                 'max:10240',
                 'required_if:kategori,materi',
             ],
-
-            'teks_bacaan' => [
-                'nullable',
-                'string',
-                'required_if:kategori,simulasi_lesen',
-            ],
-
-            'topik_sprechen' => [
-                'nullable',
-                'string',
-                'required_if:kategori,simulasi_sprechen',
-            ],
         ]);
 
         $module = new Module();
@@ -103,9 +91,6 @@ class ModuleController extends Controller
         $module->deskripsi = $validated['deskripsi'];
         $module->level = $validated['level'];
         $module->kategori = $validated['kategori'];
-
-        $module->teks_bacaan = $validated['teks_bacaan'] ?? null;
-        $module->topik_sprechen = $validated['topik_sprechen'] ?? null;
 
         $module->dibuat_oleh = Auth::id();
         $module->diperbarui_oleh = Auth::id();
