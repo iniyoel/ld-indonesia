@@ -121,31 +121,3 @@ Daftar halaman per role dikonfigurasi di `config/page_access.php` — tambahkan 
 
 Beberapa tautan (mis. `admin-modul-detail.html`, `admin-pengguna-form.html`, `tutor-modul-detail.html`) sengaja belum punya view — halaman tersebut memang belum dibuat dan akan menghasilkan 404 sampai dikerjakan.
 
-## Troubleshooting
-
-**"Your requirements could not be resolved... found laravel/framework[11.x-dev]"**
-Composer sedang mengambil versi development branch. Jalankan `composer update` sekali lagi (biasanya langsung dapat versi stabil, mis. 11.55) — kalau masih gagal, tambahkan `"minimum-stability": "stable"` di `composer.json` lalu `composer update` ulang.
-
-**"SQLSTATE[HY000] [1049] Unknown database 'ld_indonesia'"**
-Database-nya belum dibuat di MySQL. Jalankan `CREATE DATABASE ld_indonesia CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;` dulu (lihat langkah di atas), baru `php artisan migrate --seed`.
-
-**"SQLSTATE[HY000] [2002] Connection refused" (atau "No connection could be made")**
-Service MySQL belum jalan, atau `DB_HOST`/`DB_PORT` di `.env` tidak sesuai instalasi kamu (mis. pakai Laragon/XAMPP/Herd — cek port MySQL-nya, umumnya `3306`). Pastikan MySQL sudah running, lalu coba lagi.
-
-**"Access denied for user 'root'@'localhost'"**
-`DB_USERNAME` / `DB_PASSWORD` di `.env` salah. Sesuaikan dengan user MySQL kamu (kalau pakai Laragon/XAMPP biasanya user `root` dengan password kosong).
-
-**Tidak mau pakai MySQL, mau yang lebih ringan (SQLite)?**
-Ubah `.env`:
-```
-DB_CONNECTION=sqlite
-```
-(hapus/comment baris `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`), lalu pastikan file databasenya ada:
-```bash
-# Windows PowerShell
-New-Item database/database.sqlite
-
-# Mac/Linux
-touch database/database.sqlite
-```
-lalu `php artisan migrate --seed` seperti biasa. Project sudah otomatis tidak butuh SQLite untuk session/cache/queue (sudah diset ke `file`/`sync` di `.env.example`), jadi opsi ini murni soal DB tabel data saja.
