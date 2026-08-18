@@ -40,6 +40,13 @@ return [
         'tutor-modul-soal',
         'tutor-performa-siswa',
         'tutor-siswa-detail',
+
+        'dashboard-admin',
+        'admin-modul-pembelajaran',
+        'admin-modul-form',
+        'admin-modul-soal',
+        'admin-performa-siswa',
+        'admin-siswa-detail',
     ],
 
     'admin' => [
