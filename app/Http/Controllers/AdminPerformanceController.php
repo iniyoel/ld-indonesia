@@ -23,8 +23,6 @@ class AdminPerformanceController extends Controller
      */
     public function index(Request $request): View
     {
-        abort_unless($request->user()?->role === 'admin', 403);
-
         $students = $this->studentPerformanceQuery()
             ->orderBy('users.name')
             ->paginate(15)
@@ -98,8 +96,6 @@ class AdminPerformanceController extends Controller
 
     public function show(Request $request, int $user): View
     {
-        abort_unless($request->user()?->role === 'admin', 403);
-
         // Ambil data siswa
         $student = DB::table('users')
             ->where('users.id', $user)
@@ -236,8 +232,6 @@ class AdminPerformanceController extends Controller
      */
     public function data(Request $request)
     {
-        abort_unless($request->user()?->role === 'admin', 403);
-
         $students = $this->studentPerformanceQuery()
             ->orderBy('users.name')
             ->get()
