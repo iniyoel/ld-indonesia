@@ -104,7 +104,7 @@ class PageController extends Controller
         // =============================================================
         $data['activities'] = DB::table('activity_logs')
             ->join('users', 'activity_logs.user_id', '=', 'users.id')
-            ->where('users.role', 'admin')
+            ->whereIn('users.role', ['admin', 'tutor'])
             ->where('activity_logs.target_table', 'modules')
             ->whereIn('activity_logs.aksi', ['tambah', 'ubah', 'hapus'])
             ->select(
