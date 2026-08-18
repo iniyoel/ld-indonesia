@@ -149,10 +149,3 @@ New-Item database/database.sqlite
 touch database/database.sqlite
 ```
 lalu `php artisan migrate --seed` seperti biasa. Project sudah otomatis tidak butuh SQLite untuk session/cache/queue (sudah diset ke `file`/`sync` di `.env.example`), jadi opsi ini murni soal DB tabel data saja.
-
-## Langkah selanjutnya (saran)
-
-1. ~~Buat model & migration (User dengan kolom `role`, Modul, Soal)~~ — sudah ada (`users`, `modules`, `questions`, `question_options`); lanjutkan ke `attempts`, `answers`, `activity_logs` (migration sudah ada, model menyusul).
-2. ~~Pindahkan logika auth ke AuthController + Laravel session~~ — sudah dikerjakan (lihat bagian "Login & pembatasan akses per role").
-3. Ganti setiap data contoh (`var MODULES = [...]`, dsb di tiap file) dengan data dari controller lewat Eloquent (`@json()` atau fetch ke API).
-4. Sambungkan form Tambah/Ubah Modul & Buat Soal (`admin-modul-form`, `admin-modul-soal`, dan versi tutor-nya) ke `Module`/`Question`/`QuestionOption` lewat controller sungguhan (saat ini masih menyimpan ke state JS di browser saja).
