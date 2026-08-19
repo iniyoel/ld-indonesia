@@ -55,7 +55,7 @@
                 </a>
             </li>
             <li>
-                <a href="performa-siswa.html"
+                <a href="{{ route('admin.performa.index') }}"
                     class="nav-link {{ request()->routeIs('performa-siswa.*') ? 'active' : '' }}"
                     @if (request()->routeIs('performa-siswa.*')) aria-current="page" @endif>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -70,7 +70,7 @@
             </li>
             @if ($role === 'admin')
                 <li>
-                    <a href="admin-pengguna.html"
+                    <a href="{{ url('/admin-pengguna') }}"
                         class="nav-link {{ request()->routeIs('pengguna.*') ? 'active' : '' }}"
                         @if (request()->routeIs('pengguna.*')) aria-current="page" @endif>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
