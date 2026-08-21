@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Artikel Das — Latihan Soal — LD Indonesia</title>
-<meta name="description" content="Latihan soal pilihan ganda bahasa Jerman: Artikel Das — LD Indonesia.">
+<title>LD Indonesia</title>
+<meta name="description" content="LD Indonesia">
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -334,7 +334,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   <!-- ============ SIDEBAR ============ -->
   <aside class="sidebar" id="sidebar" aria-label="Navigasi utama">
     <div class="sidebar-brand">
-      <a href="dashboard-siswa.html" style="display:flex;align-items:center;gap:10px;" aria-label="LD Indonesia — Dashboard">
+      <a href="{{ route('page', ['page' => 'dashboard-siswa']) }}" style="display:flex;align-items:center;gap:10px;" aria-label="LD Indonesia — Dashboard">
         <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
           <path d="M24 4c-6 0-10 5-10 5s3 1 4 4c-3-1-6 0-7 3 3 0 5 1 6 3-3 1-5 3-5 6 3-1 5-1 7 0-1 3 0 6 2 8 1-3 2-5 3-6 1 1 2 3 3 6 2-2 3-5 2-8 2-1 4-1 7 0 0-3-2-5-5-6 1-2 3-3 6-3-1-3-4-4-7-3 1-3 4-4 4-4s-4-5-10-5z" fill="var(--maroon)"/>
           <circle cx="24" cy="17" r="4" fill="var(--gold)"/>
@@ -352,19 +352,19 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     <nav class="sidebar-nav">
       <ul>
         <li>
-          <a href="dashboard-siswa.html" class="nav-link">
+          <a href="{{ route('page', ['page' => 'dashboard-siswa']) }}" class="nav-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
             Dashboard
           </a>
         </li>
         <li>
-          <a href="modul-pembelajaran.html" class="nav-link active" aria-current="page">
+          <a href="{{ route('page', ['page' => 'modul-pembelajaran']) }}" class="nav-link active" aria-current="page">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C2 4.7 2.7 4 4.7 4c2.6 0 5.3 1 7.3 2.5C14 4.9 16.7 4 19.3 4c2 0 2.7.7 2.7 1.5v13c0-.8-.7-1.5-2.7-1.5-2.6 0-5.3.9-7.3 2.5-2-1.6-4.7-2.5-7.3-2.5C2.7 17 2 17.7 2 18.5z"/><path d="M12 6.5V20"/></svg>
             Modul Pembelajaran
           </a>
         </li>
         <li>
-          <a href="performa-siswa.html" class="nav-link">
+          <a href="{{ route('page', ['page' => 'performa-siswa']) }}" class="nav-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12.5" y="8" width="3" height="10"/><rect x="18" y="5" width="3" height="13"/></svg>
             Performa Siswa
           </a>
@@ -373,10 +373,19 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     </nav>
 
     <div class="sidebar-footer">
-      <a href="keluar.html" class="logout-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
-        Keluar
-      </a>
+      <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" class="logout-link" style="width: 100%; text-align: left;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <path d="M16 17l5-5-5-5"/>
+                  <path d="M21 12H9"/>
+              </svg>
+              Keluar
+          </button>
+      </form>
     </div>
   </aside>
 
@@ -396,16 +405,17 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     </header>
 
     <main class="page-content" id="mainContent">
-      <a href="modul-pembelajaran.html" class="back-link">
+      <a href="{{ route('modul.kerjakan', $module) }}" class="back-link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
         Kembali
       </a>
-
       <div class="quiz-header">
-        <h1>Artikel Das</h1>
-        <p>Uji pemahamanmu tentang penggunaan artikel bestimmt (der, die, das) dalam bahasa Jerman.</p>
-      </div>
+          <h1>{{ $module->judul }}</h1>
 
+          <p>
+              {{ $module->deskripsi }}
+          </p>
+      </div>
       <div class="quiz-layout">
         <!-- ============ KARTU SOAL ============ -->
         <section class="quiz-card" aria-label="Soal latihan">
@@ -446,153 +456,321 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     </main>
   </div>
 </div>
+@php
+    $questionsData = $questions->map(function ($question) {
+        return [
+            'id' => $question->id,
+            'type' => $question->tipe,
+            'text' => $question->pertanyaan,
+            'file_path' => $question->file_path,
+            'file_type' => $question->file_type ?? null,
 
+            'options' => $question->options
+                ->sortBy('urutan_tampil')
+                ->map(function ($option) {
+                    return [
+                        'id' => $option->id,
+                        'text' => $option->teks,
+                        'file_path' => $option->file_path,
+                        'file_type' => $option->file_type,
+                    ];
+                })
+                ->values()
+                ->toArray(),
+        ];
+    })->values()->toArray();
+@endphp
 <script>
 (function(){
-  "use strict";
+    "use strict";
 
-  /* ==================================================================
-     CATATAN INTEGRASI BACKEND
-     - QUESTIONS di bawah ini adalah data contoh statis. Saat backend
-       siap, ganti dengan fetch('/api/modul/{id}/soal') berdasarkan
-       parameter `id` pada URL.
-     - Navigasi soal, status "dijawab"/"ditandai", dan jawaban yang
-       dipilih saat ini hanya disimpan di memori (variabel JS) selama
-       halaman terbuka — belum dikirim/disimpan ke server. Saat backend
-       siap, kirim jawaban tiap soal (mis. lewat fetch) dan simpan
-       progres di sana, bukan hanya di sisi klien.
-  ================================================================== */
-  var QUESTIONS = [
-    { text: '… Buch ist sehr interessant. Ich lese es jeden Tag.', options: ['Der', 'Die', 'Das', 'Ein'] },
-    { text: '… Frau arbeitet als Lehrerin in Berlin.', options: ['Der', 'Die', 'Das', 'Eine'] },
-    { text: 'Kannst du mir … Fenster öffnen? Es ist warm hier.', options: ['der', 'die', 'das', 'den'] },
-    { text: '… Kinder spielen jeden Nachmittag im Park.', options: ['Der', 'Die', 'Das', 'Ein'] },
-    { text: 'Ich brauche … Auto, um zur Arbeit zu fahren.', options: ['der', 'die', 'ein', 'eine'] },
-    { text: '… Tisch im Wohnzimmer ist aus Holz.', options: ['Der', 'Die', 'Das', 'Den'] },
-    { text: 'Wir besuchen … Museum am Wochenende.', options: ['der', 'die', 'das', 'dem'] },
-    { text: '… Katze schläft den ganzen Tag auf dem Sofa.', options: ['Der', 'Die', 'Das', 'Ein'] },
-    { text: 'Hast du … Schlüssel für die Wohnung gesehen?', options: ['der', 'die', 'den', 'das'] },
-    { text: '… Wetter heute ist wirklich schön.', options: ['Der', 'Die', 'Das', 'Ein'] },
-    { text: 'Er kauft … Brot für das Frühstück.', options: ['der', 'die', 'das', 'ein'] },
-    { text: '… Straße vor unserem Haus ist sehr laut.', options: ['Der', 'Die', 'Das', 'Eine'] },
-    { text: 'Ich schreibe … Brief an meine Familie.', options: ['der', 'die', 'einen', 'das'] },
-    { text: '… Zug nach München fährt um acht Uhr ab.', options: ['Der', 'Die', 'Das', 'Ein'] },
-    { text: 'Kannst du … Tür bitte schließen? Es ist kalt.', options: ['der', 'die', 'das', 'den'] }
-  ];
-  var LETTERS = ['A', 'B', 'C', 'D'];
+    var QUESTIONS = @json($questionsData);
 
-  var state = {
-    current: 0,
-    answers: new Array(QUESTIONS.length).fill(null),
-    marked: new Array(QUESTIONS.length).fill(false)
-  };
+    var LETTERS = ['A', 'B', 'C', 'D'];
 
-  var quizProgress = document.getElementById('quizProgress');
-  var quizQuestion = document.getElementById('quizQuestion');
-  var quizOptions = document.getElementById('quizOptions');
-  var soalGrid = document.getElementById('soalGrid');
-  var markBtn = document.getElementById('markBtn');
-  var markBtnLabel = document.getElementById('markBtnLabel');
-  var prevBtn = document.getElementById('prevBtn');
-  var nextBtn = document.getElementById('nextBtn');
-  var nextBtnLabel = document.getElementById('nextBtnLabel');
-  var nextBtnIcon = document.getElementById('nextBtnIcon');
+    var state = {
+        current: 0,
+        answers: new Array(QUESTIONS.length).fill(null),
+        marked: new Array(QUESTIONS.length).fill(false)
+    };
 
-  function renderQuestion(){
-    var idx = state.current;
-    var q = QUESTIONS[idx];
+    var quizProgress = document.getElementById('quizProgress');
+    var quizQuestion = document.getElementById('quizQuestion');
+    var quizOptions = document.getElementById('quizOptions');
+    var soalGrid = document.getElementById('soalGrid');
+    var markBtn = document.getElementById('markBtn');
+    var markBtnLabel = document.getElementById('markBtnLabel');
+    var prevBtn = document.getElementById('prevBtn');
+    var nextBtn = document.getElementById('nextBtn');
+    var nextBtnLabel = document.getElementById('nextBtnLabel');
+    var nextBtnIcon = document.getElementById('nextBtnIcon');
 
-    quizProgress.textContent = 'Soal ' + (idx + 1) + ' dari ' + QUESTIONS.length;
-    quizQuestion.textContent = q.text;
+    /*
+     * Kalau belum ada soal
+     */
+    if (!QUESTIONS.length) {
 
-    quizOptions.innerHTML = '';
-    q.options.forEach(function(optText, i){
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'quiz-option' + (state.answers[idx] === i ? ' is-selected' : '');
-      btn.setAttribute('role', 'radio');
-      btn.setAttribute('aria-checked', state.answers[idx] === i ? 'true' : 'false');
-      btn.innerHTML = '<span class="quiz-option-letter">' + LETTERS[i] + '</span><span class="quiz-option-text">' + optText + '</span>';
-      btn.addEventListener('click', function(){
-        state.answers[idx] = i;
+        quizProgress.textContent = 'Belum ada soal';
+
+        quizQuestion.textContent =
+            'Belum ada soal yang tersedia untuk modul ini.';
+
+        quizOptions.innerHTML = '';
+
+        nextBtn.disabled = true;
+        markBtn.disabled = true;
+
+        soalGrid.innerHTML =
+            '<p style="color:var(--gray-500);font-size:.9rem;">' +
+            'Belum ada soal.' +
+            '</p>';
+
+        return;
+    }
+
+    function renderQuestion() {
+
+        var idx = state.current;
+        var q = QUESTIONS[idx];
+
+        quizProgress.textContent =
+            'Soal ' + (idx + 1) + ' dari ' + QUESTIONS.length;
+
+        quizQuestion.textContent = q.text;
+
+        quizOptions.innerHTML = '';
+
+        q.options.forEach(function(option, i) {
+
+            var btn = document.createElement('button');
+
+            btn.type = 'button';
+
+            btn.className =
+                'quiz-option' +
+                (state.answers[idx] === i
+                    ? ' is-selected'
+                    : '');
+
+            btn.setAttribute('role', 'radio');
+
+            btn.setAttribute(
+                'aria-checked',
+                state.answers[idx] === i
+                    ? 'true'
+                    : 'false'
+            );
+
+            var content = '';
+
+            content +=
+                '<span class="quiz-option-letter">' +
+                LETTERS[i] +
+                '</span>';
+
+            if (
+                option.file_path &&
+                option.file_type === 'image'
+            ) {
+
+                content +=
+                    '<span class="quiz-option-content">' +
+                        '<img ' +
+                            'src="{{ asset('storage') }}/' +
+                            option.file_path +
+                            '" ' +
+                            'alt="Pilihan ' +
+                            LETTERS[i] +
+                            '" ' +
+                            'style="max-width:180px;max-height:120px;object-fit:contain;">' +
+                    '</span>';
+
+            } else {
+
+                content +=
+                    '<span class="quiz-option-text">' +
+                    escapeHtml(option.text || '') +
+                    '</span>';
+            }
+
+            btn.innerHTML = content;
+
+            btn.addEventListener('click', function() {
+
+                state.answers[idx] = i;
+
+                renderQuestion();
+                renderGrid();
+
+            });
+
+            quizOptions.appendChild(btn);
+        });
+
+        markBtn.classList.toggle(
+            'is-marked',
+            state.marked[idx]
+        );
+
+        markBtnLabel.textContent =
+            state.marked[idx]
+                ? 'Ditandai'
+                : 'Tandai';
+
+        prevBtn.hidden = idx === 0;
+
+        var isLast =
+            idx === QUESTIONS.length - 1;
+
+        nextBtnLabel.textContent =
+            isLast
+                ? 'Selesai'
+                : 'Selanjutnya';
+
+        nextBtnIcon.innerHTML = isLast
+            ? '<path d="M20 6 9 17l-5-5"/>'
+            : '<path d="M5 12h14M13 6l6 6-6 6"/>';
+    }
+
+    function escapeHtml(value) {
+
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function renderGrid() {
+
+        soalGrid.innerHTML = '';
+
+        QUESTIONS.forEach(function(q, i) {
+
+            var btn = document.createElement('button');
+
+            btn.type = 'button';
+
+            btn.textContent = i + 1;
+
+            btn.setAttribute(
+                'aria-label',
+                'Ke soal ' + (i + 1)
+            );
+
+            var classes = ['soal-btn'];
+
+            if (i === state.current) {
+                classes.push('is-current');
+            }
+
+            if (state.marked[i]) {
+                classes.push('is-marked');
+            } else if (state.answers[i] !== null) {
+                classes.push('is-answered');
+            }
+
+            btn.className = classes.join(' ');
+
+            btn.addEventListener('click', function() {
+
+                state.current = i;
+
+                renderQuestion();
+                renderGrid();
+
+            });
+
+            soalGrid.appendChild(btn);
+        });
+    }
+
+    markBtn.addEventListener('click', function() {
+
+        state.marked[state.current] =
+            !state.marked[state.current];
+
         renderQuestion();
         renderGrid();
-      });
-      quizOptions.appendChild(btn);
     });
 
-    markBtn.classList.toggle('is-marked', state.marked[idx]);
-    markBtnLabel.textContent = state.marked[idx] ? 'Ditandai' : 'Tandai';
+    prevBtn.addEventListener('click', function() {
 
-    prevBtn.hidden = idx === 0;
+        if (state.current > 0) {
 
-    var isLast = idx === QUESTIONS.length - 1;
-    nextBtnLabel.textContent = isLast ? 'Selesai' : 'Selanjutnya';
-    nextBtnIcon.innerHTML = isLast
-      ? '<path d="M20 6 9 17l-5-5"/>'
-      : '<path d="M5 12h14M13 6l6 6-6 6"/>';
-  }
+            state.current--;
 
-  function renderGrid(){
-    soalGrid.innerHTML = '';
-    QUESTIONS.forEach(function(q, i){
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.textContent = i + 1;
-      btn.setAttribute('aria-label', 'Ke soal ' + (i + 1));
-
-      var classes = ['soal-btn'];
-      if (i === state.current) classes.push('is-current');
-      if (state.marked[i]) classes.push('is-marked');
-      else if (state.answers[i] !== null) classes.push('is-answered');
-      btn.className = classes.join(' ');
-
-      btn.addEventListener('click', function(){
-        state.current = i;
-        renderQuestion();
-        renderGrid();
-      });
-      soalGrid.appendChild(btn);
+            renderQuestion();
+            renderGrid();
+        }
     });
-  }
 
-  markBtn.addEventListener('click', function(){
-    state.marked[state.current] = !state.marked[state.current];
+    nextBtn.addEventListener('click', function() {
+
+        var isLast =
+            state.current === QUESTIONS.length - 1;
+
+          if (isLast) {
+
+              nextBtn.disabled = true;
+              nextBtnLabel.textContent = 'Menyimpan...';
+
+              fetch('{{ route('siswa.modul.finish', $module) }}', {
+                  method: 'POST',
+                  headers: {
+                      'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                      'Accept': 'application/json',
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                      answers: state.answers,
+                      marked: state.marked
+                  })
+              })
+              .then(async function(response) {
+
+                  const data = await response.json();
+
+                  if (!response.ok) {
+                      throw new Error(
+                          data.message || 'Gagal menyelesaikan pengerjaan.'
+                      );
+                  }
+
+                  return data;
+              })
+              .then(function(data) {
+
+                  window.location.href =
+                      '{{ route('page', ['page' => 'modul-pembelajaran']) }}';
+
+              })
+              .catch(function(error) {
+
+                  console.error(error);
+
+                  alert(
+                      error.message ||
+                      'Terjadi kesalahan saat menyelesaikan modul.'
+                  );
+
+                  nextBtn.disabled = false;
+                  nextBtnLabel.textContent = 'Selesai';
+              });
+
+          } else {
+
+              state.current++;
+              renderQuestion();
+              renderGrid();
+
+          }
+    });
+
     renderQuestion();
     renderGrid();
-  });
 
-  prevBtn.addEventListener('click', function(){
-    if (state.current > 0){ state.current--; renderQuestion(); renderGrid(); }
-  });
-
-  nextBtn.addEventListener('click', function(){
-    var isLast = state.current === QUESTIONS.length - 1;
-    if (isLast){
-      // Latihan selesai — kembali ke daftar modul.
-      // TODO: kirim seluruh jawaban (state.answers) ke backend untuk dinilai
-      // sebelum berpindah halaman, mis. fetch('/api/modul/{id}/submit', {...}).
-      window.location.href = 'modul-pembelajaran.html';
-    } else {
-      state.current++;
-      renderQuestion();
-      renderGrid();
-    }
-  });
-
-  renderQuestion();
-  renderGrid();
-
-  /* ---- Sidebar toggle (mobile) ---- */
-  var sidebar = document.getElementById('sidebar');
-  var menuToggle = document.getElementById('menuToggle');
-  var sidebarClose = document.getElementById('sidebarClose');
-  var backdrop = document.getElementById('backdrop');
-  function openSidebar(){ sidebar.classList.add('open'); backdrop.classList.add('show'); menuToggle.setAttribute('aria-expanded', 'true'); }
-  function closeSidebar(){ sidebar.classList.remove('open'); backdrop.classList.remove('show'); menuToggle.setAttribute('aria-expanded', 'false'); }
-  menuToggle.addEventListener('click', openSidebar);
-  sidebarClose.addEventListener('click', closeSidebar);
-  backdrop.addEventListener('click', closeSidebar);
 })();
 </script>
 </body>

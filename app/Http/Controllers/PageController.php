@@ -11,16 +11,33 @@ use Illuminate\Support\Facades\DB;
 
 class PageController extends Controller
 {
-    /**
-     * Halaman dashboard tunggal untuk admin & tutor.
-     * Datanya identik untuk kedua role — yang beda hanya sidebar/menu
-     * yang tersedia, ditangani otomatis oleh <x-dashboard-sidebar>.
-     */
     public function dashboard(Request $request): View
     {
-        return view('pages.dashboard-admin', $this->buildDashboardData());
-    }
+        $user = $request->user();
 
+        switch ($user->role) {
+            case 'admin':
+                return view(
+                    'pages.dashboard-admin',
+                    $this->buildDashboardData()
+                );
+
+            case 'tutor':
+                return view(
+                    'pages.dashboard-admin',
+                    $this->buildDashboardData()
+                );
+
+            case 'siswa':
+                return view(
+                    'pages.dashboard-siswa',
+                    $this->buildDashboardData()
+                );
+
+            default:
+                abort(403, 'Role pengguna tidak dikenali.');
+        }
+    }
     /**
      * Render halaman pages.* generik untuk halaman yang belum/tidak
      * perlu controller khusus (mis. admin-pengguna).
@@ -45,7 +62,267 @@ class PageController extends Controller
                 ->get();
         }
 
+        if ($page === 'dashboard-siswa') {
+            $user = $request->user();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Modul yang perlu dikerjakan
+            |--------------------------------------------------------------------------
+            */
+
+            $completedModuleIds = DB::table('attempts')
+                ->where('user_id', $user->id)
+                ->where('status', 'selesai')
+                ->pluck('module_id');
+
+            $inProgressModuleIds = DB::table('attempts')
+                ->where('user_id', $user->id)
+                ->where('status', '!=', 'selesai')
+                ->pluck('module_id');
+
+            $modulesTodo = \App\Models\Module::query()
+                ->where('level', $user->level)
+                ->whereNotIn('id', $completedModuleIds)
+                ->with([
+                    'attempts' => function ($query) use ($user) {
+                        $query->where('user_id', $user->id)
+                            ->latest('updated_at');
+                    }
+                ])
+                ->latest()
+                ->take(5)
+                ->get();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Aktivitas terakhir
+            |--------------------------------------------------------------------------
+            */
+
+            $recentActivities = \App\Models\Attempt::query()
+                ->where('user_id', $user->id)
+                ->where('status', 'selesai')
+                ->whereNotNull('selesai_pada')
+                ->with('module')
+                ->latest('selesai_pada')
+                ->take(5)
+                ->get();
+
+            $viewData['modulesTodo'] = $modulesTodo;
+            $viewData['recentActivities'] = $recentActivities;
+        }
+
+        if ($page === 'modul-pembelajaran') {
+            $user = $request->user();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Filter modul
+            |--------------------------------------------------------------------------
+            */
+
+            $search = trim((string) $request->query('search', ''));
+            $level = $request->query('level', '');
+            $kategori = $request->query('kategori', '');
+
+            /*
+            |--------------------------------------------------------------------------
+            | Query modul
+            |--------------------------------------------------------------------------
+            */
+
+            $modulesQuery = Module::query()
+                ->where('level', $user->level);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Search berdasarkan judul modul
+            |--------------------------------------------------------------------------
+            */
+
+            if ($search !== '') {
+                $modulesQuery->where(function ($query) use ($search) {
+                    $query->where('judul', 'like', '%' . $search . '%')
+                        ->orWhere('deskripsi', 'like', '%' . $search . '%');
+                });
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Filter level
+            |--------------------------------------------------------------------------
+            |
+            | Siswa tetap tidak boleh melihat level di luar levelnya.
+            |
+            */
+
+            if (in_array($level, ['A1', 'A2', 'B1', 'B2'], true)) {
+                $modulesQuery->where('level', $level);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Filter kategori
+            |--------------------------------------------------------------------------
+            */
+
+            if (in_array($kategori, [
+                'materi',
+                'simulasi_horen',
+                'simulasi_lesen',
+                'simulasi_schreiben',
+                'simulasi_sprechen',
+            ], true)) {
+                $modulesQuery->where('kategori', $kategori);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Pagination
+            |--------------------------------------------------------------------------
+            */
+
+            $modules = $modulesQuery
+                ->withCount('questions')
+                ->orderByDesc('created_at')
+                ->paginate(5)
+                ->withQueryString();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Ambil attempt milik siswa yang sedang login
+            |--------------------------------------------------------------------------
+            */
+
+            $attempts = Attempt::query()
+                ->where('user_id', $user->id)
+                ->whereIn('module_id', $modules->pluck('id'))
+                ->orderByDesc('updated_at')
+                ->get()
+                ->groupBy('module_id');
+
+            /*
+            |--------------------------------------------------------------------------
+            | Pasangkan attempt terbaru ke masing-masing modul
+            |--------------------------------------------------------------------------
+            */
+
+            $modules->getCollection()->transform(function ($module) use ($attempts) {
+                $module->attempt = $attempts
+                    ->get($module->id, collect())
+                    ->first();
+
+                return $module;
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | Kirim data ke Blade
+            |--------------------------------------------------------------------------
+            */
+
+            $viewData['modules'] = $modules;
+            $viewData['search'] = $search;
+            $viewData['selectedLevel'] = $level;
+            $viewData['selectedKategori'] = $kategori;
+        }
+
+        if ($page === 'performa-siswa') {
+            $user = $request->user();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Riwayat pengerjaan siswa
+            |--------------------------------------------------------------------------
+            | Hanya mengambil attempt milik siswa yang sedang login
+            | dan sudah selesai.
+            */
+            $attempts = Attempt::query()
+                ->where('user_id', $user->id)
+                ->where('status', 'selesai')
+                ->with('module')
+                ->whereHas('module')
+                ->latest('selesai_pada')
+                ->paginate(10)
+                ->withQueryString();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Ringkasan performa berdasarkan kategori
+            |--------------------------------------------------------------------------
+            */
+            $kategoriList = [
+                'materi' => 'Materi',
+                'simulasi_lesen' => 'Simulasi Lesen',
+                'simulasi_horen' => 'Simulasi Hören',
+                'simulasi_schreiben' => 'Simulasi Schreiben',
+                'simulasi_sprechen' => 'Simulasi Sprechen',
+            ];
+
+            $summary = [];
+
+            foreach ($kategoriList as $kategori => $label) {
+                $query = Attempt::query()
+                    ->where('user_id', $user->id)
+                    ->where('status', 'selesai')
+                    ->whereHas('module', function ($query) use ($kategori) {
+                        $query->where('kategori', $kategori);
+                    });
+
+                $selesai = (clone $query)->count();
+
+                /*
+                * Sprechen tidak menggunakan nilai angka.
+                */
+                if ($kategori === 'simulasi_sprechen') {
+                    $rataRata = null;
+                } else {
+                    $rataRata = (clone $query)
+                        ->whereNotNull('nilai')
+                        ->avg('nilai');
+                }
+
+                $summary[$kategori] = [
+                    'label' => $label,
+                    'selesai' => $selesai,
+                    'rata_rata' => $rataRata,
+                ];
+            }
+
+            $viewData['attempts'] = $attempts;
+            $viewData['summary'] = $summary;
+        }
+
         return view($view, $viewData);
+    }
+
+    public function kerjakanSoal(Request $request, Module $module): View
+    {
+        $user = $request->user();
+
+        // Hanya siswa yang boleh mengerjakan soal
+        abort_unless($user->role === 'siswa', 403);
+
+        // Siswa hanya boleh mengakses modul sesuai levelnya
+        abort_unless($module->level === $user->level, 403);
+
+        // Ambil soal berdasarkan modul
+        // JANGAN mengambil is_correct karena jawaban benar
+        // tidak boleh dikirim ke browser siswa.
+        $questions = $module->questions()
+            ->with([
+                'options' => function ($query) {
+                    $query->orderBy('urutan_tampil');
+                }
+            ])
+            ->orderBy('urutan')
+            ->get();
+
+        return view('pages.pengerjaan-soal', [
+            'module' => $module,
+            'questions' => $questions,
+        ]);
     }
 
     /**
@@ -121,16 +398,36 @@ class PageController extends Controller
             ->limit(5)
             ->get();
 
-        // =============================================================
-        // 6. PERFORMA SISWA TERBARU
-        // =============================================================
-        $data['performance'] = Attempt::query()
-            ->with(['user', 'module'])
-            ->where('status', 'selesai')
-            ->latest('selesai_pada')
-            ->limit(5)
-            ->get();
+            // =============================================================
+            // 6. PERFORMA SISWA TERBARU
+            // =============================================================
+            // Semua pengerjaan yang sudah selesai ditampilkan. Untuk
+            // Schreiben yang belum dinilai, nilai ditampilkan sebagai '-'.
+            $data['performance'] = Attempt::query()
+                ->with(['user', 'module'])
+                ->where('status', 'selesai')
+                ->latest('selesai_pada')
+                ->limit(5)
+                ->get();
 
         return $data;
+    }
+
+    /**
+     * Halaman pengerjaan / detail modul untuk siswa.
+     */
+    public function kerjakanModule(Request $request, Module $module): View
+    {
+        $user = $request->user();
+
+        // Hanya siswa yang boleh mengerjakan modul
+        abort_unless($user->role === 'siswa', 403);
+
+        // Siswa hanya boleh mengerjakan modul sesuai levelnya
+        abort_unless($module->level === $user->level, 403);
+
+        return view('pages.pengerjaan-materi', [
+            'module' => $module,
+        ]);
     }
 }

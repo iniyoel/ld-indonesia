@@ -135,4 +135,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(ActivityLog::class);
     }
+    
+    // Progress Module Siswa 
+    public function moduleProgresses()
+    {
+        return $this->hasMany(ModuleProgress::class);
+    }
 }

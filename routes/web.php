@@ -21,7 +21,7 @@ Route::get('/index', function () {
     $tutors = User::query()
         ->where('role', 'tutor')
         ->where('status', 'aktif')
-        ->orderBy('name')
+        ->orderBy('naodul-e')
         ->get();
 
     return view('pages.index', compact('tutors'));
@@ -240,13 +240,41 @@ Route::middleware('auth')->group(function () {
     Route::post('/modul/{module}/soal/selesai', [QuestionController::class, 'finish'])
         ->name('modul.soal.finish')
         ->middleware('can:manage-modules');
+    
+    // =====================================================
+    // SISWA — Mengerjakan Modul
+    // ===================================================== 
+
+    Route::get('/modul-pembelajaran/{module}', [PageController::class, 'kerjakanModule'])
+        ->name('modul.kerjakan')
+        ->middleware('auth');
+
+    // Halaman pengerjaan soal siswa
+    Route::get('/modul/{module}/soal-pengerjaan', [PageController::class, 'kerjakanSoal'])
+        ->name('siswa.modul.questions')
+        ->middleware('auth');
+
+    // Mulai mengerjakan modul
+    Route::get('/modul/{module}/kerjakan', [ModuleController::class, 'start'])
+        ->name('siswa.modul.start')
+        ->middleware('auth');
+
+    // Selesai mengerjakan modul
+    Route::post('/modul/{module}/selesai', [ModuleController::class, 'finishAttempt'])
+        ->name('siswa.modul.finish')
+        ->middleware('auth');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Halaman Generik
+    |--------------------------------------------------------------------------
+    */
 
     Route::get('/{page}', [PageController::class, 'show'])
         ->where('page', '[A-Za-z0-9\-]+')
         ->name('page');
 
-
-   /*
+    /*
     |--------------------------------------------------------------------------
     | Performa Siswa — Admin
     |--------------------------------------------------------------------------
@@ -256,8 +284,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/admin/performa-siswa/{user}', [AdminPerformanceController::class, 'show'])
         ->name('admin.siswa.detail');
-
-
 
     /*
     |--------------------------------------------------------------------------

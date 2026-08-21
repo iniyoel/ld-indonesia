@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Artikel Das — Modul Pembelajaran — LD Indonesia</title>
+<title>LD Indonesia</title>
 <meta name="description" content="Materi pembelajaran bahasa Jerman: Artikel Das — LD Indonesia.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -300,19 +300,19 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     <nav class="sidebar-nav">
       <ul>
         <li>
-          <a href="dashboard-siswa.html" class="nav-link">
+          <a href="{{ route('page', ['page' => 'dashboard-siswa']) }}" class="nav-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
             Dashboard
           </a>
         </li>
         <li>
-          <a href="modul-pembelajaran.html" class="nav-link active" aria-current="page">
+          <a href="{{ route('page', ['page' => 'modul-pembelajaran']) }}" class="nav-link active" aria-current="page">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C2 4.7 2.7 4 4.7 4c2.6 0 5.3 1 7.3 2.5C14 4.9 16.7 4 19.3 4c2 0 2.7.7 2.7 1.5v13c0-.8-.7-1.5-2.7-1.5-2.6 0-5.3.9-7.3 2.5-2-1.6-4.7-2.5-7.3-2.5C2.7 17 2 17.7 2 18.5z"/><path d="M12 6.5V20"/></svg>
             Modul Pembelajaran
           </a>
         </li>
         <li>
-          <a href="performa-siswa.html" class="nav-link">
+          <a href="{{ route('page', ['page' => 'performa-siswa']) }}" class="nav-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12.5" y="8" width="3" height="10"/><rect x="18" y="5" width="3" height="13"/></svg>
             Performa Siswa
           </a>
@@ -321,10 +321,19 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     </nav>
 
     <div class="sidebar-footer">
-      <a href="keluar.html" class="logout-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
-        Keluar
-      </a>
+      <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" class="logout-link" style="width: 100%; text-align: left;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <path d="M16 17l5-5-5-5"/>
+                  <path d="M21 12H9"/>
+              </svg>
+              Keluar
+          </button>
+      </form>
     </div>
   </aside>
 
@@ -336,84 +345,299 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
       </button>
       <div class="user-summary">
         <div class="user-meta">
-          <strong>Maria Sitanggang</strong>
+          <strong>{{ Auth::user()->name }}</strong>
           <span>Siswa</span>
         </div>
-        <div class="user-avatar" aria-hidden="true">M</div>
+        <div class="user-avatar" aria-hidden="true">
+          @if(Auth::user()->profile_photo_path)
+              <img
+                  src="{{ asset('storage/' . Auth::user()->profile_photo_path) }}"
+                  alt="{{ Auth::user()->name }}"
+                  style="
+                      width:100%;
+                      height:100%;
+                      object-fit:cover;
+                      border-radius:50%;
+                  "
+              >
+          @else
+              {{ Str::upper(Str::substr(Auth::user()->name, 0, 1)) }}
+          @endif
+      </div>
       </div>
     </header>
 
     <main class="page-content" id="mainContent">
-      <a href="modul-pembelajaran.html" class="back-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-        Kembali
+      <a
+          href="{{ route('page', ['page' => 'modul-pembelajaran']) }}"
+          class="back-link">
+          <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+          >
+              <path d="M15 18l-6-6 6-6"/>
+          </svg>
+
+          Kembali
       </a>
 
       <section class="materi-panel" aria-labelledby="materiTitle">
-        <h1 id="materiTitle">Artikel Das</h1>
-        <p class="materi-desc">Pengantar penggunaan artikel bestimmt (der, die, das) dalam bahasa Jerman.</p>
+          {{-- ==============================
+              JUDUL MODUL
+          =============================== --}}
+          <h1 id="materiTitle">
+              {{ $module->judul }}
+          </h1>
 
-        <!-- ============ PDF VIEWER (tampilan saja — pratinjau materi statis) ============ -->
-        <!-- Catatan: toolbar ini murni dekoratif untuk tahap front-end. Saat backend
-             siap, ganti area .pdf-page-area dengan penampil PDF sesungguhnya
-             (mis. PDF.js) yang memuat file materi dari server. -->
-        <div class="pdf-viewer">
-          <div class="pdf-toolbar">
-            <button class="pdf-tool-btn" aria-label="Daftar halaman" type="button">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg>
-            </button>
-            <span class="pdf-toolbar-label">Halaman</span>
+          {{-- ==============================
+              DESKRIPSI MODUL
+          =============================== --}}
+          <p class="materi-desc">
+              {{ $module->deskripsi }}
+          </p>
 
-            <div class="pdf-toolbar-group">
-              <input class="pdf-page-input" type="text" value="1" aria-label="Halaman saat ini" readonly>
-              <span class="pdf-toolbar-label">/ 12</span>
-            </div>
 
-            <div class="pdf-toolbar-group">
-              <button class="pdf-tool-btn" aria-label="Perkecil" type="button">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>
-              </button>
-              <span class="pdf-zoom-label">100%</span>
-              <button class="pdf-tool-btn" aria-label="Perbesar" type="button">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-              </button>
-            </div>
+          {{-- ==============================
+              KATEGORI
+          =============================== --}}
+          <div style="
+              display: inline-flex;
+              align-items: center;
+              gap: 8px;
+              margin-bottom: 24px;
+              padding: 7px 14px;
+              border-radius: 999px;
+              background: var(--pink-light);
+              color: var(--pink-dark);
+              font-size: .82rem;
+              font-weight: 700;
+          ">
 
-            <button class="pdf-tool-btn" aria-label="Mode buku" type="button">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C2 4.7 2.7 4 4.7 4c2.6 0 5.3 1 7.3 2.5C14 4.9 16.7 4 19.3 4c2 0 2.7.7 2.7 1.5v13c0-.8-.7-1.5-2.7-1.5-2.6 0-5.3.9-7.3 2.5-2-1.6-4.7-2.5-7.3-2.5C2.7 17 2 17.7 2 18.5z"/></svg>
-            </button>
-            <button class="pdf-tool-btn" aria-label="Muat ulang" type="button">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg>
-            </button>
+              @switch($module->kategori)
 
-            <div class="pdf-toolbar-spacer"></div>
+                  @case('materi')
+                      Materi
+                      @break
 
-            <button class="pdf-tool-btn" aria-label="Unduh" type="button">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v13"/><path d="m7 11 5 5 5-5"/><path d="M5 21h14"/></svg>
-            </button>
-            <button class="pdf-tool-btn" aria-label="Cetak" type="button">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="8" rx="1"/><path d="M6 17v4h12v-4"/></svg>
-            </button>
-            <button class="pdf-tool-btn" aria-label="Menu lainnya" type="button">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="5" r="0.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="0.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="0.7" fill="currentColor" stroke="none"/></svg>
-            </button>
+                  @case('simulasi_horen')
+                      Simulasi Hören
+                      @break
+
+                  @case('simulasi_lesen')
+                      Simulasi Lesen
+                      @break
+
+                  @case('simulasi_schreiben')
+                      Simulasi Schreiben
+                      @break
+
+                  @case('simulasi_sprechen')
+                      Simulasi Sprechen
+                      @break
+
+                  @default
+                      {{ $module->kategori }}
+
+              @endswitch
+
           </div>
 
-          <div class="pdf-page-area">
-            <div class="pdf-page">
-              <h2>Artikel Das</h2>
-              <h3>Pengantar Artikel dalam Bahasa Jerman</h3>
-              <p class="subhead-pink">Was ist ein Artikel?</p>
-              <p>Artikel adalah kata kecil yang digunakan sebelum kata benda (Nomen) dalam bahasa Jerman. Artikel membantu menunjukkan jenis kelamin, jumlah, dan kasus dari kata benda tersebut.</p>
-              <div class="pdf-scrollbar" aria-hidden="true"></div>
-            </div>
-          </div>
-        </div>
 
+          {{-- =====================================================
+              JIKA MATERI → TAMPILKAN PDF
+              JIKA SIMULASI → TIDAK TAMPILKAN PDF
+          ====================================================== --}}
+
+          @if($module->kategori === 'materi')
+
+              @if($module->file_path)
+
+                  <div class="pdf-viewer">
+
+                      {{-- ==============================
+                          PDF TOOLBAR
+                      =============================== --}}
+                      <div class="pdf-toolbar">
+
+                          <span class="pdf-toolbar-label">
+                              Dokumen Materi
+                          </span>
+
+                          <div class="pdf-toolbar-spacer"></div>
+
+                          {{-- Buka PDF di tab baru --}}
+                          <a
+                              href="{{ asset('storage/' . $module->file_path) }}"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              class="pdf-tool-btn"
+                              aria-label="Buka PDF"
+                              title="Buka PDF"
+                          >
+                              <svg
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                              >
+                                  <path d="M14 3h7v7"/>
+                                  <path d="M10 14 21 3"/>
+                                  <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/>
+                              </svg>
+                          </a>
+
+                          {{-- Download PDF --}}
+                          <a
+                              href="{{ asset('storage/' . $module->file_path) }}"
+                              download
+                              class="pdf-tool-btn"
+                              aria-label="Unduh PDF"
+                              title="Unduh PDF"
+                          >
+                              <svg
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                              >
+                                  <path d="M12 3v13"/>
+                                  <path d="m7 11 5 5 5-5"/>
+                                  <path d="M5 21h14"/>
+                              </svg>
+                          </a>
+
+                      </div>
+
+
+                      {{-- ==============================
+                          PDF ASLI DARI DATABASE
+                      =============================== --}}
+                      <div
+                          class="pdf-page-area"
+                          style="
+                              padding: 0;
+                              background: var(--gray-100);
+                          "
+                      >
+
+                          <iframe
+                              src="{{ asset('storage/' . $module->file_path) }}"
+                              title="PDF {{ $module->judul }}"
+                              style="
+                                  width: 100%;
+                                  height: 750px;
+                                  border: none;
+                                  display: block;
+                                  background: white;
+                              "
+                          ></iframe>
+                      </div>
+                  </div>
+              @else
+                  <div style="
+                      padding: 20px;
+                      border-radius: 12px;
+                      background: var(--amber-bg);
+                      color: var(--amber);
+                      font-weight: 600;
+                  ">
+                      File PDF untuk materi ini belum tersedia.
+                  </div>
+              @endif
+          @else
+              {{-- =================================================
+                  SIMULASI
+                  HANYA JUDUL + DESKRIPSI
+              ================================================== --}}
+              <div style="
+                  padding: 28px;
+                  border-radius: var(--radius-md);
+                  background: var(--pink-pale);
+                  border: 1px solid var(--pink-light);
+              ">
+                  <div style="
+                      display: flex;
+                      align-items: center;
+                      gap: 14px;
+                      margin-bottom: 16px;
+                  ">
+                      <div style="
+                          width: 44px;
+                          height: 44px;
+                          border-radius: 12px;
+                          background: var(--white);
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                          color: var(--pink-dark);
+                          flex-shrink: 0;
+                      ">
+                          <svg
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              width="22"
+                              height="22"
+                          >
+                              <path d="M12 6v12"/>
+                              <path d="M6 12h12"/>
+                          </svg>
+                      </div>
+                      <div>
+                          <strong style="
+                              display: block;
+                              color: var(--navy);
+                              font-size: 1rem;
+                          ">
+                              Informasi Simulasi
+                          </strong>
+
+                          <span style="
+                              color: var(--gray-500);
+                              font-size: .86rem;
+                          ">
+                              Modul simulasi tidak menggunakan file PDF.
+                          </span>
+                      </div>
+                  </div>
+                  <p style="
+                      color: var(--gray-700, #3A362F);
+                      line-height: 1.7;
+                      margin: 0;
+                  ">
+                      {{ $module->deskripsi }}
+                  </p>
+              </div>
+          @endif
         <div class="materi-footer">
-          <a class="btn-continue" href="pengerjaan-soal.html?id=1">
-            Lanjut ke Latihan
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          <a
+              class="btn-continue"
+              href="{{ route('siswa.modul.questions', ['module' => $module->id]) }}"
+          >
+              Lanjut ke Latihan
+              <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+              >
+                  <path d="M5 12h14M13 6l6 6-6 6"/>
+              </svg>
           </a>
         </div>
       </section>
@@ -433,14 +657,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   menuToggle.addEventListener('click', openSidebar);
   sidebarClose.addEventListener('click', closeSidebar);
   backdrop.addEventListener('click', closeSidebar);
-
-  /* Teruskan parameter id modul (jika ada) ke tombol "Lanjut ke Latihan" */
-  var params = new URLSearchParams(window.location.search);
-  var moduleId = params.get('id');
-  if (moduleId) {
-    var continueBtn = document.querySelector('.btn-continue');
-    continueBtn.href = 'pengerjaan-soal.html?id=' + encodeURIComponent(moduleId);
-  }
 })();
 </script>
 </body>

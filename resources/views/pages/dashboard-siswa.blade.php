@@ -322,7 +322,7 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
   <!-- ============ SIDEBAR ============ -->
   <aside class="sidebar" id="sidebar" aria-label="Navigasi utama">
     <div class="sidebar-brand">
-      <a href="dashboard-siswa.html" style="display:flex;align-items:center;gap:10px;" aria-label="LD Indonesia — Dashboard">
+      <a href="{{ route('page', ['page' => 'dashboard-siswa']) }}" style="display:flex;align-items:center;gap:10px;" aria-label="LD Indonesia — Dashboard">
         <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
           <path d="M24 4c-6 0-10 5-10 5s3 1 4 4c-3-1-6 0-7 3 3 0 5 1 6 3-3 1-5 3-5 6 3-1 5-1 7 0-1 3 0 6 2 8 1-3 2-5 3-6 1 1 2 3 3 6 2-2 3-5 2-8 2-1 4-1 7 0 0-3-2-5-5-6 1-2 3-3 6-3-1-3-4-4-7-3 1-3 4-4 4-4s-4-5-10-5z" fill="var(--maroon)"/>
           <circle cx="24" cy="17" r="4" fill="var(--gold)"/>
@@ -340,19 +340,19 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
     <nav class="sidebar-nav">
       <ul>
         <li>
-          <a href="dashboard-siswa.html" class="nav-link active" aria-current="page">
+          <a href="{{ route('page', ['page' => 'dashboard-siswa']) }}" class="nav-link active" aria-current="page">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
             Dashboard
           </a>
         </li>
         <li>
-          <a href="modul-pembelajaran.html" class="nav-link">
+          <a href="{{ route('page', ['page' => 'modul-pembelajaran']) }}" class="nav-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C2 4.7 2.7 4 4.7 4c2.6 0 5.3 1 7.3 2.5C14 4.9 16.7 4 19.3 4c2 0 2.7.7 2.7 1.5v13c0-.8-.7-1.5-2.7-1.5-2.6 0-5.3.9-7.3 2.5-2-1.6-4.7-2.5-7.3-2.5C2.7 17 2 17.7 2 18.5z"/><path d="M12 6.5V20"/></svg>
             Modul Pembelajaran
           </a>
         </li>
         <li>
-          <a href="performa-siswa.html" class="nav-link">
+          <a href="{{ route('page', ['page' => 'performa-siswa']) }}" class="nav-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12.5" y="8" width="3" height="10"/><rect x="18" y="5" width="3" height="13"/></svg>
             Performa Siswa
           </a>
@@ -361,10 +361,19 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
     </nav>
 
     <div class="sidebar-footer">
-      <a href="keluar.html" class="logout-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
-        Keluar
-      </a>
+      <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" class="logout-link" style="width: 100%; text-align: left;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <path d="M16 17l5-5-5-5"/>
+                  <path d="M21 12H9"/>
+              </svg>
+              Keluar
+          </button>
+      </form>
     </div>
   </aside>
 
@@ -404,7 +413,7 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
             </div>
             <h2 id="todoTitle">Modul Yang Perlu Dikerjakan</h2>
           </div>
-          <a href="modul-pembelajaran.html" class="panel-link">
+          <a href="{{ route('page', ['page' => 'modul-pembelajaran']) }}" class="panel-link">
             Lihat Semua Modul
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
@@ -422,43 +431,75 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
                 <th scope="col">Tanggal &amp; Waktu</th>
               </tr>
             </thead>
-            <tbody id="todoTableBody">
-              <tr>
-                <td class="col-num">1</td>
-                <td class="col-modul">Artikel Bestimte Der, Die, Das, Die</td>
-                <td>Materi</td>
-                <td><span class="status-pill status-belum">Belum Dikerjakan</span></td>
-                <td>20 Jun 2026, 10:30</td>
-              </tr>
-              <tr>
-                <td class="col-num">2</td>
-                <td class="col-modul">Modal Verben</td>
-                <td>Simulasi Hören</td>
-                <td><span class="status-pill status-belum">Belum Dikerjakan</span></td>
-                <td>20 Jun 2026, 10:30</td>
-              </tr>
-              <tr>
-                <td class="col-num">3</td>
-                <td class="col-modul">Pronomen</td>
-                <td>Simulasi Schreiben</td>
-                <td><span class="status-pill status-belum">Belum Dikerjakan</span></td>
-                <td>20 Jun 2026, 10:30</td>
-              </tr>
-              <tr>
-                <td class="col-num">4</td>
-                <td class="col-modul">Adjektiv</td>
-                <td>Simulasi Lesen</td>
-                <td><span class="status-pill status-belum">Belum Dikerjakan</span></td>
-                <td>20 Jun 2026, 10:30</td>
-              </tr>
-              <tr>
-                <td class="col-num">5</td>
-                <td class="col-modul">Adjektiv Deklination</td>
-                <td>Simulasi Lesen</td>
-                <td><span class="status-pill status-belum">Belum Dikerjakan</span></td>
-                <td>20 Jun 2026, 10:30</td>
-              </tr>
-            </tbody>
+              <tbody id="todoTableBody">
+              @forelse($modulesTodo as $index => $module)
+                  @php
+                      $attempt = $module->attempts->first();
+
+                      $statusClass = 'status-belum';
+                      $statusText = 'Belum Dikerjakan';
+
+                      if ($attempt && $attempt->status !== 'selesai') {
+                          $statusClass = 'status-proses';
+                          $statusText = 'Sedang Dikerjakan';
+                      }
+                  @endphp
+                  <tr>
+                      <td class="col-num">
+                          {{ $index + 1 }}
+                      </td>
+                      <td class="col-modul">
+                          {{ $module->judul }}
+                      </td>
+                      <td>
+                          @switch($module->kategori)
+                              @case('materi')
+                                  Materi
+                                  @break
+
+                              @case('simulasi_horen')
+                                  Simulasi Hören
+                                  @break
+
+                              @case('simulasi_lesen')
+                                  Simulasi Lesen
+                                  @break
+
+                              @case('simulasi_schreiben')
+                                  Simulasi Schreiben
+                                  @break
+
+                              @case('simulasi_sprechen')
+                                  Simulasi Sprechen
+                                  @break
+
+                              @default
+                                  {{ $module->kategori }}
+                          @endswitch
+                      </td>
+                      <td>
+                          <span class="status-pill {{ $statusClass }}">
+                              {{ $statusText }}
+                          </span>
+                      </td>
+                      <td>
+                          {{ $module->created_at
+                              ? $module->created_at->locale('id')->translatedFormat('d M Y, H:i')
+                              : '-' }}
+                      </td>
+                  </tr>
+              @empty
+                  <tr>
+                      <td colspan="5">
+                          <div class="empty-state">
+                              Semua modul pada level
+                              <strong>{{ Auth::user()->level ?? '-' }}</strong>
+                              sudah selesai dikerjakan 🎉
+                          </div>
+                      </td>
+                  </tr>
+              @endforelse
+              </tbody>
           </table>
         </div>
       </section>
@@ -472,7 +513,7 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
             </div>
             <h2 id="activityTitle">Aktivitas Terakhir</h2>
           </div>
-          <a href="performa-siswa.html" class="panel-link">
+          <a href="{{ route('page', ['page' => 'performa-siswa']) }}" class="panel-link">
             Lihat Semua Hasil
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
@@ -491,66 +532,78 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td class="col-num">1</td>
-                <td class="col-modul">Artikel Bestimte Der, Die, Das, Die</td>
-                <td>Materi</td>
-                <td class="col-nilai">88</td>
-                <td>20 Jun 2026, 10:30</td>
-                <td>
-                  <a class="action-btn" href="detail-pengerjaan.html?id=1&from=dashboard" aria-label="Lihat detail pengerjaan Artikel Bestimte Der, Die, Das, Die">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td class="col-num">2</td>
-                <td class="col-modul">Modal Verben</td>
-                <td>Simulasi Hören</td>
-                <td class="col-nilai">85</td>
-                <td>20 Jun 2026, 10:30</td>
-                <td>
-                  <a class="action-btn" href="detail-pengerjaan-horen.html?id=2&from=dashboard" aria-label="Lihat detail pengerjaan Modal Verben">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td class="col-num">3</td>
-                <td class="col-modul">Pronomen</td>
-                <td>Simulasi Schreiben</td>
-                <td class="col-nilai">77</td>
-                <td>20 Jun 2026, 10:30</td>
-                <td>
-                  <a class="action-btn" href="detail-pengerjaan-schreiben.html?id=3&from=dashboard" aria-label="Lihat detail pengerjaan Pronomen">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td class="col-num">4</td>
-                <td class="col-modul">Adjektiv</td>
-                <td>Simulasi Lesen</td>
-                <td class="col-nilai">100</td>
-                <td>20 Jun 2026, 10:30</td>
-                <td>
-                  <a class="action-btn" href="detail-pengerjaan-lesen.html?id=4&from=dashboard" aria-label="Lihat detail pengerjaan Adjektiv">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td class="col-num">5</td>
-                <td class="col-modul">Adjektiv Deklination</td>
-                <td>Simulasi Lesen</td>
-                <td class="col-nilai">89</td>
-                <td>20 Jun 2026, 10:30</td>
-                <td>
-                  <a class="action-btn" href="detail-pengerjaan-lesen.html?id=5&from=dashboard" aria-label="Lihat detail pengerjaan Adjektiv Deklination">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-                  </a>
-                </td>
-              </tr>
+              @forelse($recentActivities as $index => $attempt)
+                  <tr>
+                      <td class="col-num">
+                          {{ $index + 1 }}
+                      </td>
+                      <td class="col-modul">
+                          {{ $attempt->module->judul ?? 'Modul tidak ditemukan' }}
+                      </td>
+                      <td>
+                          @switch($attempt->module->kategori ?? null)
+                              @case('materi')
+                                  Materi
+                                  @break
+
+                              @case('simulasi_horen')
+                                  Simulasi Hören
+                                  @break
+
+                              @case('simulasi_lesen')
+                                  Simulasi Lesen
+                                  @break
+
+                              @case('simulasi_schreiben')
+                                  Simulasi Schreiben
+                                  @break
+
+                              @case('simulasi_sprechen')
+                                  Simulasi Sprechen
+                                  @break
+
+                              @default
+                                  {{ $attempt->module->kategori ?? '-' }}
+                          @endswitch
+                      </td>
+                      <td class="col-nilai">
+                          {{ $attempt->nilai !== null
+                              ? number_format((float) $attempt->nilai, 0)
+                              : '-' }}
+                      </td>
+                      <td>
+                          {{ $attempt->selesai_pada
+                              ? $attempt->selesai_pada->locale('id')->translatedFormat('d M Y, H:i')
+                              : '-' }}
+                      </td>
+                      <td>
+                          <a class="action-btn" href="{{ route('page', ['page' => $detailPage]) }}?id={{ $attempt->id }}&from=dashboard" aria-label="Lihat detail pengerjaan {{ $attempt->module->judul ?? 'modul' }}"
+                          >
+                              <svg
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  aria-hidden="true"
+                              >
+                                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+                                  <circle cx="12" cy="12" r="3"/>
+                              </svg>
+                          </a>
+                      </td>
+                  </tr>
+              @empty
+                  <tr>
+                      <td colspan="6">
+                          <div class="empty-state">
+                              Belum ada aktivitas pengerjaan.
+                          </div>
+                      </td>
+                  </tr>
+
+              @endforelse
             </tbody>
           </table>
         </div>
@@ -562,22 +615,6 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
 <script>
 (function(){
   "use strict";
-
-  /* ==================================================================
-     CATATAN INTEGRASI BACKEND
-     - Data nama siswa, tabel "Modul Yang Perlu Dikerjakan", dan
-       "Aktivitas Terakhir" di halaman ini masih data contoh (statis).
-     - Saat backend siap, ganti isi <tbody> secara dinamis lewat fetch,
-       mis. fetch('/api/dashboard-siswa') lalu render baris tabel.
-     - Sapaan "Halo, {nama}!" dan avatar inisial mengambil dari nama
-       pengguna yang sedang login (lihat fungsi renderUserIdentity).
-  ================================================================== */
-  function renderUserIdentity(fullName){
-    var firstName = fullName.trim().split(' ')[0];
-    var initial = firstName.charAt(0).toUpperCase();
-    document.getElementById('greeting').textContent = 'Halo, ' + firstName + '!';
-    document.getElementById('userAvatar').textContent = initial;
-  }
   renderUserIdentity('{{ Auth::user()->name }}');
 
   /* ---- Sidebar toggle (mobile) ---- */

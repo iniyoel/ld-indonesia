@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\ActivityLog;
+use App\Models\Attempt;
 
 
 class ModuleController extends Controller
@@ -45,6 +46,13 @@ class ModuleController extends Controller
     public function soal(Module $module)
     {
         return view('pages.admin-modul-soal', compact('module'));
+    }
+
+    public function kerjakan($id)
+    {
+        $module = Module::findOrFail($id);
+
+        return view('pages.modul-pembelajaran', compact('module'));
     }
 
     /*
@@ -312,6 +320,110 @@ class ModuleController extends Controller
         return redirect()
             ->route('modul.index')
             ->with('success', 'Modul berhasil diperbarui.');
+    }
+
+    /**
+     * Siswa mulai mengerjakan modul.
+     */
+    public function start(Module $module)
+    {
+        $user = Auth::user();
+
+        // Hanya siswa yang boleh mengerjakan modul.
+        abort_unless($user->role === 'siswa', 403);
+
+        // Siswa hanya boleh mengerjakan modul sesuai levelnya.
+        abort_unless($module->level === $user->level, 403);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Buat attempt baru
+        |--------------------------------------------------------------------------
+        |
+        | Satu attempt = satu kali pengerjaan.
+        | Karena tabel attempts memang dirancang sebagai riwayat pengerjaan,
+        | kita TIDAK menggunakan updateOrCreate di sini.
+        |
+        */
+        $attempt = Attempt::create([
+            'user_id' => $user->id,
+            'module_id' => $module->id,
+            'status' => 'sedang_dikerjakan',
+            'dimulai_pada' => now(),
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Arahkan ke halaman sesuai kategori modul
+        |--------------------------------------------------------------------------
+        */
+
+        if ($module->kategori === 'materi') {
+            return view('pages.pengerjaan-materi', [
+                'module' => $module,
+                'attempt' => $attempt,
+            ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Modul simulasi
+        |--------------------------------------------------------------------------
+        */
+
+        $questions = $module->questions()
+            ->with('options')
+            ->get();
+
+        return view('pages.pengerjaan-soal', [
+            'module' => $module,
+            'questions' => $questions,
+            'attempt' => $attempt,
+        ]);
+    }
+
+    /**
+     * Siswa menyelesaikan pengerjaan modul.
+     */
+    public function finishAttempt(Module $module)
+    {
+        $user = Auth::user();
+
+        abort_unless($user->role === 'siswa', 403);
+
+        abort_unless($module->level === $user->level, 403);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Cari attempt yang sedang dikerjakan
+        |--------------------------------------------------------------------------
+        */
+
+        $attempt = Attempt::query()
+            ->where('user_id', $user->id)
+            ->where('module_id', $module->id)
+            ->where('status', 'sedang_dikerjakan')
+            ->latest('dimulai_pada')
+            ->first();
+
+        abort_unless($attempt, 404);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Tandai selesai
+        |--------------------------------------------------------------------------
+        */
+
+        $attempt->update([
+            'status' => 'selesai',
+            'selesai_pada' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pengerjaan modul berhasil diselesaikan.',
+            'attempt_id' => $attempt->id,
+        ]);
     }
 
 }

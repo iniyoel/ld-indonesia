@@ -253,14 +253,18 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
   <div class="backdrop" id="backdrop"></div>
 
   <!-- ============ SIDEBAR ============ -->
+  <!-- ============ SIDEBAR ============ -->
   <aside class="sidebar" id="sidebar" aria-label="Navigasi utama">
     <div class="sidebar-brand">
-      <a href="dashboard-siswa.html" style="display:flex;align-items:center;gap:10px;" aria-label="LD Indonesia — Dashboard">
+      <a href="{{ route('page', ['page' => 'dashboard-siswa']) }}" style="display:flex;align-items:center;gap:10px;" aria-label="LD Indonesia — Dashboard">
         <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
           <path d="M24 4c-6 0-10 5-10 5s3 1 4 4c-3-1-6 0-7 3 3 0 5 1 6 3-3 1-5 3-5 6 3-1 5-1 7 0-1 3 0 6 2 8 1-3 2-5 3-6 1 1 2 3 3 6 2-2 3-5 2-8 2-1 4-1 7 0 0-3-2-5-5-6 1-2 3-3 6-3-1-3-4-4-7-3 1-3 4-4 4-4s-4-5-10-5z" fill="var(--maroon)"/>
           <circle cx="24" cy="17" r="4" fill="var(--gold)"/>
         </svg>
-        <span class="brand-text"><strong>LD <span>INDONESIA</span></strong><small>Privat Bahasa Jerman</small></span>
+        <span class="brand-text">
+          <strong>LD <span>INDONESIA</span></strong>
+          <small>Privat Bahasa Jerman</small>
+        </span>
       </a>
       <button class="sidebar-close" id="sidebarClose" aria-label="Tutup menu">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
@@ -270,19 +274,19 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
     <nav class="sidebar-nav">
       <ul>
         <li>
-          <a href="dashboard-siswa.html" class="nav-link">
+          <a href="{{ route('page', ['page' => 'dashboard-siswa']) }}" class="nav-link" aria-current="page">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
             Dashboard
           </a>
         </li>
         <li>
-          <a href="modul-pembelajaran.html" class="nav-link">
+          <a href="{{ route('page', ['page' => 'modul-pembelajaran']) }}" class="nav-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C2 4.7 2.7 4 4.7 4c2.6 0 5.3 1 7.3 2.5C14 4.9 16.7 4 19.3 4c2 0 2.7.7 2.7 1.5v13c0-.8-.7-1.5-2.7-1.5-2.6 0-5.3.9-7.3 2.5-2-1.6-4.7-2.5-7.3-2.5C2.7 17 2 17.7 2 18.5z"/><path d="M12 6.5V20"/></svg>
             Modul Pembelajaran
           </a>
         </li>
         <li>
-          <a href="performa-siswa.html" class="nav-link active" aria-current="page">
+          <a href="{{ route('page', ['page' => 'performa-siswa']) }}" class="nav-link active">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12.5" y="8" width="3" height="10"/><rect x="18" y="5" width="3" height="13"/></svg>
             Performa Siswa
           </a>
@@ -291,10 +295,19 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
     </nav>
 
     <div class="sidebar-footer">
-      <a href="keluar.html" class="logout-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
-        Keluar
-      </a>
+      <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" class="logout-link" style="width: 100%; text-align: left;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <path d="M16 17l5-5-5-5"/>
+                  <path d="M21 12H9"/>
+              </svg>
+              Keluar
+          </button>
+      </form>
     </div>
   </aside>
 
@@ -306,10 +319,16 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
       </button>
       <div class="user-summary">
         <div class="user-meta">
-          <strong>Maria Sitanggang</strong>
+          <strong id="userName">{{ Auth::user()->name }}</strong>
           <span>Siswa</span>
         </div>
-        <div class="user-avatar" aria-hidden="true">M</div>
+        <div class="user-avatar" id="userAvatar" aria-hidden="true">
+          @if(Auth::user()->profile_photo_path)
+            <img src="{{ asset('storage/' . Auth::user()->profile_photo_path) }}" alt="{{ Auth::user()->name }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+          @else
+            {{ Str::upper(Str::substr(Auth::user()->name, 0, 1)) }}
+          @endif
+        </div>
       </div>
     </header>
 
@@ -320,87 +339,215 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
 
       <!-- ============ RINGKASAN KATEGORI ============ -->
       <div class="summary-grid">
-        <div class="summary-card">
-          <div class="summary-top">
-            <div class="summary-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-            </div>
-            <div>
-              <div class="summary-title">Materi</div>
-              <span class="summary-count">5</span> <span class="summary-count-label">Selesai</span>
-            </div>
-          </div>
-          <div class="summary-divider">
-            <span class="summary-avg-label">Rata-rata</span>
-            <span class="summary-avg-value">88</span>
-          </div>
-        </div>
 
-        <div class="summary-card">
-          <div class="summary-top">
-            <div class="summary-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C2 4.7 2.7 4 4.7 4c2.6 0 5.3 1 7.3 2.5C14 4.9 16.7 4 19.3 4c2 0 2.7.7 2.7 1.5v13c0-.8-.7-1.5-2.7-1.5-2.6 0-5.3.9-7.3 2.5-2-1.6-4.7-2.5-7.3-2.5C2.7 17 2 17.7 2 18.5z"/></svg>
-            </div>
-            <div>
-              <div class="summary-title">Simulasi Lesen</div>
-              <span class="summary-count">5</span> <span class="summary-count-label">Selesai</span>
-            </div>
-          </div>
-          <div class="summary-divider">
-            <span class="summary-avg-label">Rata-rata</span>
-            <span class="summary-avg-value">88</span>
-          </div>
-        </div>
+          {{-- MATERI --}}
+          <div class="summary-card">
+              <div class="summary-top">
+                  <div class="summary-icon">
+                      <svg viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round">
+                          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                      </svg>
+                  </div>
 
-        <div class="summary-card">
-          <div class="summary-top">
-            <div class="summary-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
-            </div>
-            <div>
-              <div class="summary-title">Simulasi Hören</div>
-              <span class="summary-count">5</span> <span class="summary-count-label">Selesai</span>
-            </div>
-          </div>
-          <div class="summary-divider">
-            <span class="summary-avg-label">Rata-rata</span>
-            <span class="summary-avg-value">88</span>
-          </div>
-        </div>
+                  <div>
+                      <div class="summary-title">Materi</div>
 
-        <div class="summary-card">
-          <div class="summary-top">
-            <div class="summary-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 20 9-9-2-2-9 9-4 4z"/><path d="M2 22l3-1 1-3"/><path d="m14.5 6.5 3 3"/></svg>
-            </div>
-            <div>
-              <div class="summary-title">Simulasi Schreiben</div>
-              <span class="summary-count">5</span> <span class="summary-count-label">Selesai</span>
-            </div>
-          </div>
-          <div class="summary-divider">
-            <span class="summary-avg-label">Rata-rata</span>
-            <span class="summary-avg-value">88</span>
-          </div>
-        </div>
+                      <span class="summary-count">
+                          {{ $summary['materi']['selesai'] ?? 0 }}
+                      </span>
 
-        <div class="summary-card">
-          <div class="summary-top">
-            <div class="summary-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/><path d="M19 11a7 7 0 0 1-14 0M12 18v3"/></svg>
-            </div>
-            <div>
-              <div class="summary-title">Simulasi Sprechen</div>
-              <span class="summary-count">3</span> <span class="summary-count-label">Selesai</span>
-            </div>
+                      <span class="summary-count-label">
+                          Selesai
+                      </span>
+                  </div>
+              </div>
+
+              <div class="summary-divider">
+                  <span class="summary-avg-label">Rata-rata</span>
+
+                  <span class="summary-avg-value">
+                      @if(isset($summary['materi']['rata_rata']))
+                          {{ number_format($summary['materi']['rata_rata'], 0) }}
+                      @else
+                          —
+                      @endif
+                  </span>
+              </div>
           </div>
-          <div class="summary-divider">
-            <span class="summary-avg-label">Rata-rata</span>
-            <span class="summary-avg-value is-muted">— *</span>
+
+
+          {{-- SIMULASI LESEN --}}
+          <div class="summary-card">
+              <div class="summary-top">
+                  <div class="summary-icon">
+                      <svg viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round">
+                          <path d="M2 5.5C2 4.7 2.7 4 4.7 4c2.6 0 5.3 1 7.3 2.5C14 4.9 16.7 4 19.3 4c2 0 2.7.7 2.7 1.5v13c0-.8-.7-1.5-2.7-1.5-2.6 0-5.3.9-7.3 2.5-7.3-1.6-4.7-2.5-7.3-2.5C2.7 17 2 17.7 2 18.5z"/>
+                          <path d="M12 6.5V20"/>
+                      </svg>
+                  </div>
+
+                  <div>
+                      <div class="summary-title">Simulasi Lesen</div>
+
+                      <span class="summary-count">
+                          {{ $summary['simulasi_lesen']['selesai'] ?? 0 }}
+                      </span>
+
+                      <span class="summary-count-label">
+                          Selesai
+                      </span>
+                  </div>
+              </div>
+
+              <div class="summary-divider">
+                  <span class="summary-avg-label">Rata-rata</span>
+
+                  <span class="summary-avg-value">
+                      @if(isset($summary['simulasi_lesen']['rata_rata']))
+                          {{ number_format($summary['simulasi_lesen']['rata_rata'], 0) }}
+                      @else
+                          —
+                      @endif
+                  </span>
+              </div>
           </div>
-        </div>
+
+
+          {{-- SIMULASI HÖREN --}}
+          <div class="summary-card">
+              <div class="summary-top">
+                  <div class="summary-icon">
+                      <svg viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round">
+                          <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
+                          <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/>
+                          <path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+                      </svg>
+                  </div>
+
+                  <div>
+                      <div class="summary-title">Simulasi Hören</div>
+
+                      <span class="summary-count">
+                          {{ $summary['simulasi_horen']['selesai'] ?? 0 }}
+                      </span>
+
+                      <span class="summary-count-label">
+                          Selesai
+                      </span>
+                  </div>
+              </div>
+
+              <div class="summary-divider">
+                  <span class="summary-avg-label">Rata-rata</span>
+
+                  <span class="summary-avg-value">
+                      @if(isset($summary['simulasi_horen']['rata_rata']))
+                          {{ number_format($summary['simulasi_horen']['rata_rata'], 0) }}
+                      @else
+                          —
+                      @endif
+                  </span>
+              </div>
+          </div>
+
+
+          {{-- SIMULASI SCHREIBEN --}}
+          <div class="summary-card">
+              <div class="summary-top">
+                  <div class="summary-icon">
+                      <svg viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round">
+                          <path d="m12 20 9-9-2-2-9 9-4 4z"/>
+                          <path d="M2 22l3-1 1-3"/>
+                          <path d="m14.5 6.5 3 3"/>
+                      </svg>
+                  </div>
+
+                  <div>
+                      <div class="summary-title">Simulasi Schreiben</div>
+
+                      <span class="summary-count">
+                          {{ $summary['simulasi_schreiben']['selesai'] ?? 0 }}
+                      </span>
+
+                      <span class="summary-count-label">
+                          Selesai
+                      </span>
+                  </div>
+              </div>
+
+              <div class="summary-divider">
+                  <span class="summary-avg-label">Rata-rata</span>
+
+                  <span class="summary-avg-value">
+                      @if(isset($summary['simulasi_schreiben']['rata_rata']))
+                          {{ number_format($summary['simulasi_schreiben']['rata_rata'], 0) }}
+                      @else
+                          —
+                      @endif
+                  </span>
+              </div>
+          </div>
+
+
+          {{-- SIMULASI SPRECHEN --}}
+          <div class="summary-card">
+              <div class="summary-top">
+                  <div class="summary-icon">
+                      <svg viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round">
+                          <path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/>
+                          <path d="M19 11a7 7 0 0 1-14 0M12 18v3"/>
+                      </svg>
+                  </div>
+
+                  <div>
+                      <div class="summary-title">Simulasi Sprechen</div>
+
+                      <span class="summary-count">
+                          {{ $summary['simulasi_sprechen']['selesai'] ?? 0 }}
+                      </span>
+
+                      <span class="summary-count-label">
+                          Selesai
+                      </span>
+                  </div>
+              </div>
+
+              <div class="summary-divider">
+                  <span class="summary-avg-label">Rata-rata</span>
+
+                  <span class="summary-avg-value is-muted">
+                      —
+                  </span>
+              </div>
+          </div>
+
       </div>
-      <p style="font-size:0.8rem; color:var(--gray-500); margin:-14px 0 26px;">* Simulasi Sprechen dinilai selesai/belum, bukan dengan skor angka.</p>
+
+      <p style="font-size:0.8rem; color:var(--gray-500); margin:-14px 0 26px;">
+          * Simulasi Sprechen dinilai selesai/belum, bukan dengan skor angka.
+      </p>
+
 
       <!-- ============ FILTER BAR ============ -->
       <!-- Catatan: search & sortir di bawah ini baru tampilan (belum fungsional). -->
@@ -450,67 +597,134 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
                 <th scope="col">Aksi</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td class="col-num">1</td>
-                <td class="col-modul">Artikel Bestimte Der, Die, Das, Die</td>
-                <td>Materi</td>
-                <td class="col-nilai">80</td>
-                <td>20 Jun 2026, 10:30</td>
-                <td>
-                  <a class="action-btn" href="detail-pengerjaan.html?id=1" aria-label="Lihat detail pengerjaan Artikel Bestimte Der, Die, Das, Die">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td class="col-num">2</td>
-                <td class="col-modul">Modal Verben</td>
-                <td>Simulasi Hören</td>
-                <td class="col-nilai">70</td>
-                <td>20 Jun 2026, 10:30</td>
-                <td>
-                  <a class="action-btn" href="detail-pengerjaan-horen.html?id=2" aria-label="Lihat detail pengerjaan Modal Verben">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td class="col-num">3</td>
-                <td class="col-modul">Pronomen</td>
-                <td>Simulasi Schreiben</td>
-                <td class="col-nilai">90</td>
-                <td>20 Jun 2026, 10:30</td>
-                <td>
-                  <a class="action-btn" href="detail-pengerjaan-schreiben.html?id=3" aria-label="Lihat detail pengerjaan Pronomen">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td class="col-num">4</td>
-                <td class="col-modul">Adjektiv</td>
-                <td>Simulasi Lesen</td>
-                <td class="col-nilai">100</td>
-                <td>20 Jun 2026, 10:30</td>
-                <td>
-                  <a class="action-btn" href="detail-pengerjaan-lesen.html?id=4" aria-label="Lihat detail pengerjaan Adjektiv">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td class="col-num">5</td>
-                <td class="col-modul">Adjektiv Deklination</td>
-                <td>Simulasi Lesen</td>
-                <td class="col-nilai">100</td>
-                <td>20 Jun 2026, 10:30</td>
-                <td>
-                  <a class="action-btn" href="detail-pengerjaan-lesen.html?id=5" aria-label="Lihat detail pengerjaan Adjektiv Deklination">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-                  </a>
-                </td>
-              </tr>
+            <tbody id="riwayatBody">
+
+                @forelse($attempts as $index => $attempt)
+
+                    @php
+                        $module = $attempt->module;
+
+                        $kategoriLabel = match ($module->kategori) {
+                            'materi' => 'Materi',
+                            'simulasi_horen' => 'Simulasi Hören',
+                            'simulasi_lesen' => 'Simulasi Lesen',
+                            'simulasi_schreiben' => 'Simulasi Schreiben',
+                            'simulasi_sprechen' => 'Simulasi Sprechen',
+                            default => $module->kategori,
+                        };
+                    @endphp
+
+                    <tr
+                        data-kategori="{{ strtolower($kategoriLabel) }}"
+                        data-waktu="{{ $attempt->selesai_pada?->timestamp ?? 0 }}"
+                    >
+
+                        {{-- NO --}}
+                        <td class="col-num">
+                            {{ $attempts->firstItem() + $index }}
+                        </td>
+
+                        {{-- MODUL --}}
+                        <td class="col-modul">
+                            {{ $module->judul }}
+                        </td>
+
+                        {{-- KATEGORI --}}
+                        <td>
+                            {{ $kategoriLabel }}
+                        </td>
+
+                        {{-- NILAI --}}
+                        <td class="col-nilai">
+
+                            @if($module->kategori === 'simulasi_sprechen')
+
+                                <span class="activity-muted">
+                                    —
+                                </span>
+
+                            @elseif($attempt->nilai !== null)
+
+                                {{ number_format($attempt->nilai, 0) }}
+
+                            @elseif($module->kategori === 'simulasi_schreiben')
+
+                                <span class="activity-muted">
+                                    Belum Dinilai
+                                </span>
+
+                            @else
+
+                                <span class="activity-muted">
+                                    —
+                                </span>
+
+                            @endif
+
+                        </td>
+
+                        {{-- TANGGAL --}}
+                        <td>
+                            @if($attempt->selesai_pada)
+                                {{ $attempt->selesai_pada->format('d M Y, H:i') }}
+                            @elseif($attempt->dimulai_pada)
+                                {{ $attempt->dimulai_pada->format('d M Y, H:i') }}
+                            @else
+                                -
+                            @endif
+                        </td>
+
+                        {{-- AKSI --}}
+                        <td>
+
+                            {{-- Untuk sementara tombol detail belum diarahkan
+                                karena route detail siswa belum dibuat. --}}
+                            <button
+                                type="button"
+                                class="action-btn"
+                                title="Detail pengerjaan"
+                                aria-label="Detail pengerjaan {{ $module->judul }}"
+                                disabled
+                                style="opacity:.45; cursor:not-allowed;"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                @empty
+
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+
+                                <div class="empty-state-title">
+                                    Belum ada riwayat pengerjaan
+                                </div>
+
+                                <div>
+                                    Kamu belum menyelesaikan modul atau simulasi apa pun.
+                                </div>
+
+                            </div>
+                        </td>
+                    </tr>
+
+                @endforelse
+
             </tbody>
           </table>
         </div>
@@ -518,13 +732,145 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
         <!-- Catatan: paginasi di bawah ini baru tampilan (belum fungsional). -->
         <div class="table-footer">
           <div class="rows-per-page">
-            Rows per page
-            <select id="rowsPerPage" aria-label="Jumlah baris per halaman">
-              <option value="5" selected>5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="25">25</option>
-            </select>
+            <div class="table-footer">
+
+                <div class="rows-per-page">
+                    Menampilkan
+
+                    <strong>
+                        {{ $attempts->firstItem() ?? 0 }}
+                        –
+                        {{ $attempts->lastItem() ?? 0 }}
+                    </strong>
+
+                    dari
+
+                    <strong>
+                        {{ $attempts->total() }}
+                    </strong>
+
+                    pengerjaan
+                </div>
+
+
+                @if($attempts->hasPages())
+
+                    <nav class="pagination" aria-label="Navigasi halaman">
+
+                        {{-- PREVIOUS --}}
+                        @if($attempts->onFirstPage())
+
+                            <button
+                                class="page-btn"
+                                disabled
+                                aria-label="Halaman sebelumnya"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2.4"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M15 18l-6-6 6-6"/>
+                                </svg>
+                            </button>
+
+                        @else
+
+                            <a
+                                href="{{ $attempts->previousPageUrl() }}"
+                                class="page-btn"
+                                aria-label="Halaman sebelumnya"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2.4"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M15 18l-6-6 6-6"/>
+                                </svg>
+                            </a>
+
+                        @endif
+
+
+                        {{-- NUMBER --}}
+                        @foreach($attempts->getUrlRange(1, $attempts->lastPage()) as $page => $url)
+
+                            @if($page == $attempts->currentPage())
+
+                                <span
+                                    class="page-btn active"
+                                    aria-current="page"
+                                >
+                                    {{ $page }}
+                                </span>
+
+                            @else
+
+                                <a
+                                    href="{{ $url }}"
+                                    class="page-btn"
+                                >
+                                    {{ $page }}
+                                </a>
+
+                            @endif
+
+                        @endforeach
+
+
+                        {{-- NEXT --}}
+                        @if($attempts->hasMorePages())
+
+                            <a
+                                href="{{ $attempts->nextPageUrl() }}"
+                                class="page-btn"
+                                aria-label="Halaman berikutnya"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2.4"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M9 6l6 6-6 6"/>
+                                </svg>
+                            </a>
+
+                        @else
+
+                            <button
+                                class="page-btn"
+                                disabled
+                                aria-label="Halaman berikutnya"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2.4"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M9 6l6 6-6 6"/>
+                                </svg>
+                            </button>
+
+                        @endif
+
+                    </nav>
+
+                @endif
+
+            </div>
             <span class="results-count">1–5 of 30 aktivitas</span>
           </div>
           <nav class="pagination" aria-label="Navigasi halaman (contoh tampilan)">

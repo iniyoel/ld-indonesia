@@ -65,4 +65,9 @@ class Module extends Model
     {
         return $this->hasMany(Attempt::class);
     }
+
+    public function progresses()
+    {
+        return $this->hasMany(ModuleProgress::class, 'modul_id');
+    }
 }

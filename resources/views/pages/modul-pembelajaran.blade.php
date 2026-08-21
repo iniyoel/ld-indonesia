@@ -284,22 +284,38 @@ td.col-modul{ font-weight: 600; color: var(--navy); white-space: normal; min-wid
 .aksi-btn{
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 7px;
-  padding: 8px 16px;
-  border-radius: var(--radius-pill);
-  font-weight: 700;
+  min-width: 86px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-weight: 600;
   font-size: 0.84rem;
   border: 1.5px solid var(--pink);
   color: var(--pink-dark);
   background: var(--white);
-  transition: background 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease;
 }
-.aksi-btn:hover{ background: var(--pink-pale); }
-.aksi-btn svg{ width: 15px; height: 15px; }
-.aksi-btn.is-selesai{ border-color: var(--green); color: var(--green); }
-.aksi-btn.is-selesai:hover{ background: var(--green-bg); }
-.aksi-btn.is-proses{ border-color: var(--blue); color: var(--blue); }
-.aksi-btn.is-proses:hover{ background: var(--blue-bg); }
+
+.aksi-btn:hover{
+  background: var(--pink-pale);
+}
+
+.aksi-btn svg{
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.aksi-btn.is-selesai{
+  border-color: var(--pink);
+  color: var(--pink-dark);
+}
+
+.aksi-btn.is-proses{
+  border-color: var(--pink);
+  color: var(--pink-dark);
+}
 
 /* ---- Footer tabel & paginasi (tampilan saja, belum fungsional) ---- */
 .table-footer{
@@ -386,9 +402,10 @@ td.col-modul{ font-weight: 600; color: var(--navy); white-space: normal; min-wid
   <div class="backdrop" id="backdrop"></div>
 
   <!-- ============ SIDEBAR ============ -->
+  <!-- ============ SIDEBAR ============ -->
   <aside class="sidebar" id="sidebar" aria-label="Navigasi utama">
     <div class="sidebar-brand">
-      <a href="dashboard-siswa.html" style="display:flex;align-items:center;gap:10px;" aria-label="LD Indonesia — Dashboard">
+      <a href="{{ route('page', ['page' => 'dashboard-siswa']) }}" style="display:flex;align-items:center;gap:10px;" aria-label="LD Indonesia — Dashboard">
         <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
           <path d="M24 4c-6 0-10 5-10 5s3 1 4 4c-3-1-6 0-7 3 3 0 5 1 6 3-3 1-5 3-5 6 3-1 5-1 7 0-1 3 0 6 2 8 1-3 2-5 3-6 1 1 2 3 3 6 2-2 3-5 2-8 2-1 4-1 7 0 0-3-2-5-5-6 1-2 3-3 6-3-1-3-4-4-7-3 1-3 4-4 4-4s-4-5-10-5z" fill="var(--maroon)"/>
           <circle cx="24" cy="17" r="4" fill="var(--gold)"/>
@@ -406,19 +423,19 @@ td.col-modul{ font-weight: 600; color: var(--navy); white-space: normal; min-wid
     <nav class="sidebar-nav">
       <ul>
         <li>
-          <a href="dashboard-siswa.html" class="nav-link">
+          <a href="{{ route('page', ['page' => 'dashboard-siswa']) }}" class="nav-link" aria-current="page">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
             Dashboard
           </a>
         </li>
         <li>
-          <a href="modul-pembelajaran.html" class="nav-link active" aria-current="page">
+          <a href="{{ route('page', ['page' => 'modul-pembelajaran']) }}" class="nav-link active">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C2 4.7 2.7 4 4.7 4c2.6 0 5.3 1 7.3 2.5C14 4.9 16.7 4 19.3 4c2 0 2.7.7 2.7 1.5v13c0-.8-.7-1.5-2.7-1.5-2.6 0-5.3.9-7.3 2.5-2-1.6-4.7-2.5-7.3-2.5C2.7 17 2 17.7 2 18.5z"/><path d="M12 6.5V20"/></svg>
             Modul Pembelajaran
           </a>
         </li>
         <li>
-          <a href="performa-siswa.html" class="nav-link">
+          <a href="{{ route('page', ['page' => 'performa-siswa']) }}" class="nav-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12.5" y="8" width="3" height="10"/><rect x="18" y="5" width="3" height="13"/></svg>
             Performa Siswa
           </a>
@@ -427,10 +444,19 @@ td.col-modul{ font-weight: 600; color: var(--navy); white-space: normal; min-wid
     </nav>
 
     <div class="sidebar-footer">
-      <a href="keluar.html" class="logout-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
-        Keluar
-      </a>
+      <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" class="logout-link" style="width: 100%; text-align: left;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <path d="M16 17l5-5-5-5"/>
+                  <path d="M21 12H9"/>
+              </svg>
+              Keluar
+          </button>
+      </form>
     </div>
   </aside>
 
@@ -442,10 +468,16 @@ td.col-modul{ font-weight: 600; color: var(--navy); white-space: normal; min-wid
       </button>
       <div class="user-summary">
         <div class="user-meta">
-          <strong>Maria Sitanggang</strong>
+          <strong id="userName">{{ Auth::user()->name }}</strong>
           <span>Siswa</span>
         </div>
-        <div class="user-avatar" aria-hidden="true">M</div>
+        <div class="user-avatar" id="userAvatar" aria-hidden="true">
+          @if(Auth::user()->profile_photo_path)
+            <img src="{{ asset('storage/' . Auth::user()->profile_photo_path) }}" alt="{{ Auth::user()->name }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+          @else
+            {{ Str::upper(Str::substr(Auth::user()->name, 0, 1)) }}
+          @endif
+        </div>
       </div>
     </header>
 
@@ -502,103 +534,337 @@ td.col-modul{ font-weight: 600; color: var(--navy); white-space: normal; min-wid
                 <th scope="col">Level</th>
                 <th scope="col">Progres</th>
                 <th scope="col">Aksi</th>
-              </tr>
+            </tr>
             </thead>
             <tbody>
-              <tr>
-                <td class="col-num">1</td>
-                <td class="col-modul">Artikel Bestimte Der, Die, Das, Die</td>
-                <td>Materi</td>
-                <td>Level A1</td>
-                <td><span class="status-pill status-belum">Belum Dikerjakan</span></td>
-                <td>
-                  <a class="aksi-btn" href="pengerjaan-materi.html?id=1">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg>
-                    Mulai
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td class="col-num">2</td>
-                <td class="col-modul">Modal Verben</td>
-                <td>Simulasi Hören</td>
-                <td>Level A1</td>
-                <td><span class="status-pill status-belum">Belum Dikerjakan</span></td>
-                <td>
-                  <a class="aksi-btn" href="simulasi-horen.html?id=2">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg>
-                    Mulai
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td class="col-num">3</td>
-                <td class="col-modul">Pronomen</td>
-                <td>Simulasi Schreiben</td>
-                <td>Level A1</td>
-                <td><span class="status-pill status-proses">Sedang Progres</span></td>
-                <td>
-                  <a class="aksi-btn is-proses" href="simulasi-schreiben.html?id=3">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg>
-                    Lanjutkan
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td class="col-num">4</td>
-                <td class="col-modul">Adjektiv</td>
-                <td>Materi</td>
-                <td>Level A1</td>
-                <td><span class="status-pill status-selesai">Selesai</span></td>
-                <td>
-                  <a class="aksi-btn is-selesai" href="pengerjaan-materi.html?id=4">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-                    Lihat
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td class="col-num">5</td>
-                <td class="col-modul">Adjektiv Deklination</td>
-                <td>Simulasi Lesen</td>
-                <td>Level A1</td>
-                <td><span class="status-pill status-selesai">Selesai</span></td>
-                <td>
-                  <a class="aksi-btn is-selesai" href="simulasi-lesen.html?id=5">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-                    Lihat
-                  </a>
-                </td>
-              </tr>
-            </tbody>
+              @forelse($modules as $index => $module)
+
+                  @php
+                      $attempt = $module->attempt;
+
+                      if (!$attempt) {
+                          $status = 'belum';
+                          $statusText = 'Belum Dikerjakan';
+                      } elseif ($attempt->status === 'selesai') {
+                          $status = 'selesai';
+                          $statusText = 'Selesai';
+                      } else {
+                          $status = 'proses';
+                          $statusText = 'Sedang Dikerjakan';
+                      }
+                  @endphp
+
+                  <tr>
+                      {{-- NO --}}
+                      <td class="col-num">
+                          {{ $modules->firstItem() + $index }}
+                      </td>
+
+                      {{-- MODUL --}}
+                      <td class="col-modul">
+                          {{ $module->judul }}
+                      </td>
+
+                      {{-- KATEGORI --}}
+                      <td>
+                          @switch($module->kategori)
+
+                              @case('materi')
+                                  Materi
+                                  @break
+
+                              @case('simulasi_horen')
+                                  Simulasi Hören
+                                  @break
+
+                              @case('simulasi_lesen')
+                                  Simulasi Lesen
+                                  @break
+
+                              @case('simulasi_schreiben')
+                                  Simulasi Schreiben
+                                  @break
+
+                              @case('simulasi_sprechen')
+                                  Simulasi Sprechen
+                                  @break
+
+                              @default
+                                  {{ $module->kategori }}
+
+                          @endswitch
+                      </td>
+
+                      {{-- LEVEL --}}
+                      <td>
+                          {{ $module->level }}
+                      </td>
+
+                      {{-- PROGRES --}}
+                      <td>
+                          @if($status === 'belum')
+                              <span class="status-pill status-belum">
+                                  Belum Dikerjakan
+                              </span>
+
+                          @elseif($status === 'proses')
+                              <span class="status-pill status-proses">
+                                  Sedang Dikerjakan
+                              </span>
+
+                          @else
+                              <span class="status-pill status-selesai">
+                                  Selesai
+                              </span>
+                          @endif
+                      </td>
+                      {{-- AKSI --}}
+                      <td>
+                          @if($status === 'belum')
+
+                              <a href="{{ route('modul.kerjakan', $module) }}"
+                                class="aksi-btn"
+                                title="Mulai mengerjakan modul">
+
+                                  <svg viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      stroke-width="2"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      aria-hidden="true">
+                                      <path d="M8 5v14l11-7z"/>
+                                  </svg>
+
+                                  Mulai
+                              </a>
+
+                          @elseif($status === 'proses')
+
+                              <a href="{{ route('modul.kerjakan', $module) }}"
+                                class="aksi-btn is-proses"
+                                title="Lanjutkan mengerjakan modul">
+
+                                  <svg viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      stroke-width="2"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      aria-hidden="true">
+                                      <path d="M8 5v14"/>
+                                      <path d="M16 5v14"/>
+                                  </svg>
+
+                                  Lanjutkan
+                              </a>
+
+                          @else
+
+                              <a href="{{ route('modul.kerjakan', $module) }}"
+                                class="aksi-btn is-selesai"
+                                title="Lihat hasil modul">
+
+                                  <svg viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      stroke-width="2"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      aria-hidden="true">
+                                      <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/>
+                                      <circle cx="12" cy="12" r="2.5"/>
+                                  </svg>
+
+                                  Lihat
+                              </a>
+
+                          @endif
+                      </td>
+                  </tr>
+
+              @empty
+
+                  <tr>
+                      <td colspan="6" class="empty-state">
+                          Belum ada modul pembelajaran untuk level
+                          {{ Auth::user()->level ?? '-' }}.
+                      </td>
+                  </tr>
+
+              @endforelse
+          </tbody>
           </table>
         </div>
 
         <!-- Catatan: paginasi di bawah ini baru tampilan (belum fungsional).
              Saat backend siap, hubungkan dengan jumlah modul & halaman sesungguhnya. -->
-        <div class="table-footer">
-          <div class="rows-per-page">
-            Rows per page
-            <select id="rowsPerPage" aria-label="Jumlah baris per halaman">
-              <option value="5" selected>5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="25">25</option>
-            </select>
-            <span class="results-count">1–5 of 30 modul</span>
+        @if($modules->total() > 0)
+          <div class="table-footer">
+
+              {{-- Jumlah data per halaman --}}
+              <form method="GET" action="{{ url()->current() }}" class="rows-per-page">
+
+                  <span>Rows per page</span>
+
+                  <select
+                      name="per_page"
+                      id="rowsPerPage"
+                      aria-label="Jumlah baris per halaman"
+                      onchange="this.form.submit()"
+                  >
+                      <option value="5" {{ request('per_page', 5) == 5 ? 'selected' : '' }}>
+                          5
+                      </option>
+
+                      <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>
+                          10
+                      </option>
+
+                      <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>
+                          15
+                      </option>
+
+                      <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>
+                          25
+                      </option>
+                  </select>
+
+                  <span class="results-count">
+                      Menampilkan
+                      {{ $modules->firstItem() }}
+                    –{{ $modules->lastItem() }}
+                      dari
+                      {{ $modules->total() }}
+                      modul
+                  </span>
+
+              </form>
+
+
+              {{-- Pagination --}}
+              @if($modules->hasPages())
+
+                  <nav class="pagination" aria-label="Navigasi halaman">
+
+                      {{-- Previous --}}
+                      @if($modules->onFirstPage())
+
+                          <button
+                              type="button"
+                              class="page-btn"
+                              disabled
+                              aria-label="Halaman sebelumnya"
+                          >
+                              <svg
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="2.4"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                              >
+                                  <path d="M15 18l-6-6 6-6"/>
+                              </svg>
+                          </button>
+
+                      @else
+
+                          <a
+                              href="{{ $modules->previousPageUrl() }}"
+                              class="page-btn"
+                              aria-label="Halaman sebelumnya"
+                          >
+                              <svg
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="2.4"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                              >
+                                  <path d="M15 18l-6-6 6-6"/>
+                              </svg>
+                          </a>
+
+                      @endif
+
+
+                      {{-- Nomor halaman --}}
+                      @foreach($modules->getUrlRange(1, $modules->lastPage()) as $page => $url)
+
+                          @if($page == $modules->currentPage())
+
+                              <span
+                                  class="page-btn active"
+                                  aria-current="page"
+                              >
+                                  {{ $page }}
+                              </span>
+
+                          @else
+
+                              <a
+                                  href="{{ $url }}"
+                                  class="page-btn"
+                                  aria-label="Halaman {{ $page }}"
+                              >
+                                  {{ $page }}
+                              </a>
+
+                          @endif
+
+                      @endforeach
+
+
+                      {{-- Next --}}
+                      @if($modules->hasMorePages())
+
+                          <a
+                              href="{{ $modules->nextPageUrl() }}"
+                              class="page-btn"
+                              aria-label="Halaman berikutnya"
+                          >
+                              <svg
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="2.4"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                              >
+                                  <path d="M9 6l6 6-6 6"/>
+                              </svg>
+                          </a>
+
+                      @else
+
+                          <button
+                              type="button"
+                              class="page-btn"
+                              disabled
+                              aria-label="Halaman berikutnya"
+                          >
+                              <svg
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="2.4"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                              >
+                                  <path d="M9 6l6 6-6 6"/>
+                              </svg>
+                          </button>
+
+                      @endif
+
+                  </nav>
+
+              @endif
+
           </div>
-          <nav class="pagination" aria-label="Navigasi halaman (contoh tampilan)">
-            <button class="page-btn" disabled aria-label="Halaman sebelumnya">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-            </button>
-            <button class="page-btn active" aria-current="page" aria-label="Halaman 1">1</button>
-            <button class="page-btn" aria-label="Halaman 2">2</button>
-            <button class="page-btn" aria-label="Halaman 3">3</button>
-            <button class="page-btn" aria-label="Halaman berikutnya">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
-            </button>
-          </nav>
-        </div>
+      @endif
       </section>
     </main>
   </div>
@@ -607,10 +873,20 @@ td.col-modul{ font-weight: 600; color: var(--navy); white-space: normal; min-wid
 <script>
 (function(){
   "use strict";
-  /* Catatan: halaman ini murni tampilan (front-end) untuk tahap ini.
-     Search, filter Level/Kategori, dan paginasi akan dibuat fungsional
-     saat backend & data modul sesungguhnya sudah tersedia. */
 
+  const searchInput = document.getElementById('searchInput');
+  const levelFilter = document.getElementById('levelFilter');
+  const kategoriFilter = document.getElementById('kategoriFilter');
+
+  function filterModules() {
+      const search = searchInput.value.toLowerCase();
+      const level = levelFilter.value.toLowerCase();
+      const kategori = kategoriFilter.value.toLowerCase();
+  }
+
+  searchInput?.addEventListener('input', filterModules);
+  levelFilter?.addEventListener('change', filterModules);
+  kategoriFilter?.addEventListener('change', filterModules);
   /* ---- Sidebar toggle (mobile) ---- */
   var sidebar = document.getElementById('sidebar');
   var menuToggle = document.getElementById('menuToggle');
