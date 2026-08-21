@@ -318,8 +318,8 @@ class ModuleController extends Controller
         ]);
 
         return redirect()
-            ->route('modul.index')
-            ->with('success', 'Modul berhasil diperbarui.');
+            ->route('modul.soal.create', ['module' => $module->id])
+            ->with('success', 'Modul berhasil diperbarui. Silahkan cek soal dan ubah jika diperlukan');
     }
 
     /**

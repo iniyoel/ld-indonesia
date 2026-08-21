@@ -327,7 +327,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     <x-dashboard-header />
 
     <main class="page-content" id="mainContent">
-      <a href="{{ route('modul.create') }}" class="back-link">
+      <a href="{{ route('modul.edit', $module) }}" class="back-link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         Kembali ke Form Modul
       </a>
@@ -368,7 +368,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
       </div>
 
       <div class="form-actions">
-        <a href="{{ route('modul.create') }}" class="back-link" style="margin-bottom:0;">Kembali</a>
+        <a href="{{ route('modul.edit', $module) }}" class="back-link" style="margin-bottom:0;">Kembali</a>
         <button type="button" class="btn-save" id="saveBtn">
           Simpan Semua Soal
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
@@ -390,6 +390,9 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
      Sprechen           = Pertanyaan/Topik Berbicara
   */
   var category = @json($module->kategori);
+  var rawQuestions = @json($questions ?? []);
+  var storageBaseUrl = "{{ asset('storage') }}/";
+
   var configMap = {
     materi: { type: 'pilihan_ganda', label: 'Pilihan Ganda', note: 'Isi 4 pilihan jawaban dan tandai satu jawaban yang benar.' },
     simulasi_horen: { type: 'pilihan_ganda', label: 'Pilihan Ganda + Audio', note: 'Upload audio untuk setiap soal Hören. Pilihan jawaban berjumlah 4.' },
@@ -565,7 +568,28 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
       var rail=document.createElement('div');rail.className='control-rail';
       var addBtn=document.createElement('button');addBtn.type='button';addBtn.className='rail-btn';addBtn.title='Tambah pertanyaan';addBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">'+icon('plus')+'</svg>';addBtn.addEventListener('click',function(){questions.splice(qi+1,0,newQuestion());render();});
-      var dup=document.createElement('button');dup.type='button';dup.className='rail-btn';dup.title='Duplikat pertanyaan';dup.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+icon('copy')+'</svg>';dup.addEventListener('click',function(){var c={id:nextId++,type:q.type,text:q.text,questionFile:null,options:q.options.map(function(o){return{text:o.text,file:null};}),correct:q.correct,penjelasan:q.penjelasan};questions.splice(qi+1,0,c);render();});
+var dup=document.createElement('button');
+dup.type='button';
+dup.className='rail-btn';
+dup.title='Duplikat pertanyaan';
+dup.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+icon('copy')+'</svg>';
+dup.addEventListener('click', function(){
+  var c = {
+    id: nextId++,
+    serverQuestionId: null, // Forces the clone to hit store instead of update
+    type: q.type,
+    text: q.text,
+    questionFile: null,
+    existingFileUrl: null,
+    options: q.options.map(function(o){
+      return { id: null, text: o.text, file: null, existingFileUrl: null };
+    }),
+    correct: q.correct,
+    penjelasan: q.penjelasan
+  };
+  questions.splice(qi + 1, 0, c);
+  render();
+});
       var delQ=document.createElement('button');delQ.type='button';delQ.className='rail-btn is-delete';delQ.title='Hapus pertanyaan';delQ.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+icon('trash')+'</svg>';delQ.addEventListener('click',function(){if(questions.length===1){alertError('Minimal harus ada satu soal.');return;}questions.splice(qi,1);render();});
       rail.appendChild(addBtn);rail.appendChild(dup);rail.appendChild(delQ);row.appendChild(card);row.appendChild(rail);container.appendChild(row);
     });
@@ -612,39 +636,148 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     return true;
   }
 
-  document.getElementById('saveBtn').addEventListener('click',async function(){
-    clearAlert(); if(!validate())return;
-    var btn=document.getElementById('saveBtn');btn.disabled=true;btn.textContent='Menyimpan...';
-    var csrf=document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    try{
-      for(var i=0;i<questions.length;i++){
-        var q=questions[i],fd=new FormData();
-        fd.append('tipe',q.type);
-        fd.append('pertanyaan',q.text.trim());
-        fd.append('penjelasan',q.penjelasan||'');
-        if(category==='simulasi_horen'&&q.questionFile)
-          fd.append('file',q.questionFile);
-        if(q.type==='pilihan_ganda'){
-          q.options.forEach(function(o,index){
-            fd.append('options['+index+'][teks]',(o.text || '').trim());
+document.getElementById('saveBtn').addEventListener('click', async function(){
+    clearAlert();
+    if(!validate()) return;
 
-            if(category==='simulasi_horen' && o.file){
-              fd.append('options['+index+'][file]',o.file);
+    var btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+    btn.textContent = 'Menyimpan...';
+
+    var csrf = document.querySelector('meta[name="csrf-token"]') ?
+               document.querySelector('meta[name="csrf-token"]').getAttribute('content') :
+               '{{ csrf_token() }}';
+
+    var storeUrl = "{{ route('modul.soal.store', $module) }}";
+    // Base URL template for update route
+    var updateUrlTemplate = "{{ route('modul.soal.update', [$module, ':question_id']) }}";
+
+    try {
+      for(var i = 0; i < questions.length; i++){
+        var q = questions[i];
+        var fd = new FormData();
+
+        fd.append('tipe', q.type);
+        fd.append('pertanyaan', q.text.trim());
+        fd.append('penjelasan', q.penjelasan || '');
+
+        if(category === 'simulasi_horen' && q.questionFile){
+          fd.append('file', q.questionFile);
+        }
+
+        if(q.type === 'pilihan_ganda'){
+          q.options.forEach(function(o, index){
+            if (o.id) {
+              fd.append('options[' + index + '][id]', o.id);
+            }
+            fd.append('options[' + index + '][teks]', (o.text || '').trim());
+
+            if(category === 'simulasi_horen' && o.file){
+              fd.append('options[' + index + '][file]', o.file);
             }
           });
-          fd.append('correct_option',String(q.correct));
+          fd.append('correct_option', String(q.correct));
         }
-        var response=await fetch("{{ route('modul.soal.store',$module) }}",{method:'POST',headers:{'X-CSRF-TOKEN':csrf,'Accept':'application/json'},body:fd});
-        if(!response.ok){var msg='Gagal menyimpan soal nomor '+(i+1)+'.';try{var data=await response.json();if(data.message)msg=data.message;if(data.errors){var key=Object.keys(data.errors)[0];if(key&&data.errors[key]&&data.errors[key][0])msg=data.errors[key][0];}}catch(e){}throw new Error(msg);}
+
+        // Determine dynamic endpoint and method
+        var targetUrl = storeUrl;
+        if (q.serverQuestionId) {
+          targetUrl = updateUrlTemplate.replace(':question_id', q.serverQuestionId);
+        }
+
+        var response = await fetch(targetUrl, {
+          method: 'POST',
+          headers: {
+            'X-CSRF-TOKEN': csrf,
+            'Accept': 'application/json'
+          },
+          body: fd
+        });
+
+        if(!response.ok){
+          var msg = 'Gagal menyimpan soal nomor ' + (i + 1) + '.';
+          try {
+            var data = await response.json();
+            if(data.message) msg = data.message;
+            if(data.errors){
+              var key = Object.keys(data.errors)[0];
+              if(key && data.errors[key] && data.errors[key][0]) msg = data.errors[key][0];
+            }
+          } catch(e){}
+          throw new Error(msg);
+        }
       }
-      var finish=await fetch("{{ route('modul.soal.finish',$module) }}",{method:'POST',headers:{'X-CSRF-TOKEN':csrf,'Accept':'application/json'}});
-      if(!finish.ok)throw new Error('Soal berhasil disimpan, tetapi modul gagal diselesaikan.');
-      successAlert.textContent='Semua soal berhasil disimpan.';successAlert.style.display='block';
-      setTimeout(function(){window.location.href="{{ route('modul.index') }}";},700);
-    }catch(error){console.error(error);alertError(error.message||'Terjadi kesalahan saat menyimpan soal.');btn.disabled=false;btn.textContent='Simpan Semua Soal';}
+
+      var finish = await fetch("{{ route('modul.soal.finish', $module) }}", {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': csrf,
+          'Accept': 'application/json'
+        }
+      });
+
+    if(!finish.ok){
+        var errorData = await finish.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Gagal menyelesaikan modul (HTTP ' + finish.status + ').');
+      }
+
+      successAlert.textContent = 'Semua soal berhasil disimpan.';
+      successAlert.style.display = 'block';
+      setTimeout(function(){
+        window.location.href = "{{ route('modul.index') }}";
+      }, 700);
+
+    } catch(error) {
+      console.error(error);
+      alertError(error.message || 'Terjadi kesalahan saat menyimpan soal.');
+      btn.disabled = false;
+      btn.textContent = 'Simpan Semua Soal';
+    }
   });
 
-  questions.push(newQuestion());render();
+if (rawQuestions && rawQuestions.length > 0) {
+    questions = rawQuestions.map(function(q) {
+      var mappedOptions = [];
+      var correctIndex = 0;
+
+      if (q.options && q.options.length > 0) {
+        mappedOptions = q.options.map(function(opt, oi) {
+          if (opt.is_correct || opt.benar) {
+            correctIndex = oi;
+          }
+          return {
+            id: opt.id || null,
+            text: opt.teks || opt.text || '',
+            file: null,
+            existingFileUrl: opt.file_path ? (storageBaseUrl + opt.file_path) : null
+          };
+        });
+      } else if (config.type === 'pilihan_ganda') {
+        mappedOptions = [
+          { id: null, text: '', file: null, existingFileUrl: null },
+          { id: null, text: '', file: null, existingFileUrl: null },
+          { id: null, text: '', file: null, existingFileUrl: null },
+          { id: null, text: '', file: null, existingFileUrl: null }
+        ];
+      }
+
+      return {
+        id: nextId++,
+        serverQuestionId: q.id || null, // Stores DB ID for modul.soal.update
+        type: q.tipe || q.type || config.type,
+        text: q.pertanyaan || q.text || '',
+        questionFile: null,
+        existingFileUrl: q.file_path ? (storageBaseUrl + q.file_path) : null,
+        options: mappedOptions,
+        correct: correctIndex,
+        penjelasan: q.penjelasan || ''
+      };
+    });
+  } else {
+    questions.push(newQuestion());
+  }
+
+  render();
 
   var sidebar=document.getElementById('sidebar'),menuToggle=document.getElementById('menuToggle'),sidebarClose=document.getElementById('sidebarClose'),backdrop=document.getElementById('backdrop');
   function openSidebar(){sidebar.classList.add('open');backdrop.classList.add('show');menuToggle.setAttribute('aria-expanded','true');}

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Module;
 use App\Models\Question;
 use App\Models\QuestionOption;
@@ -9,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use App\Models\ActivityLog;
 
 class QuestionController extends Controller
 {
@@ -125,14 +125,13 @@ class QuestionController extends Controller
 
             foreach ($validated['options'] as $index => $option) {
 
-                $hasText = !empty($option['teks'] ?? '');
+                $hasText = ! empty($option['teks'] ?? '');
                 $hasFile = $request->hasFile("options.$index.file");
 
-                if (!$hasText && !$hasFile) {
+                if (! $hasText && ! $hasFile) {
                     return back()
                         ->withErrors([
-                            "options.$index.teks" =>
-                                'Pilihan jawaban harus memiliki teks atau gambar.',
+                            "options.$index.teks" => 'Pilihan jawaban harus memiliki teks atau gambar.',
                         ])
                         ->withInput();
                 }
@@ -182,7 +181,7 @@ class QuestionController extends Controller
 
             $lastOrder = $module->questions()->max('urutan');
 
-            $question = new Question();
+            $question = new Question;
 
             $question->module_id = $module->id;
             $question->tipe = $forcedType;
@@ -224,7 +223,7 @@ class QuestionController extends Controller
 
                 foreach ($validated['options'] as $index => $option) {
 
-                    $optionModel = new QuestionOption();
+                    $optionModel = new QuestionOption;
 
                     $optionModel->question_id = $question->id;
 
@@ -273,9 +272,8 @@ class QuestionController extends Controller
                 'target_table' => 'questions',
                 'target_id' => $question->id,
 
-                'deskripsi' =>
-                    'Menambahkan soal pada modul "' .
-                    $module->judul .
+                'deskripsi' => 'Menambahkan soal pada modul "'.
+                    $module->judul.
                     '"',
 
                 'metadata' => [
@@ -315,9 +313,8 @@ class QuestionController extends Controller
             'aksi' => 'hapus',
             'target_table' => 'questions',
             'target_id' => $question->id,
-            'deskripsi' =>
-                'Menghapus soal dari modul "' .
-                $module->judul .
+            'deskripsi' => 'Menghapus soal dari modul "'.
+                $module->judul.
                 '"',
             'metadata' => [
                 'module_id' => $module->id,
@@ -339,8 +336,7 @@ class QuestionController extends Controller
         if ($questionCount === 0) {
             return back()
                 ->withErrors([
-                    'questions' =>
-                        'Minimal harus ada satu soal sebelum modul diselesaikan.',
+                    'questions' => 'Minimal harus ada satu soal sebelum modul diselesaikan.',
                 ]);
         }
 
@@ -369,9 +365,8 @@ class QuestionController extends Controller
             'aksi' => 'selesai',
             'target_table' => 'modules',
             'target_id' => $module->id,
-            'deskripsi' =>
-                'Menyelesaikan input soal modul "' .
-                $module->judul .
+            'deskripsi' => 'Menyelesaikan input soal modul "'.
+                $module->judul.
                 '"',
             'metadata' => [
                 'jumlah_soal' => $questionCount,
@@ -391,5 +386,186 @@ class QuestionController extends Controller
                 'success',
                 'Modul dan soal berhasil disimpan.'
             );
+    }
+
+    public function update(Request $request, Module $module, Question $question)
+    {
+        // Ensure the question actually belongs to this module
+        abort_if($question->module_id !== $module->id, 404);
+
+        /*
+        |--------------------------------------------------------------------------
+        | 1. Tentukan tipe soal berdasarkan kategori modul
+        |--------------------------------------------------------------------------
+        */
+        $forcedType = match ($module->kategori) {
+            'materi',
+            'simulasi_horen',
+            'simulasi_lesen' => 'pilihan_ganda',
+
+            'simulasi_schreiben',
+            'simulasi_sprechen' => 'paragraf',
+
+            default => null,
+        };
+
+        abort_if($forcedType === null, 404);
+
+        /*
+        |--------------------------------------------------------------------------
+        | 2. Validasi Request
+        |--------------------------------------------------------------------------
+        */
+        $validated = $request->validate([
+            'tipe' => [
+                'required',
+                'in:pilihan_ganda,paragraf',
+            ],
+            'pertanyaan' => [
+                'required',
+                'string',
+            ],
+            'penjelasan' => [
+                'nullable',
+                'string',
+            ],
+            'file' => [
+                'nullable',
+                'file',
+                'mimes:mp3,wav,m4a,ogg',
+                'max:10240',
+            ],
+            'options' => [
+                'required_if:tipe,pilihan_ganda',
+                'array',
+                'size:4',
+            ],
+            'options.*.id' => [
+                'nullable',
+                'integer',
+            ],
+            'options.*.teks' => [
+                'nullable',
+                'string',
+                'max:1000',
+            ],
+            'options.*.file' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:2048',
+            ],
+            'correct_option' => [
+                'required_if:tipe,pilihan_ganda',
+                'integer',
+                'between:0,3',
+            ],
+        ]);
+
+        if ($validated['tipe'] !== $forcedType) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tipe soal tidak sesuai dengan kategori modul.',
+            ], 422);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 3. Validasi Khusus Pilihan Ganda (Teks, File Baru, atau File Lama)
+        |--------------------------------------------------------------------------
+        */
+        $existingOptions = $question->options()->orderBy('urutan_tampil')->get();
+
+        if ($forcedType === 'pilihan_ganda') {
+            foreach ($validated['options'] as $index => $option) {
+                $hasText = ! empty(trim($option['teks'] ?? ''));
+                $hasNewFile = $request->hasFile("options.$index.file");
+                $hasExistingFile = isset($existingOptions[$index]) && ! empty($existingOptions[$index]->file_path);
+
+                if (! $hasText && ! $hasNewFile && ! $hasExistingFile) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Opsi '.($index + 1).' harus memiliki teks atau gambar.',
+                    ], 422);
+                }
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 4. Update Database & Storage Transaction
+        |--------------------------------------------------------------------------
+        */
+        DB::transaction(function () use ($request, $module, $question, $validated, $forcedType, $existingOptions) {
+
+            $question->tipe = $forcedType;
+            $question->pertanyaan = $validated['pertanyaan'];
+            $question->penjelasan = $validated['penjelasan'] ?? null;
+
+            // Process Hören question audio update
+            if ($module->kategori === 'simulasi_horen' && $request->hasFile('file')) {
+                // Delete old file if present
+                if ($question->file_path && Storage::disk('public')->exists($question->file_path)) {
+                    Storage::disk('public')->delete($question->file_path);
+                }
+
+                $file = $request->file('file');
+                $question->file_path = $file->store('questions', 'public');
+                $question->file_type = $file->getMimeType();
+            }
+
+            $question->save();
+
+            // Process Options update
+            if ($forcedType === 'pilihan_ganda') {
+                foreach ($validated['options'] as $index => $optionData) {
+                    // Find existing option row or initialize a new one if missing
+                    $optionModel = $existingOptions->get($index) ?? new QuestionOption;
+
+                    $optionModel->question_id = $question->id;
+                    $optionModel->teks = $optionData['teks'] ?? null;
+                    $optionModel->is_correct = ((int) $validated['correct_option'] === $index);
+                    $optionModel->urutan_tampil = $index;
+
+                    // If a new image is uploaded for this option
+                    if ($request->hasFile("options.$index.file")) {
+                        // Remove old image
+                        if ($optionModel->file_path && Storage::disk('public')->exists($optionModel->file_path)) {
+                            Storage::disk('public')->delete($optionModel->file_path);
+                        }
+
+                        $image = $request->file("options.$index.file");
+                        $optionModel->file_path = $image->store('question-options', 'public');
+                        $optionModel->file_type = $image->getMimeType();
+                    }
+
+                    $optionModel->save();
+                }
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Activity Log
+            |--------------------------------------------------------------------------
+            */
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'aksi' => 'ubah',
+                'target_table' => 'questions',
+                'target_id' => $question->id,
+                'deskripsi' => 'Memperbarui soal ID '.$question->id.' pada modul "'.$module->judul.'"',
+                'metadata' => [
+                    'module_id' => $module->id,
+                    'question_id' => $question->id,
+                    'tipe' => $question->tipe,
+                    'kategori' => $module->kategori,
+                ],
+            ]);
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Soal berhasil diperbarui.',
+        ]);
     }
 }
