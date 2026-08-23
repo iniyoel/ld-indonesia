@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-
 class Module extends Model
 {
     use HasFactory;
@@ -19,8 +18,6 @@ class Module extends Model
         'kategori',
         'file_path',
         'file_type',
-        'teks_bacaan',
-        'topik_sprechen',
         'dibuat_oleh',
         'diperbarui_oleh',
     ];
