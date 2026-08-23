@@ -661,7 +661,10 @@ td.col-modul{ font-weight: 600; color: var(--navy); white-space: normal; min-wid
 
                           @else
 
-                              <a href="{{ route('modul.kerjakan', $module) }}"
+                              <a href="{{ route('siswa.modul.hasil', [
+                                  'module' => $module->id,
+                                  'attempt' => $attempt->id
+                              ]) }}"
                                 class="aksi-btn is-selesai"
                                 title="Lihat hasil modul">
 

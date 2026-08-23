@@ -142,6 +142,14 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
   .result-panel{ padding:20px 16px; }
 }
 @media (max-width:640px){ .user-meta{ display:none; } }
+
+.quiz-option.is-selected{
+  box-shadow:0 0 0 2px rgba(236,78,140,0.12);
+}
+
+#prevBtn[hidden] {
+    display: none !important;
+}
 </style>
 </head>
 <body>
@@ -163,13 +171,25 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
     </div>
     <nav class="sidebar-nav">
       <ul>
-        <li><a href="dashboard-siswa.html" class="nav-link" id="navDashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>Dashboard</a></li>
-        <li><a href="modul-pembelajaran.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C2 4.7 2.7 4 4.7 4c2.6 0 5.3 1 7.3 2.5C14 4.9 16.7 4 19.3 4c2 0 2.7.7 2.7 1.5v13c0-.8-.7-1.5-2.7-1.5-2.6 0-5.3.9-7.3 2.5-2-1.6-4.7-2.5-7.3-2.5C2.7 17 2 17.7 2 18.5z"/><path d="M12 6.5V20"/></svg>Modul Pembelajaran</a></li>
-        <li><a href="performa-siswa.html" class="nav-link active" id="navPerforma" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12.5" y="8" width="3" height="10"/><rect x="18" y="5" width="3" height="13"/></svg>Performa Siswa</a></li>
+        <li><a href="{{ route('page', ['page' => 'dashboard-siswa']) }}" class="nav-link" id="navDashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>Dashboard</a></li>
+        <li><a href="{{ route('page', ['page' => 'modul-pembelajaran']) }}" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C2 4.7 2.7 4 4.7 4c2.6 0 5.3 1 7.3 2.5C14 4.9 16.7 4 19.3 4c2 0 2.7.7 2.7 1.5v13c0-.8-.7-1.5-2.7-1.5-2.6 0-5.3.9-7.3 2.5-2-1.6-4.7-2.5-7.3-2.5C2.7 17 2 17.7 2 18.5z"/><path d="M12 6.5V20"/></svg>Modul Pembelajaran</a></li>
+        <li><a href="{{ route('page', ['page' => 'performa-siswa']) }}" class="nav-link active" id="navPerforma" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12.5" y="8" width="3" height="10"/><rect x="18" y="5" width="3" height="13"/></svg>Performa Siswa</a></li>
       </ul>
     </nav>
     <div class="sidebar-footer">
-      <a href="keluar.html" class="logout-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>Keluar</a>
+      <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" class="logout-link" style="width: 100%; text-align: left;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <path d="M16 17l5-5-5-5"/>
+                  <path d="M21 12H9"/>
+              </svg>
+              Keluar
+          </button>
+      </form>
     </div>
   </aside>
 
@@ -192,7 +212,7 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
 
       <section class="result-panel" aria-labelledby="resultTitle">
         <div class="result-head">
-          <h1 id="resultTitle>{{ $module->judul }}</h1>
+          <h1 id="resultTitle">{{ $module->judul }}</h1>
           @if($attempt->nilai !== null)
               <span class="score-chip" id="scoreChip">
                   Nilai: {{ number_format($attempt->nilai, 0) }}
@@ -213,7 +233,7 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
 
         <div class="quiz-layout">
           <section class="quiz-card" aria-label="Detail jawaban soal">
-            <p class="quiz-progress" id="quizProgress">Soal 1 dari 15</p>
+            <p class="quiz-progress" id="quizProgress">Soal 1 dari {{ $questions->count() }}</p>
             <p class="quiz-question" id="quizQuestion"></p>
 
             <div class="quiz-options" id="quizOptions"></div>
@@ -221,7 +241,7 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
             <div class="explanation-box">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.5-2 1.8-2 3.5"/><path d="M12 17h.01"/></svg>
               <div>
-                <div class="explanation-title">Kenapa jawaban ini benar?</div>
+                <div class="explanation-title">Penjelasan Jawaban</div>
                 <div class="explanation-text" id="explanationText"></div>
               </div>
             </div>
@@ -252,35 +272,84 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
   </div>
 </div>
 @php
-    $questionsData = $questions->map(function ($question) use ($attempt) {
+    $questionsData = $questions->map(function ($question) {
+
         $studentAnswer = $question->studentAnswer;
+
+        $selectedId = $studentAnswer?->question_option_id;
+
+        /*
+         * Ambil ID opsi yang benar langsung dari database.
+         */
+        $correctOption = $question->options
+            ->firstWhere('is_benar', 1);
+
+        $correctId = $correctOption?->id;
+
+        /*
+         * Tentukan apakah jawaban siswa benar.
+         */
+        $isAnswered = $selectedId !== null;
+
+        $isCorrect = $isAnswered
+            && $correctId !== null
+            && (int) $selectedId === (int) $correctId;
 
         return [
             'id' => $question->id,
+
             'text' => $question->pertanyaan,
+
             'explanation' => $question->penjelasan,
 
-            'selected' => $studentAnswer?->question_option_id,
+            'selected' => $selectedId,
 
-            'is_correct' => $studentAnswer?->is_correct ?? false,
+            'correct_option_id' => $correctId,
+
+            'is_answered' => $isAnswered,
+
+            'is_correct' => $isCorrect,
 
             'options' => $question->options
                 ->sortBy('urutan_tampil')
-                ->map(function ($option) use ($studentAnswer) {
+                ->values()
+                ->map(function ($option) use ($selectedId) {
+
+                    $isCorrectOption =
+                        (int) $option->is_benar === 1;
+
+                    $isSelected =
+                        $selectedId !== null &&
+                        (int) $option->id === (int) $selectedId;
+
                     return [
                         'id' => $option->id,
+
                         'text' => $option->teks,
-                        'is_correct' => (bool) $option->is_benar,
-                        'is_selected' => $studentAnswer?->question_option_id === $option->id,
+
+                        /*
+                         * Status benar diambil LANGSUNG
+                         * dari is_benar database.
+                         */
+                        'is_correct' => $isCorrectOption,
+
+                        /*
+                         * Status pilihan siswa.
+                         */
+                        'is_selected' => $isSelected,
                     ];
                 })
-                ->values()
                 ->toArray(),
         ];
     })
     ->values()
     ->toArray();
 @endphp
+
+<script>
+    const QUESTIONS = @json($questionsData);
+</script>
+
 <script>
 (function(){
     "use strict";
@@ -376,56 +445,58 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
 
         quizOptions.innerHTML = '';
 
-
         q.options.forEach(function(option, i){
 
+            /*
+            * Apakah opsi ini adalah jawaban yang benar?
+            */
             var isCorrect =
-                option.is_correct;
+                option.is_correct === true ||
+                option.is_correct === 1 ||
+                option.is_correct === "1";
 
             var isSelected =
-                option.id === q.selected;
+                option.is_selected === true ||
+                option.is_selected === 1 ||
+                option.is_selected === "1";
 
             var isWrongSelected =
                 isSelected &&
                 !isCorrect;
 
-
-            var row =
-                document.createElement('div');
-
+            var row = document.createElement('div');
 
             row.className =
                 'quiz-option' +
-                (isCorrect
-                    ? ' is-correct'
-                    : '') +
-                (isWrongSelected
-                    ? ' is-wrong-selected'
-                    : '');
-
+                (isCorrect ? ' is-correct' : '') +
+                (isWrongSelected ? ' is-wrong-selected' : '') +
+                (isSelected ? ' is-selected' : '');
 
             var tag = '';
 
-
-            if (isCorrect) {
+            if (isSelected && isCorrect) {
 
                 tag =
                     '<span class="quiz-option-tag">' +
-                    'Jawaban Benar' +
+                    'Jawabanmu • Jawaban Benar' +
                     '</span>';
 
-            } else if (isWrongSelected) {
+            } else if (isSelected && isWrongSelected) {
 
                 tag =
                     '<span class="quiz-option-tag">' +
                     'Jawabanmu' +
                     '</span>';
+
+            } else if (isCorrect) {
+
+                tag =
+                    '<span class="quiz-option-tag">' +
+                    'Jawaban Benar' +
+                    '</span>';
             }
 
-
-            var text =
-                option.text || '';
-
+            var text = option.text || '';
 
             row.innerHTML =
                 '<span class="quiz-option-letter">' +
@@ -438,9 +509,7 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
 
                 tag;
 
-
             quizOptions.appendChild(row);
-
         });
 
 
@@ -450,8 +519,13 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
         |--------------------------------------------------------------------------
         */
 
-        prevBtn.hidden =
-            idx === 0;
+        if (idx === 0) {
+            prevBtn.hidden = true;
+            prevBtn.style.display = 'none';
+        } else {
+            prevBtn.hidden = false;
+            prevBtn.style.display = 'inline-flex';
+        }
 
 
         var isLast =
@@ -536,22 +610,17 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
             /*
              * Tentukan warna berdasarkan jawaban.
              */
-
-            if (q.selected !== null) {
+            if (q.is_answered) {
 
                 if (q.is_correct) {
 
-                    classes.push(
-                        'is-correct'
-                    );
+                    classes.push('is-correct');
 
                 } else {
 
-                    classes.push(
-                        'is-wrong'
-                    );
-                }
+                    classes.push('is-wrong');
 
+                }
             }
 
 
