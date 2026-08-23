@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\ActivityLog;
 use App\Models\Attempt;
+use App\Models\Answer;
+use Illuminate\Support\Facades\DB;
 
 
 class ModuleController extends Controller
@@ -328,70 +330,82 @@ class ModuleController extends Controller
     public function start(Module $module)
     {
         $user = Auth::user();
-
-        // Hanya siswa yang boleh mengerjakan modul.
+        // Hanya siswa yang boleh mengerjakan modul
         abort_unless($user->role === 'siswa', 403);
-
-        // Siswa hanya boleh mengerjakan modul sesuai levelnya.
+        // Siswa hanya boleh mengerjakan modul sesuai level
         abort_unless($module->level === $user->level, 403);
 
         /*
         |--------------------------------------------------------------------------
-        | Buat attempt baru
+        | Cek apakah masih ada attempt yang sedang dikerjakan
         |--------------------------------------------------------------------------
-        |
-        | Satu attempt = satu kali pengerjaan.
-        | Karena tabel attempts memang dirancang sebagai riwayat pengerjaan,
-        | kita TIDAK menggunakan updateOrCreate di sini.
-        |
         */
-        $attempt = Attempt::create([
-            'user_id' => $user->id,
-            'module_id' => $module->id,
-            'status' => 'sedang_dikerjakan',
-            'dimulai_pada' => now(),
-        ]);
+
+        $attempt = Attempt::query()
+            ->where('user_id', $user->id)
+            ->where('module_id', $module->id)
+            ->where('status', 'sedang_dikerjakan')
+            ->latest('dimulai_pada')
+            ->first();
 
         /*
         |--------------------------------------------------------------------------
-        | Arahkan ke halaman sesuai kategori modul
+        | Kalau belum ada, buat attempt baru
         |--------------------------------------------------------------------------
         */
 
-        if ($module->kategori === 'materi') {
-            return view('pages.pengerjaan-materi', [
-                'module' => $module,
-                'attempt' => $attempt,
+        if (!$attempt) {
+            $attempt = Attempt::create([
+                'user_id' => $user->id,
+                'module_id' => $module->id,
+                'status' => 'sedang_dikerjakan',
+                'dimulai_pada' => now(),
             ]);
         }
 
         /*
         |--------------------------------------------------------------------------
-        | Modul simulasi
+        | Materi
         |--------------------------------------------------------------------------
         */
 
-        $questions = $module->questions()
-            ->with('options')
-            ->get();
+        if ($module->kategori === 'materi') {
+            return redirect()->route('modul.kerjakan', $module);
+        }
 
-        return view('pages.pengerjaan-soal', [
-            'module' => $module,
-            'questions' => $questions,
-            'attempt' => $attempt,
-        ]);
+        /*
+        |--------------------------------------------------------------------------
+        | Simulasi / soal
+        |--------------------------------------------------------------------------
+        */
+
+        return redirect()->route('siswa.modul.questions', $module);
     }
 
     /**
      * Siswa menyelesaikan pengerjaan modul.
      */
-    public function finishAttempt(Module $module)
+    public function finishAttempt(Request $request, Module $module)
     {
         $user = Auth::user();
 
         abort_unless($user->role === 'siswa', 403);
 
         abort_unless($module->level === $user->level, 403);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validasi jawaban dari browser
+        |--------------------------------------------------------------------------
+        */
+
+        $validated = $request->validate([
+            'answers' => ['nullable', 'array'],
+            'marked' => ['nullable', 'array'],
+        ]);
+
+        $answers = $validated['answers'] ?? [];
+        $marked = $validated['marked'] ?? [];
 
         /*
         |--------------------------------------------------------------------------
@@ -410,20 +424,132 @@ class ModuleController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Tandai selesai
+        | Ambil semua soal + pilihan jawaban
         |--------------------------------------------------------------------------
         */
 
-        $attempt->update([
-            'status' => 'selesai',
-            'selesai_pada' => now(),
-        ]);
+        $questions = $module->questions()
+            ->with('options')
+            ->orderBy('urutan')
+            ->get();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Simpan jawaban + hitung nilai
+        |--------------------------------------------------------------------------
+        */
+
+        $correctCount = 0;
+        $totalQuestions = $questions->count();
+
+        DB::transaction(function () use (
+            $questions,
+            $answers,
+            $marked,
+            $attempt,
+            &$correctCount,
+            $totalQuestions
+        ) {
+
+            foreach ($questions as $index => $question) {
+
+                /*
+                * Frontend akan mengirim ID question_option,
+                * bukan nomor index A/B/C/D.
+                */
+                $selectedOptionId = $answers[$index] ?? null;
+
+                /*
+                * Kalau siswa tidak menjawab soal,
+                * jangan buat record jawaban.
+                */
+                if (!$selectedOptionId) {
+                    continue;
+                }
+
+                /*
+                * Pastikan option tersebut benar-benar
+                * milik question yang bersangkutan.
+                */
+                $selectedOption = $question->options
+                    ->firstWhere('id', (int) $selectedOptionId);
+
+                if (!$selectedOption) {
+                    continue;
+                }
+
+                $isCorrect = (bool) $selectedOption->is_correct;
+
+                if ($isCorrect) {
+                    $correctCount++;
+                }
+
+                Answer::create([
+                    'attempt_id' => $attempt->id,
+                    'question_id' => $question->id,
+                    'question_option_id' => $selectedOption->id,
+                    'jawaban_teks' => null,
+                    'is_correct' => $isCorrect,
+                    'ditandai' => (bool) ($marked[$index] ?? false),
+                    'waktu_menjawab_detik' => null,
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Hitung nilai
+            |--------------------------------------------------------------------------
+            */
+
+            $nilai = null;
+
+            /*
+            * Schreiben dan Sprechen tidak dihitung otomatis.
+            */
+            if (!in_array($attempt->module->kategori, [
+                'simulasi_schreiben',
+                'simulasi_sprechen',
+            ], true)) {
+
+                $nilai = $totalQuestions > 0
+                    ? round(($correctCount / $totalQuestions) * 100)
+                    : 0;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Selesaikan attempt
+            |--------------------------------------------------------------------------
+            */
+
+            $attempt->update([
+                'status' => 'selesai',
+                'nilai' => $nilai,
+                'selesai_pada' => now(),
+            ]);
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | Response
+        |--------------------------------------------------------------------------
+        */
 
         return response()->json([
             'success' => true,
             'message' => 'Pengerjaan modul berhasil diselesaikan.',
             'attempt_id' => $attempt->id,
+
+            /*
+            * Setelah selesai, langsung menuju halaman hasil.
+            */
+            'result_url' => route('siswa.modul.hasil', [
+                'module' => $module->id,
+                'attempt' => $attempt->id,
+            ]),
         ]);
     }
+
+    
 
 }

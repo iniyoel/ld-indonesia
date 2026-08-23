@@ -301,15 +301,49 @@ class PageController extends Controller
     {
         $user = $request->user();
 
-        // Hanya siswa yang boleh mengerjakan soal
+        // Hanya siswa yang boleh mengerjakan
         abort_unless($user->role === 'siswa', 403);
 
-        // Siswa hanya boleh mengakses modul sesuai levelnya
+        // Siswa hanya boleh mengerjakan modul sesuai level
         abort_unless($module->level === $user->level, 403);
 
-        // Ambil soal berdasarkan modul
-        // JANGAN mengambil is_correct karena jawaban benar
-        // tidak boleh dikirim ke browser siswa.
+        /*
+        |--------------------------------------------------------------------------
+        | Ambil attempt yang sedang dikerjakan
+        |--------------------------------------------------------------------------
+        |
+        | Kalau siswa sudah pernah masuk ke halaman ini dan masih memiliki
+        | attempt aktif, gunakan attempt tersebut.
+        |
+        */
+        $attempt = Attempt::query()
+            ->where('user_id', $user->id)
+            ->where('module_id', $module->id)
+            ->where('status', 'sedang_dikerjakan')
+            ->latest('dimulai_pada')
+            ->first();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Kalau belum ada attempt aktif, buat attempt baru
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$attempt) {
+            $attempt = Attempt::create([
+                'user_id' => $user->id,
+                'module_id' => $module->id,
+                'status' => 'sedang_dikerjakan',
+                'dimulai_pada' => now(),
+            ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ambil soal
+        |--------------------------------------------------------------------------
+        */
+
         $questions = $module->questions()
             ->with([
                 'options' => function ($query) {
@@ -322,6 +356,8 @@ class PageController extends Controller
         return view('pages.pengerjaan-soal', [
             'module' => $module,
             'questions' => $questions,
+            'attempt' => $attempt,
+            'totalQuestions' => $questions->count(),
         ]);
     }
 
@@ -428,6 +464,88 @@ class PageController extends Controller
 
         return view('pages.pengerjaan-materi', [
             'module' => $module,
+        ]);
+    }
+
+    /**
+     * Menampilkan hasil pengerjaan siswa.
+     */
+    public function hasilPengerjaan(
+        Request $request,
+        Module $module,
+        Attempt $attempt
+    ): View {
+
+        $user = $request->user();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Security check
+        |--------------------------------------------------------------------------
+        */
+
+        abort_unless($user->role === 'siswa', 403);
+
+        abort_unless($module->level === $user->level, 403);
+
+        /*
+        * Attempt harus benar-benar milik siswa yang login
+        * dan berasal dari modul yang sedang dibuka.
+        */
+        abort_unless($attempt->user_id === $user->id, 403);
+
+        abort_unless($attempt->module_id === $module->id, 403);
+
+        abort_unless($attempt->status === 'selesai', 404);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ambil soal
+        |--------------------------------------------------------------------------
+        */
+
+        $questions = $module->questions()
+            ->with('options')
+            ->orderBy('urutan')
+            ->get();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ambil jawaban siswa
+        |--------------------------------------------------------------------------
+        */
+
+        $answers = $attempt->answers()
+            ->with([
+                'selectedOption',
+                'question',
+            ])
+            ->get()
+            ->keyBy('question_id');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Gabungkan soal + jawaban siswa
+        |--------------------------------------------------------------------------
+        */
+
+        $questions->each(function ($question) use ($answers) {
+
+            $question->studentAnswer =
+                $answers->get($question->id);
+
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | Data ke Blade
+        |--------------------------------------------------------------------------
+        */
+
+        return view('pages.detail-pengerjaan', [
+            'module' => $module,
+            'attempt' => $attempt,
+            'questions' => $questions,
         ]);
     }
 }

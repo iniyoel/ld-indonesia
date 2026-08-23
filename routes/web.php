@@ -269,6 +269,10 @@ Route::middleware('auth')->group(function () {
         ->name('siswa.modul.finish')
         ->middleware('auth');
 
+    Route::get('/modul/{module}/hasil/{attempt}', [PageController::class, 'hasilPengerjaan'])
+        ->name('siswa.modul.hasil')
+        ->middleware('auth');
+
     /*
     |--------------------------------------------------------------------------
     | Halaman Generik

@@ -577,8 +577,9 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
                               : '-' }}
                       </td>
                       <td>
-                          <a class="action-btn" href="{{ route('page', ['page' => $detailPage]) }}?id={{ $attempt->id }}&from=dashboard" aria-label="Lihat detail pengerjaan {{ $attempt->module->judul ?? 'modul' }}"
-                          >
+                          <a class="action-btn"
+                            href="{{ route('page', ['page' => 'hasil-pengerjaan']) }}?id={{ $attempt->id }}&from=dashboard"
+                            aria-label="Lihat detail pengerjaan {{ $attempt->module->judul ?? 'modul' }}">
                               <svg
                                   viewBox="0 0 24 24"
                                   fill="none"
@@ -617,22 +618,12 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
   "use strict";
   renderUserIdentity('{{ Auth::user()->name }}');
 
-  /* ---- Sidebar toggle (mobile) ---- */
   var sidebar = document.getElementById('sidebar');
   var menuToggle = document.getElementById('menuToggle');
   var sidebarClose = document.getElementById('sidebarClose');
   var backdrop = document.getElementById('backdrop');
-
-  function openSidebar(){
-    sidebar.classList.add('open');
-    backdrop.classList.add('show');
-    menuToggle.setAttribute('aria-expanded', 'true');
-  }
-  function closeSidebar(){
-    sidebar.classList.remove('open');
-    backdrop.classList.remove('show');
-    menuToggle.setAttribute('aria-expanded', 'false');
-  }
+  function openSidebar(){ sidebar.classList.add('open'); backdrop.classList.add('show'); menuToggle.setAttribute('aria-expanded', 'true'); }
+  function closeSidebar(){ sidebar.classList.remove('open'); backdrop.classList.remove('show'); menuToggle.setAttribute('aria-expanded', 'false'); }
   menuToggle.addEventListener('click', openSidebar);
   sidebarClose.addEventListener('click', closeSidebar);
   backdrop.addEventListener('click', closeSidebar);

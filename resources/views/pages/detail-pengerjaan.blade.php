@@ -185,17 +185,31 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
     </header>
 
     <main class="page-content" id="mainContent">
-      <a href="performa-siswa.html" class="back-link" id="backLink">
+      <a href="{{ route('page', ['page' => 'performa-siswa']) }}" class="back-link" id="backLink">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
         Kembali
       </a>
 
       <section class="result-panel" aria-labelledby="resultTitle">
         <div class="result-head">
-          <h1 id="resultTitle">Artikel Das</h1>
-          <span class="score-chip" id="scoreChip">Nilai: 80</span>
+          <h1 id="resultTitle>{{ $module->judul }}</h1>
+          @if($attempt->nilai !== null)
+              <span class="score-chip" id="scoreChip">
+                  Nilai: {{ number_format($attempt->nilai, 0) }}
+              </span>
+          @else
+              <span class="score-chip" id="scoreChip">
+                  Menunggu Penilaian
+              </span>
+          @endif
         </div>
-        <p class="result-desc">Hasil pengerjaan latihan soal — lihat jawabanmu dan jawaban yang benar untuk tiap soal di bawah ini.</p>
+        <p class="result-desc">
+            Hasil pengerjaan modul
+            @if($attempt->selesai_pada)
+                — selesai pada
+                {{ $attempt->selesai_pada->format('d M Y, H:i') }}
+            @endif
+        </p>
 
         <div class="quiz-layout">
           <section class="quiz-card" aria-label="Detail jawaban soal">
@@ -237,159 +251,463 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
     </main>
   </div>
 </div>
+@php
+    $questionsData = $questions->map(function ($question) use ($attempt) {
+        $studentAnswer = $question->studentAnswer;
 
+        return [
+            'id' => $question->id,
+            'text' => $question->pertanyaan,
+            'explanation' => $question->penjelasan,
+
+            'selected' => $studentAnswer?->question_option_id,
+
+            'is_correct' => $studentAnswer?->is_correct ?? false,
+
+            'options' => $question->options
+                ->sortBy('urutan_tampil')
+                ->map(function ($option) use ($studentAnswer) {
+                    return [
+                        'id' => $option->id,
+                        'text' => $option->teks,
+                        'is_correct' => (bool) $option->is_benar,
+                        'is_selected' => $studentAnswer?->question_option_id === $option->id,
+                    ];
+                })
+                ->values()
+                ->toArray(),
+        ];
+    })
+    ->values()
+    ->toArray();
+@endphp
 <script>
 (function(){
-  "use strict";
+    "use strict";
 
-  /* ==================================================================
-     CATATAN INTEGRASI BACKEND
-     - QUESTIONS di bawah ini (soal, opsi, jawaban benar, jawaban siswa,
-       dan penjelasan) masih data contoh statis untuk modul "Artikel Das".
-       Saat backend siap, ganti dengan fetch('/api/riwayat/{attemptId}')
-       yang memuat hasil pengerjaan sesungguhnya berdasarkan id yang
-       dikirim lewat parameter URL (?id=...).
-     - Nilai pada .score-chip juga masih contoh statis (80), idealnya
-       dihitung dari jumlah jawaban benar / total soal oleh backend.
-  ================================================================== */
-  var QUESTIONS = [
-    { text: '… Buch ist sehr interessant. Ich lese es jeden Tag.', options: ['Der', 'Die', 'Das', 'Ein'], correct: 2, selected: 2,
-      explanation: '"Buch" berjenis kelamin netral dalam bahasa Jerman, sehingga artikel bestimmt yang tepat adalah "das" (das Buch).' },
-    { text: '… Frau arbeitet als Lehrerin in Berlin.', options: ['Der', 'Die', 'Das', 'Eine'], correct: 1, selected: 1,
-      explanation: '"Frau" berjenis kelamin feminin, sehingga artikel yang tepat adalah "die" (die Frau).' },
-    { text: 'Kannst du mir … Fenster öffnen? Es ist warm hier.', options: ['der', 'die', 'das', 'den'], correct: 2, selected: 0,
-      explanation: '"Fenster" berjenis kelamin netral. Dalam kasus akusatif, artikel netral tidak berubah, sehingga tetap "das" (das Fenster).' },
-    { text: '… Kinder spielen jeden Nachmittag im Park.', options: ['Der', 'Die', 'Das', 'Ein'], correct: 1, selected: 1,
-      explanation: '"Kinder" adalah bentuk jamak (Plural), dan artikel bestimmt untuk semua kata benda jamak adalah "die".' },
-    { text: 'Ich brauche … Auto, um zur Arbeit zu fahren.', options: ['der', 'die', 'ein', 'eine'], correct: 2, selected: 2,
-      explanation: '"Auto" berjenis kelamin netral, sehingga artikel tak tentu (unbestimmt) yang tepat adalah "ein" (ein Auto).' },
-    { text: '… Tisch im Wohnzimmer ist aus Holz.', options: ['Der', 'Die', 'Das', 'Den'], correct: 0, selected: 0,
-      explanation: '"Tisch" berjenis kelamin maskulin, sehingga dalam kasus nominatif artikelnya adalah "der" (der Tisch).' },
-    { text: 'Wir besuchen … Museum am Wochenende.', options: ['der', 'die', 'das', 'dem'], correct: 2, selected: 3,
-      explanation: '"Museum" berjenis kelamin netral. Sebagai objek akusatif setelah kata kerja "besuchen", artikel netral tetap "das" (das Museum).' },
-    { text: '… Katze schläft den ganzen Tag auf dem Sofa.', options: ['Der', 'Die', 'Das', 'Ein'], correct: 1, selected: 1,
-      explanation: '"Katze" berjenis kelamin feminin, sehingga artikelnya adalah "die" (die Katze).' },
-    { text: 'Hast du … Schlüssel für die Wohnung gesehen?', options: ['der', 'die', 'den', 'das'], correct: 2, selected: 2,
-      explanation: '"Schlüssel" berjenis kelamin maskulin. Sebagai objek akusatif, artikel maskulin berubah dari "der" menjadi "den".' },
-    { text: '… Wetter heute ist wirklich schön.', options: ['Der', 'Die', 'Das', 'Ein'], correct: 2, selected: 2,
-      explanation: '"Wetter" berjenis kelamin netral, sehingga artikel bestimmt-nya adalah "das" (das Wetter).' },
-    { text: 'Er kauft … Brot für das Frühstück.', options: ['der', 'die', 'das', 'ein'], correct: 2, selected: 2,
-      explanation: '"Brot" berjenis kelamin netral. Dalam kasus akusatif, artikel netral tidak berubah dari "das".' },
-    { text: '… Straße vor unserem Haus ist sehr laut.', options: ['Der', 'Die', 'Das', 'Eine'], correct: 1, selected: 1,
-      explanation: '"Straße" berjenis kelamin feminin, sehingga artikelnya adalah "die" (die Straße).' },
-    { text: 'Ich schreibe … Brief an meine Familie.', options: ['der', 'die', 'einen', 'das'], correct: 2, selected: 0,
-      explanation: '"Brief" berjenis kelamin maskulin. Sebagai objek akusatif dengan artikel tak tentu, bentuknya berubah dari "ein" menjadi "einen".' },
-    { text: '… Zug nach München fährt um acht Uhr ab.', options: ['Der', 'Die', 'Das', 'Ein'], correct: 0, selected: 0,
-      explanation: '"Zug" berjenis kelamin maskulin, sehingga artikel nominatifnya adalah "der" (der Zug).' },
-    { text: 'Kannst du … Tür bitte schließen? Es ist kalt.', options: ['der', 'die', 'das', 'den'], correct: 1, selected: 1,
-      explanation: '"Tür" berjenis kelamin feminin. Dalam kasus akusatif, artikel feminin tidak berubah dari "die".' }
-  ];
-  var LETTERS = ['A', 'B', 'C', 'D'];
+    var LETTERS = ['A', 'B', 'C', 'D'];
 
-  var totalCorrect = QUESTIONS.filter(function(q){ return q.selected === q.correct; }).length;
-  var score = Math.round((totalCorrect / QUESTIONS.length) * 100);
-  document.getElementById('scoreChip').textContent = 'Nilai: ' + score;
+    var state = {
+        current: 0
+    };
 
-  var state = { current: 0 };
+    var quizProgress =
+        document.getElementById('quizProgress');
 
-  var quizProgress = document.getElementById('quizProgress');
-  var quizQuestion = document.getElementById('quizQuestion');
-  var quizOptions = document.getElementById('quizOptions');
-  var explanationText = document.getElementById('explanationText');
-  var soalGrid = document.getElementById('soalGrid');
-  var prevBtn = document.getElementById('prevBtn');
-  var nextBtn = document.getElementById('nextBtn');
-  var nextBtnLabel = document.getElementById('nextBtnLabel');
-  var nextBtnIcon = document.getElementById('nextBtnIcon');
+    var quizQuestion =
+        document.getElementById('quizQuestion');
 
-  function renderQuestion(){
-    var idx = state.current;
-    var q = QUESTIONS[idx];
-    quizProgress.textContent = 'Soal ' + (idx + 1) + ' dari ' + QUESTIONS.length;
-    quizQuestion.textContent = q.text;
-    explanationText.textContent = q.explanation;
+    var quizOptions =
+        document.getElementById('quizOptions');
 
-    quizOptions.innerHTML = '';
-    q.options.forEach(function(optText, i){
-      var isCorrect = i === q.correct;
-      var isWrongSelected = i === q.selected && q.selected !== q.correct;
+    var explanationText =
+        document.getElementById('explanationText');
 
-      var row = document.createElement('div');
-      row.className = 'quiz-option' + (isCorrect ? ' is-correct' : '') + (isWrongSelected ? ' is-wrong-selected' : '');
+    var soalGrid =
+        document.getElementById('soalGrid');
 
-      var tag = '';
-      if (isCorrect) tag = '<span class="quiz-option-tag">Jawaban Benar</span>';
-      else if (isWrongSelected) tag = '<span class="quiz-option-tag">Jawabanmu</span>';
+    var prevBtn =
+        document.getElementById('prevBtn');
 
-      row.innerHTML =
-        '<span class="quiz-option-letter">' + LETTERS[i] + '</span>' +
-        '<span class="quiz-option-text">' + optText + '</span>' + tag;
-      quizOptions.appendChild(row);
-    });
+    var nextBtn =
+        document.getElementById('nextBtn');
 
-    prevBtn.hidden = idx === 0;
-    var isLast = idx === QUESTIONS.length - 1;
-    nextBtnLabel.textContent = isLast ? 'Selesai' : 'Selanjutnya';
-    nextBtnIcon.innerHTML = isLast ? '<path d="M20 6 9 17l-5-5"/>' : '<path d="M5 12h14M13 6l6 6-6 6"/>';
-  }
+    var nextBtnLabel =
+        document.getElementById('nextBtnLabel');
 
-  function renderGrid(){
-    soalGrid.innerHTML = '';
-    QUESTIONS.forEach(function(q, i){
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.textContent = i + 1;
-      btn.setAttribute('aria-label', 'Ke soal ' + (i + 1) + (q.selected === q.correct ? ' (benar)' : ' (salah)'));
-      var classes = ['soal-btn'];
-      if (i === state.current) classes.push('is-current');
-      classes.push(q.selected === q.correct ? 'is-correct' : 'is-wrong');
-      btn.className = classes.join(' ');
-      btn.addEventListener('click', function(){
-        state.current = i;
-        renderQuestion();
-        renderGrid();
-      });
-      soalGrid.appendChild(btn);
-    });
-  }
+    var nextBtnIcon =
+        document.getElementById('nextBtnIcon');
 
-  prevBtn.addEventListener('click', function(){
-    if (state.current > 0){ state.current--; renderQuestion(); renderGrid(); }
-  });
-  nextBtn.addEventListener('click', function(){
-    var isLast = state.current === QUESTIONS.length - 1;
-    if (isLast){
-      window.location.href = 'performa-siswa.html';
-    } else {
-      state.current++;
-      renderQuestion();
-      renderGrid();
+
+    /*
+    |--------------------------------------------------------------------------
+    | Tidak ada soal
+    |--------------------------------------------------------------------------
+    */
+
+    if (!QUESTIONS.length) {
+
+        quizProgress.textContent =
+            'Belum ada soal';
+
+        quizQuestion.textContent =
+            'Belum ada soal untuk modul ini.';
+
+        quizOptions.innerHTML = '';
+
+        explanationText.textContent =
+            '';
+
+        soalGrid.innerHTML =
+            '<p style="color:var(--gray-500);font-size:.9rem;">' +
+            'Belum ada soal.' +
+            '</p>';
+
+        prevBtn.hidden = true;
+        nextBtn.hidden = true;
+
+        return;
     }
-  });
 
-  renderQuestion();
-  renderGrid();
 
-  /* Jika halaman dibuka lewat Dashboard, arahkan tombol Kembali ke Dashboard;
-     jika dari Performa Siswa (default), tetap ke performa-siswa.html. */
-  var params = new URLSearchParams(window.location.search);
-  if (params.get('from') === 'dashboard'){
-    document.getElementById('backLink').href = 'dashboard-siswa.html';
-    document.getElementById('navPerforma').classList.remove('active');
-    document.getElementById('navPerforma').removeAttribute('aria-current');
-    document.getElementById('navDashboard').classList.add('active');
-    document.getElementById('navDashboard').setAttribute('aria-current', 'page');
-  }
+    /*
+    |--------------------------------------------------------------------------
+    | Render soal
+    |--------------------------------------------------------------------------
+    */
 
-  var sidebar = document.getElementById('sidebar');
-  var menuToggle = document.getElementById('menuToggle');
-  var sidebarClose = document.getElementById('sidebarClose');
-  var backdrop = document.getElementById('backdrop');
-  function openSidebar(){ sidebar.classList.add('open'); backdrop.classList.add('show'); menuToggle.setAttribute('aria-expanded', 'true'); }
-  function closeSidebar(){ sidebar.classList.remove('open'); backdrop.classList.remove('show'); menuToggle.setAttribute('aria-expanded', 'false'); }
-  menuToggle.addEventListener('click', openSidebar);
-  sidebarClose.addEventListener('click', closeSidebar);
-  backdrop.addEventListener('click', closeSidebar);
+    function renderQuestion(){
+
+        var idx = state.current;
+        var q = QUESTIONS[idx];
+
+        quizProgress.textContent =
+            'Soal ' +
+            (idx + 1) +
+            ' dari ' +
+            QUESTIONS.length;
+
+        quizQuestion.textContent =
+            q.text;
+
+        explanationText.textContent =
+            q.explanation ||
+            'Tidak ada penjelasan untuk soal ini.';
+
+        quizOptions.innerHTML = '';
+
+
+        q.options.forEach(function(option, i){
+
+            var isCorrect =
+                option.is_correct;
+
+            var isSelected =
+                option.id === q.selected;
+
+            var isWrongSelected =
+                isSelected &&
+                !isCorrect;
+
+
+            var row =
+                document.createElement('div');
+
+
+            row.className =
+                'quiz-option' +
+                (isCorrect
+                    ? ' is-correct'
+                    : '') +
+                (isWrongSelected
+                    ? ' is-wrong-selected'
+                    : '');
+
+
+            var tag = '';
+
+
+            if (isCorrect) {
+
+                tag =
+                    '<span class="quiz-option-tag">' +
+                    'Jawaban Benar' +
+                    '</span>';
+
+            } else if (isWrongSelected) {
+
+                tag =
+                    '<span class="quiz-option-tag">' +
+                    'Jawabanmu' +
+                    '</span>';
+            }
+
+
+            var text =
+                option.text || '';
+
+
+            row.innerHTML =
+                '<span class="quiz-option-letter">' +
+                LETTERS[i] +
+                '</span>' +
+
+                '<span class="quiz-option-text">' +
+                escapeHtml(text) +
+                '</span>' +
+
+                tag;
+
+
+            quizOptions.appendChild(row);
+
+        });
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Tombol navigasi
+        |--------------------------------------------------------------------------
+        */
+
+        prevBtn.hidden =
+            idx === 0;
+
+
+        var isLast =
+            idx === QUESTIONS.length - 1;
+
+
+        nextBtnLabel.textContent =
+            isLast
+                ? 'Kembali ke Performa'
+                : 'Selanjutnya';
+
+
+        nextBtnIcon.innerHTML =
+            isLast
+
+                ? '<path d="M5 12h14"/>' +
+                  '<path d="m12 5 7 7-7 7"/>'
+
+                : '<path d="M5 12h14M13 6l6 6-6 6"/>';
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Escape HTML
+    |--------------------------------------------------------------------------
+    */
+
+    function escapeHtml(value){
+
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Daftar soal
+    |--------------------------------------------------------------------------
+    */
+
+    function renderGrid(){
+
+        soalGrid.innerHTML = '';
+
+
+        QUESTIONS.forEach(function(q, i){
+
+            var btn =
+                document.createElement('button');
+
+            btn.type =
+                'button';
+
+            btn.textContent =
+                i + 1;
+
+            btn.setAttribute(
+                'aria-label',
+                'Ke soal ' + (i + 1)
+            );
+
+
+            var classes =
+                ['soal-btn'];
+
+
+            if (i === state.current) {
+
+                classes.push(
+                    'is-current'
+                );
+            }
+
+
+            /*
+             * Tentukan warna berdasarkan jawaban.
+             */
+
+            if (q.selected !== null) {
+
+                if (q.is_correct) {
+
+                    classes.push(
+                        'is-correct'
+                    );
+
+                } else {
+
+                    classes.push(
+                        'is-wrong'
+                    );
+                }
+
+            }
+
+
+            btn.className =
+                classes.join(' ');
+
+
+            btn.addEventListener(
+                'click',
+                function(){
+
+                    state.current =
+                        i;
+
+                    renderQuestion();
+                    renderGrid();
+
+                }
+            );
+
+
+            soalGrid.appendChild(btn);
+
+        });
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Sebelumnya
+    |--------------------------------------------------------------------------
+    */
+
+    prevBtn.addEventListener(
+        'click',
+        function(){
+
+            if (state.current > 0) {
+
+                state.current--;
+
+                renderQuestion();
+                renderGrid();
+
+            }
+
+        }
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Selanjutnya / kembali
+    |--------------------------------------------------------------------------
+    */
+
+    nextBtn.addEventListener(
+        'click',
+        function(){
+
+            var isLast =
+                state.current ===
+                QUESTIONS.length - 1;
+
+
+            if (isLast) {
+
+                window.location.href =
+                    '{{ route('page', ['page' => 'performa-siswa']) }}';
+
+            } else {
+
+                state.current++;
+
+                renderQuestion();
+                renderGrid();
+
+            }
+
+        }
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Initial render
+    |--------------------------------------------------------------------------
+    */
+
+    renderQuestion();
+    renderGrid();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Sidebar mobile
+    |--------------------------------------------------------------------------
+    */
+
+    var sidebar =
+        document.getElementById('sidebar');
+
+    var menuToggle =
+        document.getElementById('menuToggle');
+
+    var sidebarClose =
+        document.getElementById('sidebarClose');
+
+    var backdrop =
+        document.getElementById('backdrop');
+
+
+    function openSidebar(){
+
+        sidebar.classList.add('open');
+
+        backdrop.classList.add('show');
+
+        menuToggle.setAttribute(
+            'aria-expanded',
+            'true'
+        );
+
+    }
+
+
+    function closeSidebar(){
+
+        sidebar.classList.remove('open');
+
+        backdrop.classList.remove('show');
+
+        menuToggle.setAttribute(
+            'aria-expanded',
+            'false'
+        );
+
+    }
+
+
+    menuToggle.addEventListener(
+        'click',
+        openSidebar
+    );
+
+    sidebarClose.addEventListener(
+        'click',
+        closeSidebar
+    );
+
+    backdrop.addEventListener(
+        'click',
+        closeSidebar
+    );
+
 })();
 </script>
 </body>

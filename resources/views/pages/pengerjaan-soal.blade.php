@@ -597,7 +597,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
             btn.addEventListener('click', function() {
 
-                state.answers[idx] = i;
+                state.answers[idx] = option.id;
 
                 renderQuestion();
                 renderGrid();
@@ -742,8 +742,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
               })
               .then(function(data) {
 
-                  window.location.href =
-                      '{{ route('page', ['page' => 'modul-pembelajaran']) }}';
+                  window.location.href = data.result_url;
 
               })
               .catch(function(error) {
