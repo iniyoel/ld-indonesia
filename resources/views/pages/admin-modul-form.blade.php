@@ -290,7 +290,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
     <main class="page-content" id="mainContent">
       <div class="page-heading">
-        <h1>Tambah Modul</h1>
+        <h1>{{ isset($module) ? 'Edit Modul' : 'Tambah Modul' }}</h1>
       </div>
       @if ($errors->any())
           <div style="
@@ -310,14 +310,17 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
               </ul>
           </div>
       @endif
-      <form id="modulForm" action="{{ route('modul.store') }}" method="POST" enctype="multipart/form-data">
+      <form id="modulForm" action="{{ isset($module) ? route('modul.update', $module->id) : route('modul.store') }}" method="POST" enctype="multipart/form-data">
          @csrf
+            @if(isset($module))
+                @method('PUT')
+            @endif
         <div class="form-grid">
           <!-- ============ KOLOM KIRI: DATA MODUL ============ -->
           <div>
             <div class="field">
               <label for="judulModul">Judul Modul</label>
-              <input type="text" id="judulModul" name="judul" placeholder="Contoh: Artikel Der, Das, Die" value="{{ old('judul') }}" aria-describedby="judulError">
+              <input type="text" id="judulModul" name="judul" placeholder="Contoh: Artikel Der, Das, Die" value="{{ old('judul', $module->judul ?? '') }}" aria-describedby="judulError">
               <p class="field-error" id="judulError">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
                 <span>Judul modul wajib diisi.</span>
@@ -329,11 +332,12 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
                 <label for="levelModul">Level</label>
                 <div class="select-wrap">
                   <select id="levelModul" name="level" required aria-describedby="levelError">
-                    <option value="" selected disabled>Pilih Level</option>
-                    <option value="A1">A1</option>
-                    <option value="A2">A2</option>
-                    <option value="B1">B1</option>
-                    <option value="B2">B2</option>
+                    <option value="" disabled {{ old('level', $module->level ?? '') == '' ? 'selected' : '' }}>Pilih Level</option>
+                    @foreach(['A1', 'A2', 'B1', 'B2'] as $lvl)
+                      <option value="{{ $lvl }}" {{ old('level', $module->level ?? '') === $lvl ? 'selected' : '' }}>
+                        {{ $lvl }}
+                      </option>
+                    @endforeach
                   </select>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
                 </div>
@@ -346,13 +350,23 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
               <div class="field">
                 <label for="kategoriModul">Kategori</label>
                 <div class="select-wrap">
+                    @php
+                    $currentKategori = old('kategori', $module->kategori ?? '');
+                    $kategoriOptions = [
+                      'materi' => 'Materi',
+                      'simulasi_horen' => 'Simulasi Hören',
+                      'simulasi_lesen' => 'Simulasi Lesen',
+                      'simulasi_schreiben' => 'Simulasi Schreiben',
+                      'simulasi_sprechen' => 'Simulasi Sprechen'
+                    ];
+                  @endphp
                   <select id="kategoriModul" name="kategori" required aria-describedby="kategoriError">
-                    <option value="" selected disabled>Pilih Kategori</option>
-                    <option value="materi">Materi</option>
-                    <option value="simulasi_horen">Simulasi Hören</option>
-                    <option value="simulasi_lesen">Simulasi Lesen</option>
-                    <option value="simulasi_schreiben">Simulasi Schreiben</option>
-                    <option value="simulasi_sprechen">Simulasi Sprechen</option>
+                    <option value="" disabled {{ $currentKategori == '' ? 'selected' : '' }}>Pilih Kategori</option>
+                    @foreach($kategoriOptions as $val => $label)
+                      <option value="{{ $val }}" {{ $currentKategori === $val ? 'selected' : '' }}>
+                        {{ $label }}
+                      </option>
+                    @endforeach
                   </select>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
                 </div>
@@ -365,7 +379,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
             <div class="field" style="margin-bottom:0;">
               <label for="deskripsiModul">Deskripsi</label>
-              <textarea id="deskripsiModul" name="deskripsi" placeholder="Tuliskan deskripsi singkat mengenai modul ini...">{{ old('deskripsi') }}</textarea>
+              <textarea id="deskripsiModul" name="deskripsi" placeholder="Tuliskan deskripsi singkat mengenai modul ini...">{{ old('deskripsi', $module->deskripsi ?? '') }}</textarea>
             </div>
           </div>
 

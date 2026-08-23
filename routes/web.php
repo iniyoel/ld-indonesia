@@ -233,14 +233,19 @@ Route::middleware('auth')->group(function () {
         ->name('modul.soal.store')
         ->middleware('can:manage-modules');
 
-    Route::delete('/modul/{module}/soal/{question}', [QuestionController::class, 'destroy'])
-        ->name('modul.soal.destroy')
-        ->middleware('can:manage-modules');
-
+    // Route ini harus sebelum modul.soal.update agar laravel tidak mengakses route update ketika proses finish soal
     Route::post('/modul/{module}/soal/selesai', [QuestionController::class, 'finish'])
         ->name('modul.soal.finish')
         ->middleware('can:manage-modules');
     
+    Route::post('/modul/{module}/soal/{question}', [QuestionController::class, 'update'])
+        ->name('modul.soal.update')
+        ->middleware('can:manage-modules');
+
+    Route::delete('/modul/{module}/soal/{question}/destroy', [QuestionController::class, 'destroy'])
+        ->name('modul.soal.destroy')
+        ->middleware('can:manage-modules');
+
     // =====================================================
     // SISWA — Mengerjakan Modul
     // ===================================================== 
