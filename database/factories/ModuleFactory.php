@@ -2,11 +2,15 @@
 
 namespace Database\Factories;
 
+use App\Models\Module;
+use App\Models\Question;
+use App\Models\QuestionOption;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Module>
+ * @extends Factory<Module>
  */
 class ModuleFactory extends Factory
 {
@@ -19,11 +23,34 @@ class ModuleFactory extends Factory
             'kategori' => 'materi',
             'file_path' => null,
             'file_type' => null,
-            'teks_bacaan' => null,
-            'topik_sprechen' => null,
             'dibuat_oleh' => User::factory()->admin(),
             'diperbarui_oleh' => null,
+            'sudah_rilis' => false,
         ];
+    }
+
+    /**
+     * Buat soal serta opsi jawaban otomatis setelah membuat modul
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Module $module) {
+            Question::factory()
+                ->count(3)
+                ->for($module)
+                ->has(
+                    QuestionOption::factory()
+                        ->count(4)
+                        ->state(new Sequence(
+                            ['is_correct' => true],
+                            ['is_correct' => false],
+                            ['is_correct' => false],
+                            ['is_correct' => false],
+                        )),
+                    'options'
+                )
+                ->create();
+        });
     }
 
     public function kategori(string $kategori): static

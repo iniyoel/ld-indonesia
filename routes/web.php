@@ -218,6 +218,9 @@ Route::middleware('auth')->group(function () {
         ->name('modul.update')
         ->middleware('can:manage-modules');
 
+    Route::patch('/modul/{module}/release', [ModuleController::class, 'toggleRelease'])
+        ->name('modul.release')
+        ->middleware('can:manage-modules');
 
     /*
     |--------------------------------------------------------------------------

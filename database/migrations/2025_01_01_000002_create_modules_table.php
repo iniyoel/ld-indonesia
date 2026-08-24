@@ -45,6 +45,8 @@ return new class extends Migration
             $table->foreignId('dibuat_oleh')->constrained('users')->cascadeOnDelete();
             $table->foreignId('diperbarui_oleh')->nullable()->constrained('users')->nullOnDelete();
 
+            $table->boolean('sudah_rilis')->default(false);
+
             $table->timestamps();
 
             $table->index(['kategori', 'level']);

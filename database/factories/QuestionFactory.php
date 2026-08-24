@@ -3,19 +3,22 @@
 namespace Database\Factories;
 
 use App\Models\Module;
+use App\Models\Question;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Question>
+ * @extends Factory<Question>
  */
 class QuestionFactory extends Factory
 {
+    protected $model = Question::class;
+
     public function definition(): array
     {
         return [
             'module_id' => Module::factory(),
             'tipe' => 'pilihan_ganda',
-            'pertanyaan' => fake()->sentence() . ' ___',
+            'pertanyaan' => fake()->sentence().' ___',
             'file_path' => null,
             'penjelasan' => fake()->sentence(),
             'urutan' => 0,

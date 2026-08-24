@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
+use App\Models\Answer;
+use App\Models\Attempt;
 use App\Models\Module;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use App\Models\ActivityLog;
-use App\Models\Attempt;
-use App\Models\Answer;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Storage;
 
 class ModuleController extends Controller
 {
@@ -28,7 +27,6 @@ class ModuleController extends Controller
 
         return view('pages.admin-modul-pembelajaran', compact('modules'));
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -95,7 +93,7 @@ class ModuleController extends Controller
             ],
         ]);
 
-        $module = new Module();
+        $module = new Module;
 
         $module->judul = $validated['judul'];
         $module->deskripsi = $validated['deskripsi'];
@@ -121,7 +119,7 @@ class ModuleController extends Controller
             'aksi' => 'tambah',
             'target_table' => 'modules',
             'target_id' => $module->id,
-            'deskripsi' => 'Menambahkan modul "' . $module->judul . '"',
+            'deskripsi' => 'Menambahkan modul "'.$module->judul.'"',
             'metadata' => [
                 'kategori' => $module->kategori,
                 'level' => $module->level,
@@ -201,7 +199,7 @@ class ModuleController extends Controller
             'aksi' => 'hapus',
             'target_table' => 'modules',
             'target_id' => $moduleId,
-            'deskripsi' => 'Menghapus modul "' . $moduleTitle . '"',
+            'deskripsi' => 'Menghapus modul "'.$moduleTitle.'"',
             'metadata' => [
                 'kategori' => $moduleKategori,
                 'level' => $moduleLevel,
@@ -214,7 +212,7 @@ class ModuleController extends Controller
         |--------------------------------------------------------------------------
         */
         return response()->json([
-            'message' => 'Modul "' . $moduleTitle . '" berhasil dihapus.',
+            'message' => 'Modul "'.$moduleTitle.'" berhasil dihapus.',
         ]);
     }
 
@@ -308,7 +306,7 @@ class ModuleController extends Controller
             'aksi' => 'ubah',
             'target_table' => 'modules',
             'target_id' => $module->id,
-            'deskripsi' => 'Mengubah modul "' . $module->judul . '"',
+            'deskripsi' => 'Mengubah modul "'.$module->judul.'"',
             'metadata' => [
                 'judul_lama' => $judulLama,
                 'judul_baru' => $module->judul,
@@ -354,7 +352,7 @@ class ModuleController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if (!$attempt) {
+        if (! $attempt) {
             $attempt = Attempt::create([
                 'user_id' => $user->id,
                 'module_id' => $module->id,
@@ -463,7 +461,7 @@ class ModuleController extends Controller
                 * Kalau siswa tidak menjawab soal,
                 * jangan buat record jawaban.
                 */
-                if (!$selectedOptionId) {
+                if (! $selectedOptionId) {
                     continue;
                 }
 
@@ -474,7 +472,7 @@ class ModuleController extends Controller
                 $selectedOption = $question->options
                     ->firstWhere('id', (int) $selectedOptionId);
 
-                if (!$selectedOption) {
+                if (! $selectedOption) {
                     continue;
                 }
 
@@ -506,7 +504,7 @@ class ModuleController extends Controller
             /*
             * Schreiben dan Sprechen tidak dihitung otomatis.
             */
-            if (!in_array($attempt->module->kategori, [
+            if (! in_array($attempt->module->kategori, [
                 'simulasi_schreiben',
                 'simulasi_sprechen',
             ], true)) {
@@ -550,6 +548,32 @@ class ModuleController extends Controller
         ]);
     }
 
-    
+    public function toggleRelease(Module $module)
+    {
+        // Balik status rilis saat ini (true jadi false, false jadi true)
+        $statusBaru = ! $module->sudah_rilis;
 
+        // Update data modul
+        $module->sudah_rilis = $statusBaru;
+        $module->diperbarui_oleh = Auth::id();
+        $module->save();
+
+        // Tentukan teks status untuk deskripsi log
+        $statusTeks = $statusBaru ? 'merilis (publish)' : 'menarik publikasi (unrelease)';
+
+        // Catat aktivitas admin/tutor (menyesuaikan pola activity log Anda)
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'aksi' => 'ubah',
+            'target_table' => 'modules',
+            'target_id' => $module->id,
+            'deskripsi' => 'Berhasil '.$statusTeks.' modul "'.$module->judul.'"',
+            'metadata' => [
+                'judul' => $module->judul,
+                'sudah_rilis' => $statusBaru,
+            ],
+        ]);
+
+        return back()->with('success', 'Status rilis modul "'.$module->judul.'" berhasil diperbarui.');
+    }
 }
