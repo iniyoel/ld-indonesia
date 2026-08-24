@@ -32,8 +32,9 @@ class DatabaseSeeder extends Seeder
             'email' => 'siswa@ldindonesia.test',
         ]);
 
-        Module::factory()->create([
+        Module::factory(2)->create([
             'dibuat_oleh' => $admin->id,
+            'sudah_rilis' => true,
         ]);
 
         Module::factory()->create([

@@ -25,6 +25,7 @@ class ModuleFactory extends Factory
             'file_type' => null,
             'dibuat_oleh' => User::factory()->admin(),
             'diperbarui_oleh' => null,
+            'sudah_rilis' => false,
         ];
     }
 

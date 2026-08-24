@@ -20,6 +20,7 @@ class Module extends Model
         'file_type',
         'dibuat_oleh',
         'diperbarui_oleh',
+        'sudah_rilis',
     ];
 
     /*
@@ -51,6 +52,16 @@ class Module extends Model
     {
         return $this->hasMany(Question::class)
             ->orderBy('urutan');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATUS RELEASE MODUL
+    |--------------------------------------------------------------------------
+    */
+    public function scopeReleased($query)
+    {
+        return $query->where('sudah_rilis', true);
     }
 
     /*
