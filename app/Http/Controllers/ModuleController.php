@@ -317,6 +317,8 @@ class ModuleController extends Controller
         abort_unless($user->role === 'siswa', 403);
         // Siswa hanya boleh mengerjakan modul sesuai level
         abort_unless($module->level === $user->level, 403);
+        // Siswa hanya boleh mengerjakan modul yang sudah rilis
+        abort_unless($module->sudah_rilis === true, 403);
 
         /*
         |--------------------------------------------------------------------------
@@ -375,6 +377,9 @@ class ModuleController extends Controller
         abort_unless($user->role === 'siswa', 403);
 
         abort_unless($module->level === $user->level, 403);
+
+        // Siswa hanya boleh mengerjakan modul yang sudah rilis
+        abort_unless($module->sudah_rilis === true, 403);
 
         /*
         |--------------------------------------------------------------------------

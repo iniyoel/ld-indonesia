@@ -38,13 +38,14 @@ class PageController extends Controller
                 abort(403, 'Role pengguna tidak dikenali.');
         }
     }
+
     /**
      * Render halaman pages.* generik untuk halaman yang belum/tidak
      * perlu controller khusus (mis. admin-pengguna).
      */
     public function show(Request $request, string $page): View
     {
-        $view = 'pages.' . $page;
+        $view = 'pages.'.$page;
 
         abort_unless(view()->exists($view), 404);
 
@@ -81,14 +82,15 @@ class PageController extends Controller
                 ->where('status', '!=', 'selesai')
                 ->pluck('module_id');
 
-            $modulesTodo = \App\Models\Module::query()
+            $modulesTodo = Module::query()
+                ->released() // Hanya mengirim modul yang sudah rilis
                 ->where('level', $user->level)
                 ->whereNotIn('id', $completedModuleIds)
                 ->with([
                     'attempts' => function ($query) use ($user) {
                         $query->where('user_id', $user->id)
                             ->latest('updated_at');
-                    }
+                    },
                 ])
                 ->latest()
                 ->take(5)
@@ -100,7 +102,7 @@ class PageController extends Controller
             |--------------------------------------------------------------------------
             */
 
-            $recentActivities = \App\Models\Attempt::query()
+            $recentActivities = Attempt::query()
                 ->where('user_id', $user->id)
                 ->where('status', 'selesai')
                 ->whereNotNull('selesai_pada')
@@ -133,6 +135,7 @@ class PageController extends Controller
             */
 
             $modulesQuery = Module::query()
+                ->released() // Hanya mengirim modul yang sudah rilis
                 ->where('level', $user->level);
 
             /*
@@ -143,8 +146,8 @@ class PageController extends Controller
 
             if ($search !== '') {
                 $modulesQuery->where(function ($query) use ($search) {
-                    $query->where('judul', 'like', '%' . $search . '%')
-                        ->orWhere('deskripsi', 'like', '%' . $search . '%');
+                    $query->where('judul', 'like', '%'.$search.'%')
+                        ->orWhere('deskripsi', 'like', '%'.$search.'%');
                 });
             }
 
@@ -307,6 +310,9 @@ class PageController extends Controller
         // Siswa hanya boleh mengerjakan modul sesuai level
         abort_unless($module->level === $user->level, 403);
 
+        // Siswa hanya boleh mengerjakan modul yang sudah rilis
+        abort_unless($module->sudah_rilis === true, 403);
+
         /*
         |--------------------------------------------------------------------------
         | Ambil attempt yang sedang dikerjakan
@@ -329,7 +335,7 @@ class PageController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if (!$attempt) {
+        if (! $attempt) {
             $attempt = Attempt::create([
                 'user_id' => $user->id,
                 'module_id' => $module->id,
@@ -348,7 +354,7 @@ class PageController extends Controller
             ->with([
                 'options' => function ($query) {
                     $query->orderBy('urutan_tampil');
-                }
+                },
             ])
             ->orderBy('urutan')
             ->get();
@@ -434,17 +440,17 @@ class PageController extends Controller
             ->limit(5)
             ->get();
 
-            // =============================================================
-            // 6. PERFORMA SISWA TERBARU
-            // =============================================================
-            // Semua pengerjaan yang sudah selesai ditampilkan. Untuk
-            // Schreiben yang belum dinilai, nilai ditampilkan sebagai '-'.
-            $data['performance'] = Attempt::query()
-                ->with(['user', 'module'])
-                ->where('status', 'selesai')
-                ->latest('selesai_pada')
-                ->limit(5)
-                ->get();
+        // =============================================================
+        // 6. PERFORMA SISWA TERBARU
+        // =============================================================
+        // Semua pengerjaan yang sudah selesai ditampilkan. Untuk
+        // Schreiben yang belum dinilai, nilai ditampilkan sebagai '-'.
+        $data['performance'] = Attempt::query()
+            ->with(['user', 'module'])
+            ->where('status', 'selesai')
+            ->latest('selesai_pada')
+            ->limit(5)
+            ->get();
 
         return $data;
     }
@@ -461,6 +467,9 @@ class PageController extends Controller
 
         // Siswa hanya boleh mengerjakan modul sesuai levelnya
         abort_unless($module->level === $user->level, 403);
+
+        // Siswa hanya boleh mengerjakan modul yang sudah rilis
+        abort_unless($module->sudah_rilis === true, 403);
 
         return view('pages.pengerjaan-materi', [
             'module' => $module,
