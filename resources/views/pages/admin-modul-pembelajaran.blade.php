@@ -977,6 +977,8 @@ body.feedback-open{
   </div>
 </div>
 
+<x-toast />
+
 <script>
 (function(){
   "use strict";
