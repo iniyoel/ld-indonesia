@@ -274,26 +274,50 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
 @php
     $questionsData = $questions->map(function ($question) {
 
+        /*
+         * Jawaban siswa untuk soal ini
+         */
         $studentAnswer = $question->studentAnswer;
 
-        $selectedId = $studentAnswer?->question_option_id;
+        $selectedId = $studentAnswer
+            ? $studentAnswer->question_option_id
+            : null;
+
 
         /*
-         * Ambil ID opsi yang benar langsung dari database.
+         * Ambil semua pilihan soal
          */
-        $correctOption = $question->options
-            ->firstWhere('is_benar', 1);
+        $options = $question->options
+            ->sortBy('urutan_tampil')
+            ->values();
 
-        $correctId = $correctOption?->id;
 
         /*
-         * Tentukan apakah jawaban siswa benar.
+         * Cari jawaban yang benar.
+         *
+         * PENTING:
+         * field database adalah is_correct,
+         * bukan is_benar.
+         */
+        $correctOption = $options->first(function ($option) {
+            return (bool) $option->is_correct === true;
+        });
+
+        $correctId = $correctOption
+            ? $correctOption->id
+            : null;
+
+
+        /*
+         * Tentukan status jawaban siswa
          */
         $isAnswered = $selectedId !== null;
 
-        $isCorrect = $isAnswered
-            && $correctId !== null
-            && (int) $selectedId === (int) $correctId;
+        $isCorrect =
+            $isAnswered &&
+            $correctId !== null &&
+            (int) $selectedId === (int) $correctId;
+
 
         return [
             'id' => $question->id,
@@ -310,42 +334,38 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
 
             'is_correct' => $isCorrect,
 
-            'options' => $question->options
-                ->sortBy('urutan_tampil')
-                ->values()
-                ->map(function ($option) use ($selectedId) {
+            'options' => $options->map(function ($option) use ($selectedId) {
 
-                    $isCorrectOption =
-                        (int) $option->is_benar === 1;
+                /*
+                 * QuestionOption sudah melakukan cast
+                 * is_correct menjadi boolean.
+                 */
+                $isCorrectOption = (bool) $option->is_correct;
 
-                    $isSelected =
-                        $selectedId !== null &&
-                        (int) $option->id === (int) $selectedId;
+                /*
+                 * Apakah opsi ini yang dipilih siswa?
+                 */
+                $isSelected =
+                    $selectedId !== null &&
+                    (int) $option->id === (int) $selectedId;
 
-                    return [
-                        'id' => $option->id,
+                return [
+                    'id' => $option->id,
 
-                        'text' => $option->teks,
+                    'text' => $option->teks,
 
-                        /*
-                         * Status benar diambil LANGSUNG
-                         * dari is_benar database.
-                         */
-                        'is_correct' => $isCorrectOption,
+                    'is_correct' => $isCorrectOption,
 
-                        /*
-                         * Status pilihan siswa.
-                         */
-                        'is_selected' => $isSelected,
-                    ];
-                })
-                ->toArray(),
+                    'is_selected' => $isSelected,
+                ];
+
+            })->toArray(),
         ];
+
     })
     ->values()
     ->toArray();
 @endphp
-
 <script>
     const QUESTIONS = @json($questionsData);
 </script>
