@@ -378,6 +378,8 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   </div>
 </div>
 
+<x-toast />
+
 <script>
 (function(){
   "use strict";

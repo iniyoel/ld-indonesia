@@ -252,18 +252,6 @@ class ModuleController extends Controller
                 'max:10240',
                 'required_if:kategori,materi',
             ],
-
-            'teks_bacaan' => [
-                'nullable',
-                'string',
-                'required_if:kategori,simulasi_lesen',
-            ],
-
-            'topik_sprechen' => [
-                'nullable',
-                'string',
-                'required_if:kategori,simulasi_sprechen',
-            ],
         ]);
 
         // Simpan data lama untuk kebutuhan activity log
@@ -276,9 +264,6 @@ class ModuleController extends Controller
         $module->deskripsi = $validated['deskripsi'];
         $module->level = $validated['level'];
         $module->kategori = $validated['kategori'];
-
-        $module->teks_bacaan = $validated['teks_bacaan'] ?? null;
-        $module->topik_sprechen = $validated['topik_sprechen'] ?? null;
 
         $module->diperbarui_oleh = Auth::id();
 
@@ -332,6 +317,8 @@ class ModuleController extends Controller
         abort_unless($user->role === 'siswa', 403);
         // Siswa hanya boleh mengerjakan modul sesuai level
         abort_unless($module->level === $user->level, 403);
+        // Siswa hanya boleh mengerjakan modul yang sudah rilis
+        abort_unless($module->sudah_rilis === true, 403);
 
         /*
         |--------------------------------------------------------------------------
@@ -390,6 +377,9 @@ class ModuleController extends Controller
         abort_unless($user->role === 'siswa', 403);
 
         abort_unless($module->level === $user->level, 403);
+
+        // Siswa hanya boleh mengerjakan modul yang sudah rilis
+        abort_unless($module->sudah_rilis === true, 403);
 
         /*
         |--------------------------------------------------------------------------
