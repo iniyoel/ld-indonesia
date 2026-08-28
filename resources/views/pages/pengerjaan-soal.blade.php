@@ -436,22 +436,47 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
 .writing-answer {
     width: 100%;
-    min-height: 260px;
+    min-height: 300px;
     resize: vertical;
+
     padding: 16px;
+
     border: 1.5px solid var(--gray-200);
     border-radius: 12px;
+
     background: var(--white);
     color: var(--gray-800);
+
     font-family: var(--font-body);
     font-size: 0.95rem;
     line-height: 1.7;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
 }
 
 .writing-answer:focus {
     outline: none;
     border-color: var(--pink);
-    box-shadow: 0 0 0 3px var(--pink-light);
+
+    box-shadow:
+        0 0 0 3px var(--pink-light);
+}
+
+.writing-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-top: 8px;
+
+    font-size: 0.82rem;
+    color: var(--gray-500);
+}
+
+.writing-word-count {
+    font-weight: 600;
 }
 
 /* SPRECHEN */
@@ -862,6 +887,97 @@ function renderQuestion() {
     */
 
     quizOptions.innerHTML = '';
+
+    if (isSchreiben()) {
+
+        var writingBox = document.createElement('div');
+        writingBox.className = 'writing-box';
+
+        var label = document.createElement('label');
+        label.className = 'writing-box-label';
+        label.textContent = 'Jawaban Anda';
+
+        var textarea = document.createElement('textarea');
+
+        textarea.className = 'writing-answer';
+        textarea.placeholder =
+            'Tuliskan jawaban Anda dalam bahasa Jerman...';
+
+        textarea.value =
+            state.answers[idx] || '';
+
+        var meta = document.createElement('div');
+        meta.className = 'writing-meta';
+
+        var hint = document.createElement('span');
+        hint.textContent =
+            'Tulis jawaban sesuai instruksi pada soal.';
+
+        var counter = document.createElement('span');
+        counter.className = 'writing-word-count';
+
+        function updateWordCount() {
+
+            var text = textarea.value.trim();
+
+            var words = text
+                ? text.split(/\s+/).filter(Boolean).length
+                : 0;
+
+            counter.textContent =
+                words + ' kata';
+        }
+
+        textarea.addEventListener('input', function() {
+
+            state.answers[idx] =
+                textarea.value;
+
+            updateWordCount();
+            renderGrid();
+        });
+
+        updateWordCount();
+
+        meta.appendChild(hint);
+        meta.appendChild(counter);
+
+        writingBox.appendChild(label);
+        writingBox.appendChild(textarea);
+        writingBox.appendChild(meta);
+
+        quizOptions.appendChild(writingBox);
+
+        /*
+        * Schreiben tidak menggunakan pilihan A/B/C/D.
+        */
+        markBtn.classList.toggle(
+            'is-marked',
+            state.marked[idx]
+        );
+
+        markBtnLabel.textContent =
+            state.marked[idx]
+                ? 'Ditandai'
+                : 'Tandai';
+
+        prevBtn.hidden = idx === 0;
+
+        var isLastSchreiben =
+            idx === QUESTIONS.length - 1;
+
+        nextBtnLabel.textContent =
+            isLastSchreiben
+                ? 'Selesai'
+                : 'Selanjutnya';
+
+        nextBtnIcon.innerHTML =
+            isLastSchreiben
+                ? '<path d="M20 6 9 17l-5-5"/>'
+                : '<path d="M5 12h14M13 6l6 6-6 6"/>';
+
+        return;
+    }
 
 
     /*
