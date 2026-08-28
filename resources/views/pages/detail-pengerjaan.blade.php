@@ -150,6 +150,116 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
 #prevBtn[hidden] {
     display: none !important;
 }
+
+/* =========================================================
+   MEDIA SOAL HÖREN
+   ========================================================= */
+
+.question-audio-box {
+    margin: 0 0 22px;
+    padding: 16px 18px;
+    background: var(--pink-pale);
+    border: 1px solid var(--pink-light);
+    border-radius: var(--radius-sm);
+}
+
+.question-audio-label {
+    font-family: var(--font-display);
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 9px;
+}
+
+.question-audio {
+    width: 100%;
+    display: block;
+}
+
+
+/* =========================================================
+   GAMBAR PILIHAN HÖREN
+   ========================================================= */
+
+.quiz-option-media {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quiz-option-image {
+    width: 180px;
+    max-width: 100%;
+    max-height: 150px;
+    object-fit: contain;
+    border-radius: 10px;
+    border: 1px solid var(--gray-200);
+    background: var(--white);
+}
+
+.quiz-option.has-image {
+    align-items: center;
+}
+
+.quiz-option.has-image .quiz-option-text {
+    display: none;
+}
+
+
+/* =========================================================
+   JAWABAN ESSAY SCHREIBEN
+   ========================================================= */
+
+.essay-answer-box {
+    margin-top: 8px;
+    margin-bottom: 22px;
+    border: 1.5px solid var(--pink-light);
+    background: var(--pink-pale);
+    border-radius: var(--radius-md);
+    padding: 20px 22px;
+}
+
+.essay-answer-label {
+    font-family: var(--font-display);
+    color: var(--pink-dark);
+    font-size: 0.92rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.essay-answer {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    padding: 18px 20px;
+    color: var(--gray-800);
+    font-size: 0.98rem;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.essay-empty {
+    color: var(--gray-500);
+    font-style: italic;
+}
+
+.soal-btn.is-answered {
+    background: var(--pink-pale);
+    border-color: var(--pink-light);
+    color: var(--pink-dark);
+}
+
+.legend-swatch.answered {
+    background: var(--pink-pale);
+    border-color: var(--pink-light);
+}
+
+.legend-swatch.pending {
+    background: #FFF3D6;
+    border-color: #F3D99B;
+}
 </style>
 </head>
 <body>
@@ -262,8 +372,29 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
             <h2>Daftar Soal</h2>
             <div class="soal-grid" id="soalGrid"></div>
             <div class="legend">
-              <div class="legend-item"><span class="legend-swatch correct"></span> Jawaban benar</div>
-              <div class="legend-item"><span class="legend-swatch wrong"></span> Jawaban salah</div>
+                <div class="legend" id="legendMultipleChoice">
+                    <div class="legend-item">
+                        <span class="legend-swatch correct"></span>
+                        Jawaban benar
+                    </div>
+
+                    <div class="legend-item">
+                        <span class="legend-swatch wrong"></span>
+                        Jawaban salah
+                    </div>
+                </div>
+
+                <div class="legend" id="legendEssay" style="display:none;">
+                    <div class="legend-item">
+                        <span class="legend-swatch answered"></span>
+                        Sudah dijawab
+                    </div>
+
+                    <div class="legend-item">
+                        <span class="legend-swatch pending"></span>
+                        Menunggu penilaian
+                    </div>
+                </div>
             </div>
           </aside>
         </div>
@@ -274,31 +405,16 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
 @php
     $questionsData = $questions->map(function ($question) {
 
-        /*
-         * Jawaban siswa untuk soal ini
-         */
         $studentAnswer = $question->studentAnswer;
 
         $selectedId = $studentAnswer
             ? $studentAnswer->question_option_id
             : null;
 
-
-        /*
-         * Ambil semua pilihan soal
-         */
         $options = $question->options
             ->sortBy('urutan_tampil')
             ->values();
 
-
-        /*
-         * Cari jawaban yang benar.
-         *
-         * PENTING:
-         * field database adalah is_correct,
-         * bukan is_benar.
-         */
         $correctOption = $options->first(function ($option) {
             return (bool) $option->is_correct === true;
         });
@@ -307,24 +423,29 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
             ? $correctOption->id
             : null;
 
-
-        /*
-         * Tentukan status jawaban siswa
-         */
-        $isAnswered = $selectedId !== null;
+        $isAnswered = $studentAnswer !== null;
 
         $isCorrect =
-            $isAnswered &&
+            $selectedId !== null &&
             $correctId !== null &&
             (int) $selectedId === (int) $correctId;
-
 
         return [
             'id' => $question->id,
 
+            // penting untuk membedakan pilihan ganda dan essay
+            'type' => $question->tipe,
+
             'text' => $question->pertanyaan,
 
-            'explanation' => $question->penjelasan,
+            // Audio soal Hören
+            'file_path' => $question->file_path,
+            'file_type' => $question->file_type,
+
+            // Jawaban essay siswa untuk Schreiben
+            'answer_text' => $studentAnswer
+                ? $studentAnswer->jawaban_teks
+                : null,
 
             'selected' => $selectedId,
 
@@ -334,17 +455,12 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
 
             'is_correct' => $isCorrect,
 
+            'explanation' => $question->penjelasan,
+
             'options' => $options->map(function ($option) use ($selectedId) {
 
-                /*
-                 * QuestionOption sudah melakukan cast
-                 * is_correct menjadi boolean.
-                 */
                 $isCorrectOption = (bool) $option->is_correct;
 
-                /*
-                 * Apakah opsi ini yang dipilih siswa?
-                 */
                 $isSelected =
                     $selectedId !== null &&
                     (int) $option->id === (int) $selectedId;
@@ -354,6 +470,10 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
 
                     'text' => $option->teks,
 
+                    // Gambar pilihan Hören
+                    'file_path' => $option->file_path,
+                    'file_type' => $option->file_type,
+
                     'is_correct' => $isCorrectOption,
 
                     'is_selected' => $isSelected,
@@ -361,13 +481,32 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
 
             })->toArray(),
         ];
-
     })
     ->values()
     ->toArray();
 @endphp
 <script>
     const QUESTIONS = @json($questionsData);
+    const MODULE_CATEGORY = @json($module->kategori);
+
+    var legendMultipleChoice =
+    document.getElementById('legendMultipleChoice');
+
+    var legendEssay =
+        document.getElementById('legendEssay');
+
+    if (
+        MODULE_CATEGORY === 'simulasi_schreiben'
+    ) {
+
+        legendMultipleChoice.style.display = 'none';
+        legendEssay.style.display = 'flex';
+
+    } else {
+
+        legendMultipleChoice.style.display = 'flex';
+        legendEssay.style.display = 'none';
+    }
 </script>
 
 <script>
@@ -445,31 +584,150 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
     |--------------------------------------------------------------------------
     */
 
-    function renderQuestion(){
+function renderQuestion(){
 
-        var idx = state.current;
-        var q = QUESTIONS[idx];
+    var idx = state.current;
+    var q = QUESTIONS[idx];
 
-        quizProgress.textContent =
-            'Soal ' +
-            (idx + 1) +
-            ' dari ' +
-            QUESTIONS.length;
+    quizProgress.textContent =
+        'Soal ' +
+        (idx + 1) +
+        ' dari ' +
+        QUESTIONS.length;
 
-        quizQuestion.textContent =
-            q.text;
+    quizQuestion.textContent =
+        q.text || '';
 
+    quizOptions.innerHTML = '';
+
+    /*
+    |--------------------------------------------------------------------------
+    | SIMULASI HÖREN
+    |--------------------------------------------------------------------------
+    | Audio berada pada questions.file_path
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        MODULE_CATEGORY === 'simulasi_horen' &&
+        q.file_path &&
+        q.file_type &&
+        String(q.file_type).startsWith('audio/')
+    ) {
+
+        var audioBox =
+            document.createElement('div');
+
+        audioBox.className =
+            'question-audio-box';
+
+        var audioLabel =
+            document.createElement('div');
+
+        audioLabel.className =
+            'question-audio-label';
+
+        audioLabel.textContent =
+            'Audio Soal';
+
+        var audio =
+            document.createElement('audio');
+
+        audio.className =
+            'question-audio';
+
+        audio.controls = true;
+
+        audio.preload = 'metadata';
+
+        audio.src =
+            '{{ asset('storage') }}/' +
+            q.file_path;
+
+        audioBox.appendChild(audioLabel);
+        audioBox.appendChild(audio);
+
+        quizOptions.appendChild(audioBox);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SIMULASI SCHREIBEN
+    |--------------------------------------------------------------------------
+    | Tidak ada pilihan ganda.
+    | Tampilkan jawaban essay siswa.
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        MODULE_CATEGORY === 'simulasi_schreiben' ||
+        q.type === 'paragraf'
+    ) {
+
+        var essayBox =
+            document.createElement('div');
+
+        essayBox.className =
+            'essay-answer-box';
+
+        var essayLabel =
+            document.createElement('div');
+
+        essayLabel.className =
+            'essay-answer-label';
+
+        essayLabel.textContent =
+            'Jawabanmu';
+
+        var essay =
+            document.createElement('div');
+
+        essay.className =
+            'essay-answer';
+
+        if (
+            q.answer_text !== null &&
+            q.answer_text !== undefined &&
+            String(q.answer_text).trim() !== ''
+        ) {
+
+            essay.textContent =
+                q.answer_text;
+
+        } else {
+
+            essay.textContent =
+                'Siswa belum memberikan jawaban.';
+
+            essay.classList.add(
+                'essay-empty'
+            );
+        }
+
+        essayBox.appendChild(essayLabel);
+        essayBox.appendChild(essay);
+
+        quizOptions.appendChild(essayBox);
+
+        /*
+         * Schreiben tidak menggunakan explanation
+         * pilihan ganda.
+         */
         explanationText.textContent =
             q.explanation ||
-            'Tidak ada penjelasan untuk soal ini.';
+            'Jawaban essay akan dinilai secara manual oleh tutor.';
 
-        quizOptions.innerHTML = '';
+    } else {
+
+        /*
+        |--------------------------------------------------------------------------
+        | PILIHAN GANDA
+        |--------------------------------------------------------------------------
+        */
 
         q.options.forEach(function(option, i){
 
-            /*
-            * Apakah opsi ini adalah jawaban yang benar?
-            */
             var isCorrect =
                 option.is_correct === true ||
                 option.is_correct === 1 ||
@@ -484,24 +742,46 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
                 isSelected &&
                 !isCorrect;
 
-            var row = document.createElement('div');
+            var row =
+                document.createElement('div');
+
+            var hasImage =
+                option.file_path &&
+                option.file_type &&
+                String(option.file_type)
+                    .startsWith('image/');
 
             row.className =
                 'quiz-option' +
-                (isCorrect ? ' is-correct' : '') +
-                (isWrongSelected ? ' is-wrong-selected' : '') +
-                (isSelected ? ' is-selected' : '');
+                (isCorrect
+                    ? ' is-correct'
+                    : '') +
+                (isWrongSelected
+                    ? ' is-wrong-selected'
+                    : '') +
+                (isSelected
+                    ? ' is-selected'
+                    : '') +
+                (hasImage
+                    ? ' has-image'
+                    : '');
 
             var tag = '';
 
-            if (isSelected && isCorrect) {
+            if (
+                isSelected &&
+                isCorrect
+            ) {
 
                 tag =
                     '<span class="quiz-option-tag">' +
                     'Jawabanmu • Jawaban Benar' +
                     '</span>';
 
-            } else if (isSelected && isWrongSelected) {
+            } else if (
+                isSelected &&
+                isWrongSelected
+            ) {
 
                 tag =
                     '<span class="quiz-option-tag">' +
@@ -516,17 +796,53 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
                     '</span>';
             }
 
-            var text = option.text || '';
 
-            row.innerHTML =
+            /*
+            |--------------------------------------------------------------------------
+            | Huruf A/B/C/D
+            |--------------------------------------------------------------------------
+            */
+
+            var letter =
                 '<span class="quiz-option-letter">' +
                 LETTERS[i] +
-                '</span>' +
+                '</span>';
 
-                '<span class="quiz-option-text">' +
-                escapeHtml(text) +
-                '</span>' +
 
+            /*
+            |--------------------------------------------------------------------------
+            | Isi opsi
+            |--------------------------------------------------------------------------
+            */
+
+            var content = '';
+
+            if (hasImage) {
+
+                content +=
+                    '<span class="quiz-option-media">' +
+                        '<img ' +
+                            'class="quiz-option-image" ' +
+                            'src="{{ asset('storage') }}/' +
+                            escapeHtml(option.file_path) +
+                            '" ' +
+                            'alt="Gambar pilihan ' +
+                            LETTERS[i] +
+                            '">' +
+                    '</span>';
+
+            } else {
+
+                content +=
+                    '<span class="quiz-option-text">' +
+                    escapeHtml(option.text || '') +
+                    '</span>';
+            }
+
+
+            row.innerHTML =
+                letter +
+                content +
                 tag;
 
             quizOptions.appendChild(row);
@@ -535,38 +851,52 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
 
         /*
         |--------------------------------------------------------------------------
-        | Tombol navigasi
+        | Penjelasan
         |--------------------------------------------------------------------------
         */
 
-        if (idx === 0) {
-            prevBtn.hidden = true;
-            prevBtn.style.display = 'none';
-        } else {
-            prevBtn.hidden = false;
-            prevBtn.style.display = 'inline-flex';
-        }
-
-
-        var isLast =
-            idx === QUESTIONS.length - 1;
-
-
-        nextBtnLabel.textContent =
-            isLast
-                ? 'Kembali ke Performa'
-                : 'Selanjutnya';
-
-
-        nextBtnIcon.innerHTML =
-            isLast
-
-                ? '<path d="M5 12h14"/>' +
-                  '<path d="m12 5 7 7-7 7"/>'
-
-                : '<path d="M5 12h14M13 6l6 6-6 6"/>';
-
+        explanationText.textContent =
+            q.explanation ||
+            'Tidak ada penjelasan untuk soal ini.';
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Tombol navigasi
+    |--------------------------------------------------------------------------
+    */
+
+    if (idx === 0) {
+
+        prevBtn.hidden = true;
+        prevBtn.style.display = 'none';
+
+    } else {
+
+        prevBtn.hidden = false;
+        prevBtn.style.display = 'inline-flex';
+    }
+
+
+    var isLast =
+        idx === QUESTIONS.length - 1;
+
+
+    nextBtnLabel.textContent =
+        isLast
+            ? 'Kembali ke Performa'
+            : 'Selanjutnya';
+
+
+    nextBtnIcon.innerHTML =
+        isLast
+
+            ? '<path d="M5 12h14"/>' +
+              '<path d="m12 5 7 7-7 7"/>'
+
+            : '<path d="M5 12h14M13 6l6 6-6 6"/>';
+}
 
 
     /*
@@ -630,18 +960,27 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
             /*
              * Tentukan warna berdasarkan jawaban.
              */
-            if (q.is_answered) {
+if (q.is_answered) {
 
-                if (q.is_correct) {
+    if (
+        MODULE_CATEGORY === 'simulasi_schreiben' ||
+        q.type === 'paragraf'
+    ) {
 
-                    classes.push('is-correct');
+        // Schreiben sudah dijawab,
+        // tetapi belum dikategorikan benar/salah.
 
-                } else {
+        classes.push('is-answered');
 
-                    classes.push('is-wrong');
+    } else {
 
-                }
-            }
+        if (q.is_correct) {
+            classes.push('is-correct');
+        } else {
+            classes.push('is-wrong');
+        }
+    }
+}
 
 
             btn.className =
