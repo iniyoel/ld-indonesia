@@ -441,28 +441,50 @@ class ModuleController extends Controller
 
             foreach ($questions as $index => $question) {
 
-                /*
-                * Frontend akan mengirim ID question_option,
-                * bukan nomor index A/B/C/D.
-                */
-                $selectedOptionId = $answers[$index] ?? null;
+                $answer = $answers[$index] ?? null;
 
                 /*
-                * Kalau siswa tidak menjawab soal,
-                * jangan buat record jawaban.
+                |--------------------------------------------------------------------------
+                | SCHREIBEN / PARAGRAF
+                |--------------------------------------------------------------------------
                 */
-                if (! $selectedOptionId) {
+                if ($question->tipe === 'paragraf') {
+
+                    // Kalau tidak ada jawaban, jangan simpan
+                    if ($answer === null || trim((string) $answer) === '') {
+                        continue;
+                    }
+
+                    Answer::create([
+                        'attempt_id' => $attempt->id,
+                        'question_id' => $question->id,
+                        'question_option_id' => null,
+                        'jawaban_teks' => trim((string) $answer),
+                        'is_correct' => null,
+                        'ditandai' => (bool) ($marked[$index] ?? false),
+                        'waktu_menjawab_detik' => null,
+                    ]);
+
                     continue;
                 }
 
+
                 /*
-                * Pastikan option tersebut benar-benar
-                * milik question yang bersangkutan.
+                |--------------------------------------------------------------------------
+                | PILIHAN GANDA — HÖREN / LESEN / MATERI
+                |--------------------------------------------------------------------------
                 */
+
+                $selectedOptionId = $answer;
+
+                if (!$selectedOptionId) {
+                    continue;
+                }
+
                 $selectedOption = $question->options
                     ->firstWhere('id', (int) $selectedOptionId);
 
-                if (! $selectedOption) {
+                if (!$selectedOption) {
                     continue;
                 }
 
