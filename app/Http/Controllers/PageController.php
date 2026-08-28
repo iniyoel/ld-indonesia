@@ -310,17 +310,10 @@ class PageController extends Controller
         // Siswa hanya boleh mengerjakan modul sesuai level
         abort_unless($module->level === $user->level, 403);
 
-        // Siswa hanya boleh mengerjakan modul yang sudah rilis
-        abort_unless($module->sudah_rilis === true, 403);
-
         /*
         |--------------------------------------------------------------------------
         | Ambil attempt yang sedang dikerjakan
         |--------------------------------------------------------------------------
-        |
-        | Kalau siswa sudah pernah masuk ke halaman ini dan masih memiliki
-        | attempt aktif, gunakan attempt tersebut.
-        |
         */
         $attempt = Attempt::query()
             ->where('user_id', $user->id)
@@ -331,11 +324,10 @@ class PageController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Kalau belum ada attempt aktif, buat attempt baru
+        | Kalau belum ada attempt
         |--------------------------------------------------------------------------
         */
-
-        if (! $attempt) {
+        if (!$attempt) {
             $attempt = Attempt::create([
                 'user_id' => $user->id,
                 'module_id' => $module->id,
@@ -346,23 +338,29 @@ class PageController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Ambil soal
+        | Ambil seluruh soal berdasarkan modul
         |--------------------------------------------------------------------------
+        |
+        | Penting:
+        | - Hören  : soal + audio + image options
+        | - Lesen  : soal + text options
+        | - Schreiben : soal essay
+        | - Sprechen  : topik/pertanyaan
+        |
         */
-
         $questions = $module->questions()
             ->with([
                 'options' => function ($query) {
                     $query->orderBy('urutan_tampil');
-                },
+                }
             ])
             ->orderBy('urutan')
             ->get();
 
         return view('pages.pengerjaan-soal', [
             'module' => $module,
-            'questions' => $questions,
             'attempt' => $attempt,
+            'questions' => $questions,
             'totalQuestions' => $questions->count(),
         ]);
     }
@@ -458,22 +456,83 @@ class PageController extends Controller
     /**
      * Halaman pengerjaan / detail modul untuk siswa.
      */
-    public function kerjakanModule(Request $request, Module $module): View
+    public function kerjakanModule(Request $request, Module $module)
     {
         $user = $request->user();
 
-        // Hanya siswa yang boleh mengerjakan modul
-        abort_unless($user->role === 'siswa', 403);
+        /*
+        |--------------------------------------------------------------------------
+        | Security
+        |--------------------------------------------------------------------------
+        */
 
-        // Siswa hanya boleh mengerjakan modul sesuai levelnya
-        abort_unless($module->level === $user->level, 403);
+        // Hanya siswa
+        abort_unless(
+            $user->role === 'siswa',
+            403,
+            'Akses hanya untuk siswa.'
+        );
 
-        // Siswa hanya boleh mengerjakan modul yang sudah rilis
-        abort_unless($module->sudah_rilis === true, 403);
+        // Hanya modul sesuai level siswa
+        abort_unless(
+            $module->level === $user->level,
+            403,
+            'Modul ini bukan untuk level kamu.'
+        );
 
-        return view('pages.pengerjaan-materi', [
-            'module' => $module,
-        ]);
+        /*
+        |--------------------------------------------------------------------------
+        | Tentukan halaman berdasarkan kategori
+        |--------------------------------------------------------------------------
+        */
+
+        switch ($module->kategori) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | Materi
+            |--------------------------------------------------------------------------
+            */
+            case 'materi':
+
+                return view('pages.pengerjaan-materi', [
+                    'module' => $module,
+                ]);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Simulasi Hören
+            | Simulasi Lesen
+            | Simulasi Schreiben
+            | Simulasi Sprechen
+            |--------------------------------------------------------------------------
+            */
+
+            case 'simulasi_horen':
+            case 'simulasi_lesen':
+            case 'simulasi_schreiben':
+            case 'simulasi_sprechen':
+
+                return redirect()->route(
+                    'siswa.modul.questions',
+                    ['module' => $module]
+                );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Kategori tidak dikenal
+            |--------------------------------------------------------------------------
+            */
+
+            default:
+
+                abort(
+                    404,
+                    'Kategori modul tidak dikenali.'
+                );
+        }
     }
 
     /**

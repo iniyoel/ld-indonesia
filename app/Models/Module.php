@@ -23,6 +23,10 @@ class Module extends Model
         'sudah_rilis',
     ];
 
+    protected $casts = [
+        'sudah_rilis' => 'boolean',
+    ];
+
     /*
     |--------------------------------------------------------------------------
     | PEMBUAT MODUL

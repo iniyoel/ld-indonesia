@@ -237,8 +237,8 @@ Route::middleware('auth')->group(function () {
         ->middleware('can:manage-modules');
 
     // Route ini harus sebelum modul.soal.update agar laravel tidak mengakses route update ketika proses finish soal
-    Route::post('/modul/{module}/soal/selesai', [QuestionController::class, 'finish'])
-        ->name('modul.soal.finish')
+    Route::post('/modul/{module}/soal/selesai',[ModuleController::class, 'finishAttempt']
+        )->name('modul.soal.finish')
         ->middleware('can:manage-modules');
     
     Route::post('/modul/{module}/soal/{question}', [QuestionController::class, 'update'])

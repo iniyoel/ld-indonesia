@@ -323,6 +323,177 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   .quiz-nav-actions{ justify-content: stretch; }
   .quiz-nav-actions .nav-btn{ flex: 1; justify-content: center; }
 }
+
+/* =========================================================
+   TIPE KHUSUS SIMULASI
+   ========================================================= */
+
+/* AUDIO HÖREN */
+.question-audio {
+    width: 100%;
+    margin-bottom: 24px;
+    padding: 16px;
+    border-radius: 14px;
+    background: var(--pink-pale);
+    border: 1px solid var(--pink-light);
+}
+
+.question-audio audio {
+    width: 100%;
+}
+
+/* GAMBAR PILIHAN HÖREN */
+.quiz-option.is-image-option {
+    align-items: center;
+    min-height: 150px;
+}
+
+.quiz-option-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: 110px;
+}
+
+.quiz-option-content img {
+    display: block;
+    max-width: 220px;
+    max-height: 140px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+.question-audio {
+    width: 100%;
+    margin: 18px 0 22px;
+    padding: 16px;
+    background: var(--pink-pale);
+    border: 1px solid var(--pink-light);
+    border-radius: var(--radius-md);
+}
+
+.question-audio audio {
+    width: 100%;
+    display: block;
+}
+
+.quiz-option-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+}
+
+.quiz-option-image {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+/* TEKS BACAAN LESEN */
+.reading-box {
+    margin-bottom: 26px;
+    padding: 20px;
+    border-radius: 14px;
+    background: #FAF9F7;
+    border: 1px solid var(--gray-200);
+}
+
+.reading-box-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 12px;
+}
+
+.reading-box-text {
+    font-size: 0.95rem;
+    color: var(--gray-800);
+    line-height: 1.75;
+    white-space: pre-line;
+}
+
+/* SCHREIBEN */
+.writing-box {
+    margin-top: 8px;
+}
+
+.writing-box-label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--navy);
+}
+
+.writing-answer {
+    width: 100%;
+    min-height: 260px;
+    resize: vertical;
+    padding: 16px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 12px;
+    background: var(--white);
+    color: var(--gray-800);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+.writing-answer:focus {
+    outline: none;
+    border-color: var(--pink);
+    box-shadow: 0 0 0 3px var(--pink-light);
+}
+
+/* SPRECHEN */
+.speaking-box {
+    padding: 22px;
+    border-radius: 16px;
+    background: var(--pink-pale);
+    border: 1px solid var(--pink-light);
+}
+
+.speaking-title {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 12px;
+}
+
+.speaking-text {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--gray-800);
+    white-space: pre-line;
+}
+
+/* Untuk Sprechen tidak ada pilihan */
+.quiz-options.is-non-interactive {
+    margin-top: 0;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+
+    .quiz-option-content img {
+        max-width: 160px;
+        max-height: 110px;
+    }
+
+    .writing-answer {
+        min-height: 220px;
+    }
+}
 </style>
 </head>
 <body>
@@ -397,7 +568,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
       </button>
       <div class="user-summary">
         <div class="user-meta">
-          <strong>Maria Sitanggang</strong>
+          <strong>{{ Auth::user()->name }}</strong>
           <span>Siswa</span>
         </div>
         <div class="user-avatar" aria-hidden="true">M</div>
@@ -420,6 +591,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
         <!-- ============ KARTU SOAL ============ -->
         <section class="quiz-card" aria-label="Soal latihan">
           <p class="quiz-progress" id="quizProgress">Soal 1 dari 15</p>
+          <div id="questionAudio" class="question-audio" hidden></div>
           <p class="quiz-question" id="quizQuestion"></p>
           <div class="quiz-options" id="quizOptions" role="radiogroup" aria-labelledby="quizQuestion"></div>
 
@@ -463,10 +635,10 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
             'type' => $question->tipe,
             'text' => $question->pertanyaan,
             'file_path' => $question->file_path,
-            'file_type' => $question->file_type ?? null,
-
+            'file_type' => $question->file_type,
             'options' => $question->options
                 ->sortBy('urutan_tampil')
+                ->values()
                 ->map(function ($option) {
                     return [
                         'id' => $option->id,
@@ -475,16 +647,19 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
                         'file_type' => $option->file_type,
                     ];
                 })
-                ->values()
                 ->toArray(),
         ];
-    })->values()->toArray();
+    })
+    ->values()
+    ->toArray();
 @endphp
 <script>
 (function(){
     "use strict";
 
     var QUESTIONS = @json($questionsData);
+    var MODULE_CATEGORY = @json($module->kategori);
+
 
     var LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -528,109 +703,416 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
         return;
     }
 
-    function renderQuestion() {
+    function isMultipleChoiceCategory() {
+    return MODULE_CATEGORY === 'simulasi_horen'
+        || MODULE_CATEGORY === 'simulasi_lesen';
+    } 
 
-        var idx = state.current;
-        var q = QUESTIONS[idx];
+    function isSchreiben() {
+        return MODULE_CATEGORY === 'simulasi_schreiben';
+    }
 
-        quizProgress.textContent =
-            'Soal ' + (idx + 1) + ' dari ' + QUESTIONS.length;
+    function isSprechen() {
+        return MODULE_CATEGORY === 'simulasi_sprechen';
+    }
 
-        quizQuestion.textContent = q.text;
+function renderQuestion() {
 
-        quizOptions.innerHTML = '';
+    var idx = state.current;
+    var q = QUESTIONS[idx];
+
+    if (!q) {
+        console.error('Question tidak ditemukan:', idx);
+        return;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | NOMOR SOAL
+    |--------------------------------------------------------------------------
+    */
+
+    quizProgress.textContent =
+        'Soal ' + (idx + 1) + ' dari ' + QUESTIONS.length;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | TEKS SOAL
+    |--------------------------------------------------------------------------
+    */
+
+    quizQuestion.textContent =
+        q.text || '';
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | AUDIO SOAL
+    |--------------------------------------------------------------------------
+    |
+    | Untuk Hören:
+    | q.file_path = lokasi audio
+    | q.file_type = tipe file
+    |
+    | Audio berada di level QUESTION,
+    | bukan di dalam OPTION.
+    |--------------------------------------------------------------------------
+    */
+
+    var oldAudio =
+        document.getElementById('quizAudio');
+
+    if (oldAudio) {
+        oldAudio.remove();
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CEK AUDIO
+    |--------------------------------------------------------------------------
+    */
+
+    var isAudio =
+        q.file_path &&
+        (
+            q.file_type === 'audio' ||
+            q.file_type === 'audio/mpeg' ||
+            q.file_type === 'audio/mp3' ||
+            q.file_type === 'audio/wav' ||
+            q.file_type === 'audio/x-wav' ||
+            q.file_type === 'audio/m4a' ||
+            q.file_type === 'audio/x-m4a' ||
+            q.file_type === 'mp3' ||
+            q.file_type === 'wav' ||
+            q.file_type === 'm4a'
+        );
+
+
+    if (isAudio) {
+
+        var audioWrapper =
+            document.createElement('div');
+
+        audioWrapper.id =
+            'quizAudio';
+
+        audioWrapper.className =
+            'quiz-audio-wrapper';
+
+
+        var audio =
+            document.createElement('audio');
+
+        audio.controls = true;
+
+        audio.preload = 'metadata';
+
+        audio.className =
+            'quiz-audio-player';
+
+
+        /*
+         * file_path dari database.
+         *
+         * Contoh:
+         *
+         * simulasi-horen/audio/abc.mp3
+         *
+         * menjadi:
+         *
+         * /storage/simulasi-horen/audio/abc.mp3
+         */
+
+        var audioSrc =
+            "{{ asset('storage') }}/" +
+            String(q.file_path)
+                .replace(/^\/+/, '');
+
+
+        audio.src = audioSrc;
+
+
+        audioWrapper.appendChild(audio);
+
+
+        /*
+         * Audio diletakkan SETELAH teks soal.
+         */
+
+        quizQuestion.insertAdjacentElement(
+            'afterend',
+            audioWrapper
+        );
+
+
+        console.log(
+            'AUDIO SOAL:',
+            audioSrc
+        );
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | RESET PILIHAN
+    |--------------------------------------------------------------------------
+    */
+
+    quizOptions.innerHTML = '';
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | RENDER PILIHAN
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        !Array.isArray(q.options) ||
+        q.options.length === 0
+    ) {
+
+        console.warn(
+            'Soal tidak memiliki pilihan:',
+            q
+        );
+
+    } else {
 
         q.options.forEach(function(option, i) {
 
-            var btn = document.createElement('button');
+            var btn =
+                document.createElement('button');
 
-            btn.type = 'button';
+
+            btn.type =
+                'button';
+
+
+            /*
+             * PENTING:
+             * state.answers menyimpan option.id,
+             * bukan index.
+             */
+
+            var isSelected =
+                state.answers[idx] === option.id;
+
 
             btn.className =
                 'quiz-option' +
-                (state.answers[idx] === i
-                    ? ' is-selected'
-                    : '');
+                (
+                    isSelected
+                        ? ' is-selected'
+                        : ''
+                );
 
-            btn.setAttribute('role', 'radio');
+
+            btn.setAttribute(
+                'role',
+                'radio'
+            );
+
 
             btn.setAttribute(
                 'aria-checked',
-                state.answers[idx] === i
+                isSelected
                     ? 'true'
                     : 'false'
             );
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | ISI PILIHAN
+            |--------------------------------------------------------------------------
+            */
+
             var content = '';
+
+
+            /*
+             * HURUF A / B / C / D
+             */
 
             content +=
                 '<span class="quiz-option-letter">' +
                 LETTERS[i] +
                 '</span>';
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | PILIHAN GAMBAR
+            |--------------------------------------------------------------------------
+            */
+
             if (
                 option.file_path &&
-                option.file_type === 'image'
+                (
+                    option.file_type === 'image' ||
+                    option.file_type === 'image/jpeg' ||
+                    option.file_type === 'image/png' ||
+                    option.file_type === 'image/webp' ||
+                    option.file_type === 'jpg' ||
+                    option.file_type === 'jpeg' ||
+                    option.file_type === 'png' ||
+                    option.file_type === 'webp'
+                )
             ) {
+
+                var imageSrc =
+                    "{{ asset('storage') }}/" +
+                    String(option.file_path)
+                        .replace(/^\/+/, '');
+
 
                 content +=
                     '<span class="quiz-option-content">' +
+
                         '<img ' +
-                            'src="{{ asset('storage') }}/' +
-                            option.file_path +
+                            'src="' +
+                            imageSrc +
                             '" ' +
                             'alt="Pilihan ' +
                             LETTERS[i] +
                             '" ' +
-                            'style="max-width:180px;max-height:120px;object-fit:contain;">' +
+                            'class="quiz-option-image"' +
+                        '>' +
+
                     '</span>';
+
+
+                console.log(
+                    'GAMBAR PILIHAN ' +
+                    LETTERS[i] +
+                    ':',
+                    imageSrc
+                );
+
 
             } else {
 
+                /*
+                |--------------------------------------------------------------------------
+                | PILIHAN TEKS
+                |--------------------------------------------------------------------------
+                */
+
                 content +=
                     '<span class="quiz-option-text">' +
-                    escapeHtml(option.text || '') +
+                    escapeHtml(
+                        option.text || ''
+                    ) +
                     '</span>';
             }
 
-            btn.innerHTML = content;
 
-            btn.addEventListener('click', function() {
+            /*
+            |--------------------------------------------------------------------------
+            | MASUKKAN KE BUTTON
+            |--------------------------------------------------------------------------
+            */
 
-                state.answers[idx] = option.id;
+            btn.innerHTML =
+                content;
 
-                renderQuestion();
-                renderGrid();
 
-            });
+            /*
+            |--------------------------------------------------------------------------
+            | CLICK PILIHAN
+            |--------------------------------------------------------------------------
+            */
+
+            btn.addEventListener(
+                'click',
+                function() {
+
+                    /*
+                     * Simpan ID option.
+                     */
+
+                    state.answers[idx] =
+                        option.id;
+
+
+                    /*
+                     * Render ulang.
+                     */
+
+                    renderQuestion();
+
+                    renderGrid();
+
+                }
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | MASUKKAN BUTTON KE CONTAINER
+            |--------------------------------------------------------------------------
+            */
 
             quizOptions.appendChild(btn);
+
         });
 
-        markBtn.classList.toggle(
-            'is-marked',
-            state.marked[idx]
-        );
+    }
 
-        markBtnLabel.textContent =
-            state.marked[idx]
-                ? 'Ditandai'
-                : 'Tandai';
 
-        prevBtn.hidden = idx === 0;
+    /*
+    |--------------------------------------------------------------------------
+    | TANDAI
+    |--------------------------------------------------------------------------
+    */
 
-        var isLast =
-            idx === QUESTIONS.length - 1;
+    markBtn.classList.toggle(
+        'is-marked',
+        state.marked[idx]
+    );
 
-        nextBtnLabel.textContent =
-            isLast
-                ? 'Selesai'
-                : 'Selanjutnya';
 
-        nextBtnIcon.innerHTML = isLast
+    markBtnLabel.textContent =
+        state.marked[idx]
+            ? 'Ditandai'
+            : 'Tandai';
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | TOMBOL SEBELUMNYA
+    |--------------------------------------------------------------------------
+    */
+
+    prevBtn.hidden =
+        idx === 0;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | TOMBOL SELANJUTNYA
+    |--------------------------------------------------------------------------
+    */
+
+    var isLast =
+        idx === QUESTIONS.length - 1;
+
+
+    nextBtnLabel.textContent =
+        isLast
+            ? 'Selesai'
+            : 'Selanjutnya';
+
+
+    nextBtnIcon.innerHTML =
+        isLast
             ? '<path d="M20 6 9 17l-5-5"/>'
             : '<path d="M5 12h14M13 6l6 6-6 6"/>';
-    }
+}
 
     function escapeHtml(value) {
 
@@ -665,10 +1147,21 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
                 classes.push('is-current');
             }
 
-            if (state.marked[i]) {
+            if (MODULE_CATEGORY === 'simulasi_sprechen') {
+
+                /*
+                * Sprechen tidak memiliki jawaban.
+                * Grid hanya menunjukkan soal aktif.
+                */
+
+            } else if (state.marked[i]) {
+
                 classes.push('is-marked');
+
             } else if (state.answers[i] !== null) {
+
                 classes.push('is-answered');
+
             }
 
             btn.className = classes.join(' ');
@@ -716,7 +1209,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
               nextBtn.disabled = true;
               nextBtnLabel.textContent = 'Menyimpan...';
 
-              fetch('{{ route('siswa.modul.finish', $module) }}', {
+              fetch('{{ route('modul.soal.finish', $module) }}', {
                   method: 'POST',
                   headers: {
                       'X-CSRF-TOKEN': '{{ csrf_token() }}',
