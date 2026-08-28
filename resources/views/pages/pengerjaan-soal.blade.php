@@ -576,7 +576,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     </header>
 
     <main class="page-content" id="mainContent">
-      <a href="{{ route('modul.kerjakan', $module) }}" class="back-link">
+      <a href="{{ route('page', ['page' => 'modul-pembelajaran']) }}" class="back-link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
         Kembali
       </a>
@@ -1209,7 +1209,7 @@ function renderQuestion() {
               nextBtn.disabled = true;
               nextBtnLabel.textContent = 'Menyimpan...';
 
-              fetch('{{ route('modul.soal.finish', $module) }}', {
+              fetch('{{ route('siswa.modul.finish', $module) }}', {
                   method: 'POST',
                   headers: {
                       'X-CSRF-TOKEN': '{{ csrf_token() }}',
