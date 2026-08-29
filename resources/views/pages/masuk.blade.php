@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<title>Masuk — LD Indonesia</title>
+<title>LD Indonesia</title>
 <meta name="description" content="Masuk ke akun LD Indonesia untuk mengakses materi, latihan soal, dan progres belajar bahasa Jerman Anda.">
 <!-- Halaman login tidak perlu diindeks mesin pencari -->
 <meta name="robots" content="noindex, nofollow">

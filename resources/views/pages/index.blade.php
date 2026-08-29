@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LD Indonesia — Bimbel Bahasa Jerman A1, A2, B1, B2 | Belajar Bahasa Jerman Dengan Mudah</title>
+<title>LD Indonesia</title>
 <meta name="description" content="LD Indonesia adalah bimbingan belajar bahasa Jerman online untuk persiapan ujian A1, A2, B1, dan B2 (Goethe/ASM). Belajar bersama tutor berpengalaman, modul lengkap, latihan soal, dan grup belajar.">
 <meta name="keywords" content="bimbel bahasa jerman, kursus bahasa jerman, persiapan ujian A1 A2 B1 B2, LD Indonesia, belajar bahasa jerman online, goethe zertifikat, ASM jerman">
 <meta name="author" content="LD Indonesia">

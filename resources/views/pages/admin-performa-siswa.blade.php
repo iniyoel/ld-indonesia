@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Performa Siswa — Admin — LD Indonesia</title>
+<title>LD Indonesia</title>
 <meta name="description" content="Ringkasan aktivitas dan performa seluruh siswa LD Indonesia untuk admin.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">

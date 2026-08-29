@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Detail Siswa — Tutor — LD Indonesia</title>
+<title>LD Indonesia</title>
 <meta name="description" content="Detail performa dan riwayat aktivitas siswa — LD Indonesia.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
