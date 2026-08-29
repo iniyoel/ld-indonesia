@@ -274,6 +274,80 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   .field-row{ grid-template-columns: 1fr; }
 }
 @media (max-width: 640px){ .user-meta{ display: none; } }
+
+/* ============ PDF PREVIEW ============ */
+
+.pdf-preview-wrapper {
+    display: none;
+    margin-top: 18px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--gray-100);
+}
+
+.pdf-preview-wrapper.show {
+    display: block;
+}
+
+.pdf-preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.pdf-preview-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--navy);
+}
+
+.pdf-preview-title svg {
+    width: 18px;
+    height: 18px;
+    color: var(--red);
+    flex-shrink: 0;
+}
+
+.pdf-preview-remove {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--red);
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.pdf-preview-remove:hover {
+    color: var(--pink-dark);
+}
+
+.pdf-preview-remove svg {
+    width: 15px;
+    height: 15px;
+}
+
+.pdf-preview-frame {
+    width: 100%;
+    height: 620px;
+    border: none;
+    display: block;
+    background: var(--gray-100);
+}
+
+@media (max-width: 640px) {
+    .pdf-preview-frame {
+        height: 500px;
+    }
+}
 </style>
 </head>
 <body>
@@ -444,6 +518,62 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
             <p class="upload-hint" id="uploadHint">Format yang didukung: PDF. Maksimal 10 MB.</p>
 
+            <!-- ============ PDF PREVIEW ============ -->
+
+            <div class="pdf-preview-wrapper" id="pdfPreviewWrapper">
+
+                <div class="pdf-preview-header">
+
+                    <div class="pdf-preview-title">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <path d="M14 2v6h6"/>
+                            <path d="M8 13h8"/>
+                            <path d="M8 17h6"/>
+                        </svg>
+
+                        <span>Preview PDF</span>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="pdf-preview-remove"
+                        id="pdfPreviewRemove"
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+                            <path d="M18 6 6 18"/>
+                            <path d="M6 6l12 12"/>
+                        </svg>
+
+                        Hapus
+                    </button>
+
+                </div>
+
+                <iframe
+                    id="pdfPreviewFrame"
+                    class="pdf-preview-frame"
+                    title="Preview PDF modul"
+                ></iframe>
+
+            </div>
+
             <!-- Muncul otomatis saat Kategori = salah satu Simulasi -->
             <div class="upload-skip-note" id="uploadSkipNote">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
@@ -471,20 +601,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 (function(){
   "use strict";
 
-  /* ==================================================================
-     CATATAN INTEGRASI BACKEND
-     - Saat tombol "Selanjutnya" ditekan, data form (judul, level,
-       kategori, deskripsi, file) di halaman ini belum benar-benar
-       dikirim/disimpan ke server — TODO: kirim lewat
-       fetch('/api/admin/modul', {method:'POST', body: formData}).
-     - Halaman berikutnya (menambahkan soal) belum dibuat; tombol ini
-       akan mengarah ke admin-modul-soal.html dengan detail modul
-       diteruskan lewat query string sebagai contoh.
-     - Sesuai ketentuan: kolom Upload File otomatis disembunyikan saat
-       Kategori yang dipilih adalah salah satu Simulasi (Hören, Lesen,
-       Schreiben, Sprechen), karena materi berkas hanya relevan untuk
-       kategori Materi.
-  ================================================================== */
 
   var kategoriSelect = document.getElementById('kategoriModul');
   var uploadLabel = document.getElementById('uploadLabel');
@@ -496,7 +612,12 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   var dropzoneFileName = document.getElementById('dropzoneFileName');
   var fileChipName = document.getElementById('fileChipName');
   var fileChipRemove = document.getElementById('fileChipRemove');
+  var pdfPreviewWrapper = document.getElementById('pdfPreviewWrapper');
+  var pdfPreviewFrame = document.getElementById('pdfPreviewFrame');
+  var pdfPreviewRemove = document.getElementById('pdfPreviewRemove');
+
   var selectedFile = null;
+  var pdfPreviewUrl = null;
 
   function isSimulasi(value) {
       return value === 'simulasi_horen' ||
@@ -527,39 +648,134 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   kategoriSelect.addEventListener('change', updateUploadVisibility);
   updateUploadVisibility();
 
-  function setSelectedFile(file){
+  function setSelectedFile(file) {
+
       selectedFile = file;
 
-      if (file){
+      // Hapus object URL PDF sebelumnya
+      if (pdfPreviewUrl) {
+          URL.revokeObjectURL(pdfPreviewUrl);
+          pdfPreviewUrl = null;
+      }
+
+      if (file) {
+
+          // ==========================================
           // Tampilkan nama file di dalam dropzone
+          // ==========================================
+
           dropzoneFileName.textContent = file.name;
           dropzoneFileName.style.display = 'block';
 
-          // Tampilkan juga file chip di bawah dropzone
+          // ==========================================
+          // Tampilkan file chip
+          // ==========================================
+
           fileChipName.textContent = file.name;
           fileChip.classList.add('show');
 
-          // Tandai dropzone bahwa file sudah dipilih
+          // ==========================================
+          // Tandai dropzone
+          // ==========================================
+
           dropzone.classList.add('file-selected');
+
+          // ==========================================
+          // Preview PDF
+          // ==========================================
+
+          if (file.type === 'application/pdf') {
+
+              pdfPreviewUrl = URL.createObjectURL(file);
+
+              pdfPreviewFrame.src = pdfPreviewUrl;
+
+              pdfPreviewWrapper.classList.add('show');
+
+          } else {
+
+              pdfPreviewFrame.removeAttribute('src');
+
+              pdfPreviewWrapper.classList.remove('show');
+          }
+
       } else {
-          // Sembunyikan nama file
+
+          // ==========================================
+          // Reset nama file
+          // ==========================================
+
           dropzoneFileName.textContent = '';
           dropzoneFileName.style.display = 'none';
 
-          // Sembunyikan file chip
+          // ==========================================
+          // Reset file chip
+          // ==========================================
+
+          fileChipName.textContent = '';
           fileChip.classList.remove('show');
 
-          // Kembalikan tampilan dropzone
+          // ==========================================
+          // Reset dropzone
+          // ==========================================
+
           dropzone.classList.remove('file-selected');
+
+          // ==========================================
+          // Reset PDF preview
+          // ==========================================
+
+          pdfPreviewFrame.removeAttribute('src');
+
+          pdfPreviewWrapper.classList.remove('show');
       }
   }
 
-  fileInput.addEventListener('change', function(){
-    if (fileInput.files && fileInput.files[0]) setSelectedFile(fileInput.files[0]);
+  fileInput.addEventListener('change', function() {
+
+      if (!fileInput.files || !fileInput.files[0]) {
+          return;
+      }
+
+      var file = fileInput.files[0];
+
+      // Pastikan PDF
+      if (file.type !== 'application/pdf') {
+
+          alert('File harus berupa PDF.');
+
+          fileInput.value = '';
+
+          setSelectedFile(null);
+
+          return;
+      }
+
+      // Maksimal 10 MB
+      var maxSize = 10 * 1024 * 1024;
+
+      if (file.size > maxSize) {
+
+          alert('Ukuran file maksimal 10 MB.');
+
+          fileInput.value = '';
+
+          setSelectedFile(null);
+
+          return;
+      }
+
+      setSelectedFile(file);
   });
+
   fileChipRemove.addEventListener('click', function(){
     setSelectedFile(null);
     fileInput.value = '';
+  });
+
+  pdfPreviewRemove.addEventListener('click', function() {
+      setSelectedFile(null);
+      fileInput.value = '';
   });
 
   ['dragenter', 'dragover'].forEach(function(evt){
@@ -647,6 +863,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
       * ModuleController@store
       */
   });
+})();
 </script>
 </body>
 </html>
