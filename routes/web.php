@@ -297,6 +297,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/performa-siswa/{user}', [AdminPerformanceController::class, 'show'])
         ->name('admin.siswa.detail');
 
+    Route::get('/admin/performa-siswa/{user}/hasil/{attempt}', [AdminPerformanceController::class, 'showAttempt'])
+        ->name('admin.siswa.hasil');
+
     /*
     |--------------------------------------------------------------------------
     | Logout

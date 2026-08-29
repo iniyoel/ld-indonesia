@@ -272,6 +272,41 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
   .category-grid{ grid-template-columns: 1fr; }
   .table-footer{ flex-direction: column; align-items: flex-start; }
 }
+.aksi-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 86px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.84rem;
+  border: 1.5px solid var(--pink);
+  color: var(--pink-dark);
+  background: var(--white);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.aksi-btn:hover{
+  background: var(--pink-pale);
+}
+
+.aksi-btn svg{
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.aksi-btn.is-selesai{
+  border-color: var(--pink);
+  color: var(--pink-dark);
+}
+
+.aksi-btn.is-proses{
+  border-color: var(--pink);
+  color: var(--pink-dark);
+}
 </style>
 </head>
 <body>
@@ -627,6 +662,7 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
                 <th scope="col">Kategori</th>
                 <th scope="col">Nilai</th>
                 <th scope="col">Tanggal &amp; Waktu</th>
+                <th scope="col">Aksi</th>
               </tr>
             </thead>
             <tbody id="riwayatBody">
@@ -670,11 +706,30 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
                                 ? \Carbon\Carbon::parse($activity->selesai_pada)->format('d M Y, H:i')
                                 : '-' }}
                         </td>
-
+                        <td>
+                            <a href="{{ route('admin.siswa.hasil', [
+                                    'user' => $student->id,
+                                    'attempt' => $activity->id
+                                ]) }}"
+                                class="aksi-btn"
+                                title="Lihat hasil pengerjaan"
+                                aria-label="Lihat hasil pengerjaan {{ $activity->judul ?? 'Modul' }}"
+                            >
+                                <svg viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      stroke-width="2"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      aria-hidden="true">
+                                      <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/>
+                                      <circle cx="12" cy="12" r="2.5"/>
+                                </svg>
+                                Lihat
+                            </a>
+                        </td>
                     </tr>
-
                 @empty
-
                     <tr>
                         <td colspan="5" style="text-align:center;padding:30px;">
                             Belum ada aktivitas siswa.

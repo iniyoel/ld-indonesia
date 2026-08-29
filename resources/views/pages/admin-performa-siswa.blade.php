@@ -95,7 +95,6 @@ color:var(--navy);font-weight:700;font-size:.86rem;display:flex;align-items:cent
 
   <div class="app-shell">
   <div class="backdrop" id="backdrop"></div>
-
     <x-dashboard-sidebar />
 
   <div class="main-col">

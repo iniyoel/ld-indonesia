@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Attempt;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -253,6 +254,51 @@ class AdminPerformanceController extends Controller
             'success' => true,
             'total' => $students->count(),
             'data' => $students,
+        ]);
+    }
+
+    public function showAttempt(
+        Request $request,
+        User $user,
+        Attempt $attempt
+    ): View {
+        abort_unless($request->user()?->role === 'admin', 403);
+
+        // Pastikan attempt memang milik siswa yang dipilih.
+        abort_unless($attempt->user_id === $user->id, 404);
+
+        // Hanya hasil pengerjaan yang sudah selesai yang boleh dilihat.
+        abort_unless($attempt->status === 'selesai', 404);
+
+        $module = $attempt->module;
+
+        abort_unless($module !== null, 404);
+
+        // Ambil semua soal modul beserta pilihan jawabannya.
+        $questions = $module->questions()
+            ->with('options')
+            ->orderBy('urutan')
+            ->get();
+
+        // Ambil jawaban siswa untuk attempt tersebut.
+        $answers = $attempt->answers()
+            ->with([
+                'selectedOption',
+                'question',
+            ])
+            ->get()
+            ->keyBy('question_id');
+
+        // Pasangkan jawaban siswa ke setiap soal.
+        $questions->each(function ($question) use ($answers) {
+            $question->studentAnswer = $answers->get($question->id);
+        });
+
+        return view('pages.admin-detail-pengerjaan', [
+            'student' => $user,
+            'module' => $module,
+            'attempt' => $attempt,
+            'questions' => $questions,
         ]);
     }
 }
