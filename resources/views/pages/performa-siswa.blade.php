@@ -676,16 +676,14 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
 
                         {{-- AKSI --}}
                         <td>
-
-                            {{-- Untuk sementara tombol detail belum diarahkan
-                                karena route detail siswa belum dibuat. --}}
-                            <button
-                                type="button"
+                            <a
+                                href="{{ route('siswa.modul.hasil', [
+                                    'module' => $module->id,
+                                    'attempt' => $attempt->id
+                                ]) }}"
                                 class="action-btn"
                                 title="Detail pengerjaan"
                                 aria-label="Detail pengerjaan {{ $module->judul }}"
-                                disabled
-                                style="opacity:.45; cursor:not-allowed;"
                             >
                                 <svg
                                     viewBox="0 0 24 24"
@@ -699,7 +697,7 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
                                     <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
                                     <circle cx="12" cy="12" r="3"/>
                                 </svg>
-                            </button>
+                            </a>
 
                         </td>
 

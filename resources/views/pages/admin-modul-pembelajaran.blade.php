@@ -455,33 +455,126 @@ body.feedback-open{
       </div>
 
       <!-- ============ FILTER + TAMBAH MODUL ============ -->
-      <!-- Catatan: kolom cari & filter Level di bawah ini baru tampilan (belum fungsional). -->
-      <div class="filter-bar">
-        <div class="search-field">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-          <label for="searchInput" class="sr-only" hidden>Cari modul</label>
-          <input type="search" id="searchInput" placeholder="Cari...">
-        </div>
+      <form
+          action="{{ route('modul.index') }}"
+          method="GET"
+          class="filter-bar"
+      >
+          <div class="search-field">
+              <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+              >
+                  <circle cx="11" cy="11" r="7"/>
+                  <path d="m21 21-4.3-4.3"/>
+              </svg>
 
-        <div class="select-field">
-          <label for="levelFilter" class="sr-only" hidden>Filter level</label>
-          <select id="levelFilter">
-            <option value="">Semua Level</option>
-            <option value="A1">Level A1</option>
-            <option value="A2">Level A2</option>
-            <option value="B1">Level B1</option>
-            <option value="B2">Level B2</option>
-          </select>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
+              <label for="searchInput" class="sr-only" hidden>
+                  Cari modul
+              </label>
 
-        <div class="filter-spacer"></div>
+              <input
+                  type="search"
+                  id="searchInput"
+                  name="search"
+                  value="{{ request('search') }}"
+                  placeholder="Cari modul..."
+              >
+          </div>
 
-        <a class="btn-add" href="{{ route('modul.create') }}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-          Tambah Modul
-        </a>
-      </div>
+          <div class="select-field">
+              <label for="levelFilter" class="sr-only" hidden>
+                  Filter level
+              </label>
+
+              <select
+                  id="levelFilter"
+                  name="level"
+                  onchange="this.form.submit()"
+              >
+                  <option value="">Semua Level</option>
+
+                  <option
+                      value="A1"
+                      {{ request('level') === 'A1' ? 'selected' : '' }}
+                  >
+                      Level A1
+                  </option>
+
+                  <option
+                      value="A2"
+                      {{ request('level') === 'A2' ? 'selected' : '' }}
+                  >
+                      Level A2
+                  </option>
+
+                  <option
+                      value="B1"
+                      {{ request('level') === 'B1' ? 'selected' : '' }}
+                  >
+                      Level B1
+                  </option>
+
+                  <option
+                      value="B2"
+                      {{ request('level') === 'B2' ? 'selected' : '' }}
+                  >
+                      Level B2
+                  </option>
+              </select>
+
+              <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+              >
+                  <path d="M6 9l6 6 6-6"/>
+              </svg>
+          </div>
+
+          <div class="filter-spacer"></div>
+
+          <button
+              type="submit"
+              class="btn-add"
+              style="border:none;"
+          >
+              Cari
+          </button>
+
+          @if(request('search') || request('level'))
+              <a
+                  href="{{ route('modul.index') }}"
+                  class="btn-add"
+              >
+                  Reset
+              </a>
+          @endif
+
+          <a class="btn-add" href="{{ route('modul.create') }}">
+              <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.6"
+                  stroke-linecap="round"
+                  aria-hidden="true"
+              >
+                  <path d="M12 5v14M5 12h14"/>
+              </svg>
+
+              Tambah Modul
+          </a>
+      </form>
 
       <!-- ============ TABLE PANEL ============ -->
       <section class="panel" aria-label="Daftar modul dan simulasi">
@@ -489,12 +582,96 @@ body.feedback-open{
           <table>
             <thead>
                 <tr>
-                    <th scope="col">Judul</th>
-                    <th scope="col">Level</th>
-                    <th scope="col">Kategori</th>
-                    <th scope="col">Materi</th>
-                    <th scope="col">Soal</th>
-                    <th scope="col">Terakhir diperbarui</th>
+                  <th scope="col">
+                    <a
+                        href="{{ request()->fullUrlWithQuery([
+                            'sort' => 'judul',
+                            'direction' => request('sort') === 'judul' && request('direction') === 'asc'
+                                ? 'desc'
+                                : 'asc',
+                            'page' => 1
+                        ]) }}"
+                        style="
+                            display:inline-flex;
+                            align-items:center;
+                            gap:6px;
+                        "
+                    >
+                        Judul
+
+                        @if(request('sort') === 'judul')
+                            {{ request('direction') === 'asc' ? '↑' : '↓' }}
+                        @endif
+                    </a>
+                </th>
+                <th scope="col">
+                    <a
+                        href="{{ request()->fullUrlWithQuery([
+                            'sort' => 'level',
+                            'direction' => request('sort') === 'level' && request('direction') === 'asc'
+                                ? 'desc'
+                                : 'asc',
+                            'page' => 1
+                        ]) }}"
+                        style="
+                            display:inline-flex;
+                            align-items:center;
+                            gap:6px;
+                        "
+                    >
+                        Level
+
+                        @if(request('sort') === 'level')
+                            {{ request('direction') === 'asc' ? '↑' : '↓' }}
+                        @endif
+                    </a>
+                </th>
+                <th scope="col">
+                    <a
+                        href="{{ request()->fullUrlWithQuery([
+                            'sort' => 'kategori',
+                            'direction' => request('sort') === 'kategori' && request('direction') === 'asc'
+                                ? 'desc'
+                                : 'asc',
+                            'page' => 1
+                        ]) }}"
+                        style="
+                            display:inline-flex;
+                            align-items:center;
+                            gap:6px;
+                        "
+                    >
+                        Kategori
+
+                        @if(request('sort') === 'kategori')
+                            {{ request('direction') === 'asc' ? '↑' : '↓' }}
+                        @endif
+                    </a>
+                </th>
+                <th>Materi</th>
+                <th>Soal</th>
+                <th scope="col">
+                    <a
+                        href="{{ request()->fullUrlWithQuery([
+                            'sort' => 'updated_at',
+                            'direction' => request('sort') === 'updated_at' && request('direction') === 'asc'
+                                ? 'desc'
+                                : 'asc',
+                            'page' => 1
+                        ]) }}"
+                        style="
+                            display:inline-flex;
+                            align-items:center;
+                            gap:6px;
+                        "
+                    >
+                        Terakhir diperbarui
+
+                        @if(request('sort') === 'updated_at')
+                            {{ request('direction') === 'asc' ? '↑' : '↓' }}
+                        @endif
+                    </a>
+                </th>
                     <th scope="col">Aksi</th>
                 </tr>
             </thead>
@@ -786,7 +963,6 @@ body.feedback-open{
           <div class="empty-state-title">Modul belum tersedia</div>
           <div class="empty-state-text">Belum ada modul atau simulasi yang ditambahkan. Klik "Tambah Modul" untuk membuat modul pertama.</div>
         </div>
-        <!-- Catatan: paginasi di bawah ini baru tampilan (belum fungsional). -->
         @if($modules->hasPages() || $modules->total() > 0)
             <div class="table-footer">
 
@@ -982,26 +1158,6 @@ body.feedback-open{
 <script>
 (function(){
   "use strict";
-
-  /* ==================================================================
-     CATATAN INTEGRASI BACKEND
-     - MODULES di bawah ini adalah data contoh statis. Saat backend
-       siap, ganti dengan fetch('/api/admin/modul') untuk mengambil
-       daftar modul & simulasi sesungguhnya (termasuk total baris
-       untuk paginasi).
-     - Tombol Lihat/Ubah mengarah ke halaman detail & form modul yang
-       belum dibuat (admin-modul-detail.html, admin-modul-form.html).
-     - Tombol Hapus di bawah ini SUDAH fungsional secara lokal (memakai
-       konfirmasi browser lalu menghapus baris dari tampilan) sebagai
-       simulasi front-end. Saat backend siap, ganti dengan pemanggilan
-       API DELETE sebelum menghapus barisnya dari tampilan.
-     - Baris tabel otomatis menampilkan pesan "Modul belum tersedia"
-       ketika array MODULES kosong (mis. setelah semua modul dihapus).
-  ================================================================== */
-
-  var tbody = document.getElementById('moduleTableBody');
-  var emptyState = document.getElementById('emptyState');
-  var tableFooter = document.getElementById('tableFooter');
 
   var sidebar = document.getElementById('sidebar');
   var menuToggle = document.getElementById('menuToggle');

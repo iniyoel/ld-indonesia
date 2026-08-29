@@ -562,20 +562,16 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
                             </span>
 
                         </div>
-
-
-                        <div>
-
-                            <div class="category-avg-label">
-                                Rata-rata
-                            </div>
-
-                            <div class="category-avg-value">
-                                {{ $summary['rata_rata'] !== null ? $summary['rata_rata'] : '-' }}
-                            </div>
-
-                        </div>
-
+                      @if(!in_array($kategori, ['simulasi_schreiben', 'simulasi_sprechen']))
+                          <div>
+                              <div class="category-avg-label">
+                                  Rata-rata
+                              </div>
+                              <div class="category-avg-value">
+                                  {{ $summary['rata_rata'] !== null ? $summary['rata_rata'] : '-' }}
+                              </div>
+                          </div>
+                      @endif
                     </div>
 
 
@@ -640,6 +636,7 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
                     <tr
                         data-category="{{ $activity->kategori ?? '' }}"
                         data-date="{{ $activity->selesai_pada ?? '' }}"
+                        data-activity-id="{{ $activity->id ?? '' }}"
                     >
 
                         <td>
@@ -655,19 +652,17 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
                         </td>
 
                         <td class="col-nilai">
-
-                            @if($activity->nilai !== null)
-
+                            @if(in_array($activity->kategori, ['simulasi_schreiben', 'simulasi_sprechen']))
+                                <span style="color: var(--gray-400);">
+                                    —
+                                </span>
+                            @elseif($activity->nilai !== null)
                                 {{ number_format((float) $activity->nilai, 1) }}
-
                             @else
-
                                 <span class="status-pill">
                                     Belum Dinilai
                                 </span>
-
                             @endif
-
                         </td>
 
                         <td>
@@ -694,26 +689,28 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
 
         <!-- Catatan: paginasi di bawah ini baru tampilan (belum fungsional). -->
         <div class="table-footer">
-          <div class="rows-per-page">
-            Rows per page
-            <select id="rowsPerPage" aria-label="Jumlah baris per halaman">
-              <option value="5" selected>5</option>
-              <option value="10">10</option>
-              <option value="25">25</option>
-            </select>
-            <span class="results-count">1–5 of 30 aktivitas</span>
-          </div>
-          <nav class="pagination" aria-label="Navigasi halaman (contoh tampilan)">
-            <button class="page-btn" disabled aria-label="Halaman sebelumnya">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-            </button>
-            <button class="page-btn active" aria-current="page" aria-label="Halaman 1">1</button>
-            <button class="page-btn" aria-label="Halaman 2">2</button>
-            <button class="page-btn" aria-label="Halaman 3">3</button>
-            <button class="page-btn" aria-label="Halaman berikutnya">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
-            </button>
-          </nav>
+
+            <div class="rows-per-page">
+                Rows per page
+
+                <select id="rowsPerPage" aria-label="Jumlah baris per halaman">
+                    <option value="5" selected>5</option>
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                </select>
+
+                <span class="results-count" id="resultsCount">
+                    0–0 of 0 aktivitas
+                </span>
+            </div>
+
+            <nav
+                class="pagination"
+                id="pagination"
+                aria-label="Navigasi halaman"
+            >
+            </nav>
+
         </div>
       </section>
     </main>
@@ -743,6 +740,517 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
 
 
   var tbody = document.getElementById('riwayatBody');
+
+/* ============================================================
+   PAGINATION RIWAYAT AKTIVITAS
+   ============================================================ */
+
+var rowsPerPageSelect = document.getElementById('rowsPerPage');
+var resultsCount = document.getElementById('resultsCount');
+var pagination = document.getElementById('pagination');
+
+var currentPage = 1;
+var rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 5;
+
+
+/*
+ * Mengambil semua baris aktivitas asli.
+ * Baris "Belum ada aktivitas" tidak dihitung.
+ */
+var allRows = Array.from(
+    tbody.querySelectorAll('tr[data-category]')
+);
+
+
+/*
+ * Baris yang sedang lolos filter.
+ */
+var filteredRows = allRows.slice();
+
+
+function renderPagination() {
+
+    var totalRows = filteredRows.length;
+
+    var totalPages = Math.ceil(totalRows / rowsPerPage);
+
+    /*
+     * Kalau filter menyebabkan halaman aktif tidak ada,
+     * kembali ke halaman terakhir yang tersedia.
+     */
+    if (totalPages === 0) {
+        currentPage = 1;
+    } else if (currentPage > totalPages) {
+        currentPage = totalPages;
+    }
+
+
+    /*
+     * Sembunyikan semua row terlebih dahulu.
+     */
+    allRows.forEach(function(row) {
+        row.style.display = 'none';
+    });
+
+
+    /*
+     * Tentukan row yang harus ditampilkan.
+     */
+    var startIndex = (currentPage - 1) * rowsPerPage;
+    var endIndex = Math.min(
+        startIndex + rowsPerPage,
+        totalRows
+    );
+
+
+    for (var i = startIndex; i < endIndex; i++) {
+
+        filteredRows[i].style.display = '';
+
+        var numberCell =
+            filteredRows[i].querySelector('td:first-child');
+
+        if (numberCell) {
+            numberCell.textContent =
+                i + 1;
+        }
+    }
+
+
+    /*
+     * Update teks:
+     *
+     * 1–5 of 30 aktivitas
+     */
+    if (totalRows === 0) {
+
+        resultsCount.textContent = '0–0 of 0 aktivitas';
+
+    } else {
+
+        resultsCount.textContent =
+            (startIndex + 1) +
+            '–' +
+            endIndex +
+            ' of ' +
+            totalRows +
+            ' aktivitas';
+    }
+
+
+    /*
+     * Buat tombol pagination.
+     */
+    pagination.innerHTML = '';
+
+
+    /*
+     * Tombol PREVIOUS
+     */
+    var previousButton = document.createElement('button');
+
+    previousButton.type = 'button';
+    previousButton.className = 'page-btn';
+    previousButton.setAttribute(
+        'aria-label',
+        'Halaman sebelumnya'
+    );
+
+    previousButton.innerHTML = `
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M15 18l-6-6 6-6"/>
+        </svg>
+    `;
+
+    previousButton.disabled =
+        currentPage <= 1 || totalPages === 0;
+
+    previousButton.addEventListener('click', function() {
+
+        if (currentPage > 1) {
+
+            currentPage--;
+
+            renderPagination();
+        }
+
+    });
+
+    pagination.appendChild(previousButton);
+
+
+    /*
+     * Kalau tidak ada data, tidak perlu membuat
+     * tombol halaman.
+     */
+    if (totalPages > 0) {
+
+        /*
+         * Maksimal tampilkan 5 nomor halaman sekaligus.
+         *
+         * Contoh:
+         *
+         * 1 2 3 4 5
+         *
+         * atau ketika sudah jauh:
+         *
+         * 3 4 5 6 7
+         */
+        var maxVisiblePages = 5;
+
+        var startPage = Math.max(
+            1,
+            currentPage - Math.floor(maxVisiblePages / 2)
+        );
+
+        var endPage = Math.min(
+            totalPages,
+            startPage + maxVisiblePages - 1
+        );
+
+        /*
+         * Jika berada dekat akhir, geser range
+         * agar tetap memiliki maksimal 5 tombol.
+         */
+        if (
+            endPage - startPage + 1 < maxVisiblePages
+        ) {
+            startPage = Math.max(
+                1,
+                endPage - maxVisiblePages + 1
+            );
+        }
+
+
+        /*
+         * Jika halaman 1 tidak masuk range,
+         * tampilkan tombol 1 + ...
+         */
+        if (startPage > 1) {
+
+            createPageButton(1);
+
+            if (startPage > 2) {
+                createEllipsis();
+            }
+        }
+
+
+        /*
+         * Nomor halaman.
+         */
+        for (
+            var page = startPage;
+            page <= endPage;
+            page++
+        ) {
+
+            createPageButton(page);
+        }
+
+
+        /*
+         * Jika halaman terakhir belum masuk range,
+         * tampilkan ... + halaman terakhir.
+         */
+        if (endPage < totalPages) {
+
+            if (endPage < totalPages - 1) {
+                createEllipsis();
+            }
+
+            createPageButton(totalPages);
+        }
+    }
+
+
+    /*
+     * Tombol NEXT
+     */
+    var nextButton = document.createElement('button');
+
+    nextButton.type = 'button';
+    nextButton.className = 'page-btn';
+
+    nextButton.setAttribute(
+        'aria-label',
+        'Halaman berikutnya'
+    );
+
+    nextButton.innerHTML = `
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M9 6l6 6-6 6"/>
+        </svg>
+    `;
+
+    nextButton.disabled =
+        currentPage >= totalPages ||
+        totalPages === 0;
+
+    nextButton.addEventListener('click', function() {
+
+        if (currentPage < totalPages) {
+
+            currentPage++;
+
+            renderPagination();
+        }
+
+    });
+
+    pagination.appendChild(nextButton);
+}
+
+
+/*
+ * Membuat tombol nomor halaman.
+ */
+function createPageButton(page) {
+
+    var button = document.createElement('button');
+
+    button.type = 'button';
+    button.className = 'page-btn';
+
+    button.textContent = page;
+
+    button.setAttribute(
+        'aria-label',
+        'Halaman ' + page
+    );
+
+    if (page === currentPage) {
+
+        button.classList.add('active');
+
+        button.setAttribute(
+            'aria-current',
+            'page'
+        );
+    }
+
+
+    button.addEventListener('click', function() {
+
+        currentPage = page;
+
+        renderPagination();
+    });
+
+
+    pagination.appendChild(button);
+}
+
+
+/*
+ * Membuat tanda "..."
+ */
+function createEllipsis() {
+
+    var span = document.createElement('span');
+
+    span.textContent = '…';
+
+    span.setAttribute(
+        'aria-hidden',
+        'true'
+    );
+
+    span.style.display = 'flex';
+    span.style.alignItems = 'center';
+    span.style.justifyContent = 'center';
+    span.style.minWidth = '24px';
+    span.style.height = '34px';
+    span.style.color = 'var(--gray-400)';
+    span.style.fontWeight = '700';
+
+    pagination.appendChild(span);
+}
+
+
+/*
+ * Ketika jumlah row per page diubah.
+ */
+rowsPerPageSelect.addEventListener(
+    'change',
+    function() {
+
+        rowsPerPage =
+            parseInt(this.value, 10) || 5;
+
+        /*
+         * Kembali ke halaman pertama agar UX
+         * tidak membingungkan.
+         */
+        currentPage = 1;
+
+        renderPagination();
+    }
+);
+
+
+/*
+ * Render awal.
+ */
+renderPagination();
+
+/* ============================================================
+   FILTER KATEGORI & WAKTU
+   ============================================================ */
+
+var kategoriFilter =
+    document.getElementById('kategoriFilter');
+
+var waktuFilter =
+    document.getElementById('waktuFilter');
+
+
+function applyFilters() {
+
+    var selectedCategory =
+        kategoriFilter.value;
+
+    var selectedTime =
+        waktuFilter.value;
+
+
+    var now = new Date();
+
+
+    filteredRows = allRows.filter(function(row) {
+
+        var category =
+            row.dataset.category || '';
+
+        var dateString =
+            row.dataset.date || '';
+
+
+        /*
+         * -------------------------
+         * FILTER KATEGORI
+         * -------------------------
+         */
+
+        if (
+            selectedCategory &&
+            getCategoryLabel(category) !== selectedCategory
+        ) {
+            return false;
+        }
+
+
+        /*
+         * -------------------------
+         * FILTER WAKTU
+         * -------------------------
+         */
+
+        if (selectedTime && dateString) {
+
+            var activityDate =
+                new Date(
+                    dateString.replace(' ', 'T')
+                );
+
+
+            /*
+             * Kalau tanggal tidak valid,
+             * jangan langsung menghilangkan data.
+             */
+            if (!isNaN(activityDate.getTime())) {
+
+                var diff =
+                    now.getTime() -
+                    activityDate.getTime();
+
+
+                var diffHours =
+                    diff / (1000 * 60 * 60);
+
+
+                if (
+                    selectedTime === '24jam' &&
+                    diffHours > 24
+                ) {
+                    return false;
+                }
+
+
+                if (
+                    selectedTime === '1minggu' &&
+                    diffHours > 24 * 7
+                ) {
+                    return false;
+                }
+
+
+                if (
+                    selectedTime === '1bulan' &&
+                    diffHours > 24 * 30
+                ) {
+                    return false;
+                }
+            }
+        }
+
+
+        return true;
+    });
+
+
+    /*
+     * Filter berubah → kembali ke halaman 1.
+     */
+    currentPage = 1;
+
+    renderPagination();
+}
+
+
+/*
+ * Konversi key kategori database
+ * menjadi label yang digunakan dropdown.
+ */
+function getCategoryLabel(category) {
+
+    var labels = {
+        'materi': 'Materi',
+        'simulasi_horen': 'Simulasi Hören',
+        'simulasi_lesen': 'Simulasi Lesen',
+        'simulasi_schreiben': 'Simulasi Schreiben',
+        'simulasi_sprechen': 'Simulasi Sprechen'
+    };
+
+    return labels[category] || category;
+}
+
+
+kategoriFilter.addEventListener(
+    'change',
+    applyFilters
+);
+
+waktuFilter.addEventListener(
+    'change',
+    applyFilters
+);
 
   /* ---- Ekspor ke Excel (.xlsx) — fungsional, memakai SheetJS ---- */
   var exportBtn = document.getElementById('exportBtn');

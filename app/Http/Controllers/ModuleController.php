@@ -18,14 +18,57 @@ class ModuleController extends Controller
     | DAFTAR MODUL
     |--------------------------------------------------------------------------
     */
-    public function index()
+    public function index(Request $request)
     {
-        $modules = Module::with(['creator'])
-            ->withCount('questions')
-            ->latest('updated_at')
-            ->paginate(10);
+        $search = $request->input('search');
+        $level = $request->input('level');
+        $sort = $request->input('sort', 'updated_at');
+        $direction = $request->input('direction', 'desc');
 
-        return view('pages.admin-modul-pembelajaran', compact('modules'));
+        $allowedSorts = [
+            'judul',
+            'level',
+            'kategori',
+            'updated_at',
+        ];
+
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'updated_at';
+        }
+
+        $direction = $direction === 'asc' ? 'asc' : 'desc';
+
+        $modules = Module::with('creator')
+            ->withCount('questions')
+
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('judul', 'like', '%' . $search . '%')
+                    ->orWhere('level', 'like', '%' . $search . '%')
+                    ->orWhere('kategori', 'like', '%' . $search . '%')
+                    ->orWhereHas('creator', function ($creatorQuery) use ($search) {
+                        $creatorQuery->where('name', 'like', '%' . $search . '%');
+                    });
+                });
+            })
+
+            ->when($level, function ($query) use ($level) {
+                $query->where('level', $level);
+            })
+
+            ->orderBy($sort, $direction)
+
+            ->paginate(7)
+
+            ->withQueryString();
+
+        return view('pages.admin-modul-pembelajaran', compact(
+            'modules',
+            'search',
+            'level',
+            'sort',
+            'direction'
+        ));
     }
 
     /*
