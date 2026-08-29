@@ -57,10 +57,76 @@ class PageController extends Controller
         $viewData = [];
 
         if ($page === 'admin-pengguna') {
-            $viewData['users'] = User::query()
-                ->orderBy('role')
-                ->orderBy('name')
-                ->get();
+            $query = \App\Models\User::query();
+
+            // =========================
+            // SEARCH
+            // =========================
+            if ($request->filled('search')) {
+                $search = trim($request->input('search'));
+
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
+                });
+            }
+
+            // =========================
+            // FILTER PERAN / KATEGORI
+            // =========================
+            if ($request->filled('role')) {
+                $query->where('role', $request->input('role'));
+            }
+
+            // =========================
+            // FILTER LEVEL
+            // =========================
+            if ($request->filled('level')) {
+                $query->where('level', $request->input('level'));
+            }
+
+            // =========================
+            // FILTER STATUS
+            // =========================
+            if ($request->filled('status')) {
+                $query->where('status', $request->input('status'));
+            }
+
+            // =========================
+            // SORTING
+            // =========================
+            $sort = $request->input('sort', 'name');
+            $direction = $request->input('direction', 'asc');
+
+            $allowedSorts = [
+                'name',
+                'email',
+                'role',
+                'level',
+                'status',
+                'created_at',
+            ];
+
+            if (!in_array($sort, $allowedSorts, true)) {
+                $sort = 'name';
+            }
+
+            $direction = $direction === 'desc' ? 'desc' : 'asc';
+
+            $query->orderBy($sort, $direction);
+
+            // =========================
+            // PAGINATION
+            // =========================
+            $perPage = (int) $request->input('per_page', 15);
+
+            if (!in_array($perPage, [15, 25, 50], true)) {
+                $perPage = 15;
+            }
+
+            $viewData['users'] = $query
+                ->paginate($perPage)
+                ->withQueryString();
         }
 
         if ($page === 'dashboard-siswa') {
