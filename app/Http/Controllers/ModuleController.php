@@ -293,9 +293,20 @@ class ModuleController extends Controller
                 'file',
                 'mimes:pdf',
                 'max:10240',
-                'required_if:kategori,materi',
             ],
         ]);
+
+        if (
+            $validated['kategori'] === 'materi' &&
+            !$module->file_path &&
+            !$request->hasFile('file')
+        ) {
+            return back()
+                ->withErrors([
+                    'file' => 'Modul Materi wajib memiliki file PDF.',
+                ])
+                ->withInput();
+        }
 
         // Simpan data lama untuk kebutuhan activity log
         $judulLama = $module->judul;

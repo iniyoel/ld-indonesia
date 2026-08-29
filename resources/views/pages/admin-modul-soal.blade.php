@@ -438,16 +438,85 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   }
   function clearAlert(){errorAlert.style.display='none';successAlert.style.display='none';}
 
-  function fileBox(file, accept, buttonText, callback){
-    var box=document.createElement('div');
-    box.style.cssText='border:1.5px dashed var(--gray-300);border-radius:var(--radius-md);background:var(--gray-50);padding:16px;display:flex;align-items:center;gap:12px;';
-    box.innerHTML='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--pink-dark);flex-shrink:0;">'+icon('upload')+'</svg>';
-    var label=document.createElement('label'); label.className='dropzone-btn'; label.textContent=file? 'Ganti Audio':buttonText;
-    var input=document.createElement('input'); input.type='file'; input.accept=accept; input.hidden=true;
-    var name=document.createElement('span'); name.className='dropzone-file-name'; name.textContent=file?file.name:'Belum ada file dipilih';
-    if(file) name.style.color='var(--green)';
-    input.addEventListener('change',function(){if(input.files&&input.files[0])callback(input.files[0]);});
-    label.appendChild(input); box.appendChild(label); box.appendChild(name); return box;
+  function fileBox(file, existingUrl, accept, buttonText, callback){
+      var box = document.createElement('div');
+
+      box.style.cssText =
+          'border:1.5px dashed var(--gray-300);' +
+          'border-radius:var(--radius-md);' +
+          'background:var(--gray-50);' +
+          'padding:16px;' +
+          'display:flex;' +
+          'flex-direction:column;' +
+          'align-items:flex-start;' +
+          'gap:12px;';
+
+      var top = document.createElement('div');
+      top.style.cssText =
+          'display:flex;' +
+          'align-items:center;' +
+          'gap:12px;' +
+          'width:100%;';
+
+      top.innerHTML =
+          '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" ' +
+          'stroke="currentColor" stroke-width="1.8" stroke-linecap="round" ' +
+          'stroke-linejoin="round" style="color:var(--pink-dark);flex-shrink:0;">' +
+          icon('upload') +
+          '</svg>';
+
+      var label = document.createElement('label');
+      label.className = 'dropzone-btn';
+      label.textContent = file
+          ? 'Ganti Audio'
+          : (existingUrl ? 'Ganti Audio' : buttonText);
+
+      var input = document.createElement('input');
+      input.type = 'file';
+      input.accept = accept;
+      input.hidden = true;
+
+      var name = document.createElement('span');
+      name.className = 'dropzone-file-name';
+
+      if (file) {
+          name.textContent = file.name;
+          name.style.color = 'var(--green)';
+      } else if (existingUrl) {
+          name.textContent = 'Audio tersimpan';
+          name.style.color = 'var(--green)';
+      } else {
+          name.textContent = 'Belum ada file dipilih';
+      }
+
+      input.addEventListener('change', function(){
+          if(input.files && input.files[0]){
+              callback(input.files[0]);
+          }
+      });
+
+      label.appendChild(input);
+      top.appendChild(label);
+      top.appendChild(name);
+
+      box.appendChild(top);
+
+      // Preview audio lama / audio baru
+      if (file || existingUrl) {
+          var audio = document.createElement('audio');
+          audio.controls = true;
+          audio.style.width = '100%';
+
+          if (file) {
+              audio.src = URL.createObjectURL(file);
+          } else if (existingUrl) {
+              audio.src = existingUrl;
+          }
+
+          box.appendChild(audio);
+      }
+
+      return box;
   }
 
   function render(){
@@ -474,7 +543,17 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
       if(category==='simulasi_horen'){
         var audioLabel=document.createElement('label'); audioLabel.textContent='Audio Soal (MP3/WAV/M4A)'; audioLabel.style.cssText='display:block;font-family:var(--font-display);font-weight:700;font-size:1rem;color:var(--navy);margin:18px 0 8px;';
         card.appendChild(audioLabel);
-        card.appendChild(fileBox(q.questionFile,'audio/mpeg,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a',q.questionFile?'Ganti Audio':'Pilih Audio',function(file){q.questionFile=file;render();}));
+        card.appendChild(fileBox(
+            q.questionFile,
+            q.existingFileUrl,
+            'audio/mpeg,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a',
+            q.questionFile || q.existingFileUrl ? 'Ganti Audio' : 'Pilih Audio',
+            function(file){
+                q.questionFile = file;
+                q.existingFileUrl = null;
+                render();
+            }
+        ));
       }
 
       if(config.type==='pilihan_ganda'){
@@ -501,7 +580,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
           input.value=opt.text || '';
           input.addEventListener('input',function(){
             opt.text=input.value;
-            // Hören: jika memilih teks, gambar pada opsi tersebut dihapus.
             if(category==='simulasi_horen' && input.value.trim() && opt.file){
               opt.file=null;
               render();
@@ -512,34 +590,87 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
           r.appendChild(input);
 
           // Hören: opsi jawaban dapat berupa teks ATAU gambar.
-          if(category==='simulasi_horen'){
-            var imageLabel=document.createElement('label');
-            imageLabel.className='option-image-btn'+(opt.file?' has-file':'');
-            imageLabel.title=opt.file?'Ganti gambar pilihan':'Upload gambar pilihan';
+          if(category === 'simulasi_horen'){
 
-            var imageInput=document.createElement('input');
-            imageInput.type='file';
-            imageInput.accept='image/jpeg,image/png,image/webp';
-            imageInput.hidden=true;
+              var imageWrap = document.createElement('div');
 
-            imageInput.addEventListener('change',function(){
-              if(imageInput.files && imageInput.files[0]){
-                opt.file=imageInput.files[0];
-                opt.text='';
-                render();
+              imageWrap.style.cssText =
+                  'display:flex;' +
+                  'align-items:center;' +
+                  'gap:8px;' +
+                  'flex-shrink:0;';
+
+              // Preview gambar lama / baru
+              if(opt.file || opt.existingFileUrl){
+
+                  var preview = document.createElement('img');
+
+                  preview.style.cssText =
+                      'width:54px;' +
+                      'height:54px;' +
+                      'object-fit:cover;' +
+                      'border-radius:10px;' +
+                      'border:1px solid var(--gray-200);' +
+                      'background:var(--white);';
+
+                  if(opt.file){
+                      preview.src = URL.createObjectURL(opt.file);
+                  } else {
+                      preview.src = opt.existingFileUrl;
+                  }
+
+                  imageWrap.appendChild(preview);
               }
-            });
 
-            imageLabel.innerHTML=
-              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+
-              '<rect x="3" y="3" width="18" height="18" rx="2"/>'+
-              '<circle cx="8.5" cy="8.5" r="1.5"/>'+
-              '<path d="m21 15-5-5L5 21"/>'+
-              '</svg>'+
-              (opt.file?'Gambar dipilih':'Pilih gambar');
+              var imageLabel = document.createElement('label');
 
-            imageLabel.appendChild(imageInput);
-            r.appendChild(imageLabel);
+              imageLabel.className =
+                  'option-image-btn' +
+                  ((opt.file || opt.existingFileUrl) ? ' has-file' : '');
+
+              imageLabel.title =
+                  (opt.file || opt.existingFileUrl)
+                      ? 'Ganti gambar pilihan'
+                      : 'Upload gambar pilihan';
+
+              var imageInput = document.createElement('input');
+
+              imageInput.type = 'file';
+              imageInput.accept = 'image/jpeg,image/png,image/webp';
+              imageInput.hidden = true;
+
+              imageInput.addEventListener('change', function(){
+
+                  if(imageInput.files && imageInput.files[0]){
+
+                      opt.file = imageInput.files[0];
+
+                      // Media lama tidak lagi dipakai
+                      opt.existingFileUrl = null;
+
+                      opt.text = '';
+
+                      render();
+                  }
+              });
+
+              imageLabel.innerHTML =
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+                  'stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' +
+                  '<rect x="3" y="3" width="18" height="18" rx="2"/>' +
+                  '<circle cx="8.5" cy="8.5" r="1.5"/>' +
+                  '<path d="m21 15-5-5L5 21"/>' +
+                  '</svg>' +
+                  (
+                      opt.file
+                          ? 'Gambar baru'
+                          : (opt.existingFileUrl ? 'Ganti gambar' : 'Pilih gambar')
+                  );
+
+              imageLabel.appendChild(imageInput);
+
+              imageWrap.appendChild(imageLabel);
+              r.appendChild(imageWrap);
           }
 
           var del=document.createElement('button');
@@ -604,13 +735,20 @@ dup.addEventListener('click', function(){
     for(var i=0;i<questions.length;i++){
       var q=questions[i],n=i+1;
       if(!q.text||!q.text.trim()){alertError('Pertanyaan '+n+' belum diisi.');return false;}
-      if(category==='simulasi_horen'&&!q.questionFile){alertError('Soal Hören nomor '+n+' wajib memiliki audio.');return false;}
+      if(
+          category === 'simulasi_horen' &&
+          !q.questionFile &&
+          !q.existingFileUrl
+      ){
+          alertError('Soal Hören nomor '+n+' wajib memiliki audio.');
+          return false;
+      }
       if(q.type==='pilihan_ganda'){
         if(q.options.length!==4){alertError('Soal nomor '+n+' harus memiliki tepat 4 opsi.');return false;}
         for(var j=0;j<4;j++){
           var option=q.options[j];
           var hasText=!!(option.text && option.text.trim());
-          var hasImage=!!option.file;
+          var hasImage = !!option.file || !!option.existingFileUrl;
 
           if(category==='simulasi_horen'){
             if(!hasText && !hasImage){
@@ -751,7 +889,10 @@ if (rawQuestions && rawQuestions.length > 0) {
             id: opt.id || null,
             text: opt.teks || opt.text || '',
             file: null,
-            existingFileUrl: opt.file_path ? (storageBaseUrl + opt.file_path) : null
+            existingFileUrl: opt.file_path 
+              ? (storageBaseUrl + opt.file_path) 
+              : null,
+            removeExistingFile: false
           };
         });
       } else if (config.type === 'pilihan_ganda') {

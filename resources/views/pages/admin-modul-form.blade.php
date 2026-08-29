@@ -348,6 +348,66 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
         height: 500px;
     }
 }
+
+.existing-file-card{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:14px 16px;
+    margin-bottom:14px;
+    border:1px solid #B7E4CB;
+    border-radius:14px;
+    background:var(--green-bg);
+}
+
+.existing-file-icon{
+    width:42px;
+    height:42px;
+    border-radius:10px;
+    background:var(--white);
+    color:var(--green);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+}
+
+.existing-file-icon svg{
+    width:22px;
+    height:22px;
+}
+
+.existing-file-info{
+    flex:1;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+}
+
+.existing-file-info strong{
+    color:var(--navy);
+    font-size:.86rem;
+}
+
+.existing-file-info span{
+    color:var(--gray-600);
+    font-size:.78rem;
+    overflow-wrap:anywhere;
+}
+
+.existing-file-view{
+    padding:8px 13px;
+    border-radius:9px;
+    background:var(--white);
+    color:var(--green);
+    font-size:.8rem;
+    font-weight:800;
+    white-space:nowrap;
+}
+
+.existing-file-view:hover{
+    background:var(--gray-50);
+}
 </style>
 </head>
 <body>
@@ -384,11 +444,17 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
               </ul>
           </div>
       @endif
-      <form id="modulForm" action="{{ isset($module) ? route('modul.update', $module->id) : route('modul.store') }}" method="POST" enctype="multipart/form-data">
-         @csrf
-            @if(isset($module))
-                @method('PUT')
-            @endif
+      <form
+          id="modulForm"
+          action="{{ isset($module) ? route('modul.update', $module) : route('modul.store') }}"
+          method="POST"
+          enctype="multipart/form-data"
+      >
+          @csrf
+
+          @if(isset($module))
+              @method('PUT')
+          @endif
         <div class="form-grid">
           <!-- ============ KOLOM KIRI: DATA MODUL ============ -->
           <div>
@@ -458,65 +524,88 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
           </div>
 
           <!-- ============ KOLOM KANAN: UPLOAD FILE ============ -->
-          <div>
-            <div class="upload-panel-label" id="uploadLabel">Upload File</div>
+<div>
+    <div class="upload-panel-label" id="uploadLabel">
+        {{ isset($module) ? 'File PDF Modul' : 'Upload File' }}
+    </div>
 
-          <div class="dropzone" id="dropzone">
-              <svg class="dropzone-icon"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.6"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true">
-                  <path d="M7 18a4.5 4.5 0 0 1-1.4-8.8A5.5 5.5 0 0 1 16.3 7 4 4 0 0 1 17 15"/>
-                  <path d="M12 12v8"/>
-                  <path d="m9 15 3-3 3 3"/>
-              </svg>
-
-              <div class="dropzone-title" id="dropzoneTitle">
-                  Drag &amp; drop file di sini
-              </div>
-
-              <div
-                  class="dropzone-file-name"
-                  id="dropzoneFileName"
-                  style="display: none;"
-              >
-              </div>
-              
-              <div class="dropzone-or" id="dropzoneOr">
-                  atau
-              </div>
-
-              <label
-                  for="fileInput"
-                  class="dropzone-btn"
-                  id="chooseFileBtn"
-              >
-                  Pilih
-              </label>
-
-              <input
-                  type="file"
-                  id="fileInput"
-                  name="file"
-                  accept=".pdf,application/pdf"
-                  hidden
-              >
-
-          </div>
-
-            <div class="file-chip" id="fileChip">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
-              <span class="file-chip-name" id="fileChipName"></span>
-              <button type="button" class="file-chip-remove" id="fileChipRemove" aria-label="Hapus file">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-              </button>
+    @if(isset($module) && $module->file_path)
+        <div class="existing-file-card">
+            <div class="existing-file-icon">
+                <svg viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                </svg>
             </div>
 
-            <p class="upload-hint" id="uploadHint">Format yang didukung: PDF. Maksimal 10 MB.</p>
+            <div class="existing-file-info">
+                <strong>PDF saat ini</strong>
+                <span>{{ basename($module->file_path) }}</span>
+            </div>
+
+            <a
+                href="{{ asset('storage/' . $module->file_path) }}"
+                target="_blank"
+                class="existing-file-view"
+            >
+                Lihat PDF
+            </a>
+        </div>
+    @endif
+
+    <div class="dropzone" id="dropzone">
+        <svg class="dropzone-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M7 18a4.5 4.5 0 0 1-1.4-8.8A5.5 5.5 0 0 1 16.3 7 4 4 0 0 1 17 15"/>
+            <path d="M12 12v8"/>
+            <path d="m9 15 3-3 3 3"/>
+        </svg>
+
+        <div class="dropzone-title">
+            {{ isset($module) && $module->file_path
+                ? 'Ganti PDF'
+                : 'Drag & drop file di sini' }}
+        </div>
+
+        <div class="dropzone-or">atau</div>
+
+        <button type="button" class="dropzone-btn" id="chooseFileBtn">
+            {{ isset($module) && $module->file_path
+                ? 'Pilih PDF Baru'
+                : 'Pilih' }}
+        </button>
+
+        <input
+            type="file"
+            id="fileInput"
+            name="file"
+            accept=".pdf,application/pdf"
+            hidden
+        >
+    </div>
+
+    <div class="file-chip" id="fileChip">
+        ...
+    </div>
+
+    <p class="upload-hint">
+        {{ isset($module) && $module->file_path
+            ? 'Biarkan kosong jika ingin mempertahankan PDF yang sekarang.'
+            : 'Format yang didukung: PDF. Maksimal 10 MB.' }}
+    </p>
+          
 
             <!-- ============ PDF PREVIEW ============ -->
 
