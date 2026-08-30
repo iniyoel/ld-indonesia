@@ -186,44 +186,18 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 .dropzone{
   border: 1.5px dashed var(--gray-300); border-radius: var(--radius-md);
   min-height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-  padding: 30px; transition: border-color 0.15s ease, background 0.15s ease;
+  padding: 30px; transition: border-color 0.15s ease, background 0.15s ease; cursor: pointer;
 }
 .dropzone.is-dragover{ border-color: var(--pink); background: var(--pink-pale); }
 .dropzone-icon{ width: 52px; height: 52px; color: var(--gray-400); margin-bottom: 16px; }
 .dropzone-title{ font-weight: 700; font-size: 0.96rem; color: var(--navy); margin-bottom: 6px; }
 .dropzone-or{ font-size: 0.86rem; color: var(--gray-400); margin-bottom: 14px; }
 .dropzone-btn{
-  background: var(--pink-pale); 
-  color: var(--pink-dark); 
-  font-weight: 700; 
-  font-size: 0.9rem;
-  padding: 10px 26px; 
-  border-radius: var(--radius-pill);
+  background: var(--pink-pale); color: var(--pink-dark); font-weight: 700; font-size: 0.9rem;
+  padding: 10px 26px; border-radius: var(--radius-pill); cursor: pointer;
   display: inline-block;
-  cursor: pointer;
 }
 .dropzone-btn:hover{ background: var(--pink-light); }
-.dropzone.file-selected{
-    border-color: var(--green);
-    background: var(--green-bg);
-}
-
-.dropzone.file-selected .dropzone-icon{
-    color: var(--green);
-}
-
-.dropzone.file-selected .dropzone-title{
-    color: var(--green);
-}
-
-.dropzone-file-name{
-    margin-top: 8px;
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--navy);
-    max-width: 100%;
-    word-break: break-all;
-}
 .upload-hint{ font-size: 0.82rem; color: var(--gray-500); margin-top: 12px; }
 
 .file-chip{
@@ -233,7 +207,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 .file-chip.show{ display: flex; }
 .file-chip svg{ width: 20px; height: 20px; color: var(--green); flex-shrink: 0; }
 .file-chip-name{ flex-grow: 1; font-size: 0.86rem; font-weight: 600; color: var(--navy); word-break: break-all; }
-.file-chip-remove{ color: var(--gray-500); flex-shrink: 0; }
+.file-chip-remove{ color: var(--gray-500); flex-shrink: 0; cursor: pointer; }
 .file-chip-remove:hover{ color: var(--red); }
 .file-chip-remove svg{ width: 16px; height: 16px; color: inherit; }
 
@@ -252,12 +226,11 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   padding: 14px 30px; border-radius: var(--radius-pill);
   background: linear-gradient(135deg, var(--pink) 0%, var(--pink-dark) 100%); color: var(--white);
   font-weight: 700; font-size: 0.96rem; box-shadow: 0 12px 28px rgba(236,78,140,0.22);
-  transition: transform 0.18s ease;
+  transition: transform 0.18s ease; cursor: pointer;
 }
 .btn-next:hover{ transform: translateY(-2px); }
 .btn-next svg{ width: 17px; height: 17px; }
 
-/* ============ RESPONSIVE ============ */
 @media (max-width: 980px){
   .sidebar{ position: fixed; left: 0; top: 0; transform: translateX(-100%); transition: transform 0.22s ease; box-shadow: var(--shadow-md); }
   .sidebar.open{ transform: translateX(0); }
@@ -274,140 +247,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   .field-row{ grid-template-columns: 1fr; }
 }
 @media (max-width: 640px){ .user-meta{ display: none; } }
-
-/* ============ PDF PREVIEW ============ */
-
-.pdf-preview-wrapper {
-    display: none;
-    margin-top: 18px;
-    border: 1px solid var(--gray-200);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    background: var(--gray-100);
-}
-
-.pdf-preview-wrapper.show {
-    display: block;
-}
-
-.pdf-preview-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 12px 16px;
-    background: var(--white);
-    border-bottom: 1px solid var(--gray-200);
-}
-
-.pdf-preview-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.86rem;
-    font-weight: 700;
-    color: var(--navy);
-}
-
-.pdf-preview-title svg {
-    width: 18px;
-    height: 18px;
-    color: var(--red);
-    flex-shrink: 0;
-}
-
-.pdf-preview-remove {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    color: var(--red);
-    font-size: 0.8rem;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.pdf-preview-remove:hover {
-    color: var(--pink-dark);
-}
-
-.pdf-preview-remove svg {
-    width: 15px;
-    height: 15px;
-}
-
-.pdf-preview-frame {
-    width: 100%;
-    height: 620px;
-    border: none;
-    display: block;
-    background: var(--gray-100);
-}
-
-@media (max-width: 640px) {
-    .pdf-preview-frame {
-        height: 500px;
-    }
-}
-
-.existing-file-card{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    padding:14px 16px;
-    margin-bottom:14px;
-    border:1px solid #B7E4CB;
-    border-radius:14px;
-    background:var(--green-bg);
-}
-
-.existing-file-icon{
-    width:42px;
-    height:42px;
-    border-radius:10px;
-    background:var(--white);
-    color:var(--green);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-shrink:0;
-}
-
-.existing-file-icon svg{
-    width:22px;
-    height:22px;
-}
-
-.existing-file-info{
-    flex:1;
-    min-width:0;
-    display:flex;
-    flex-direction:column;
-}
-
-.existing-file-info strong{
-    color:var(--navy);
-    font-size:.86rem;
-}
-
-.existing-file-info span{
-    color:var(--gray-600);
-    font-size:.78rem;
-    overflow-wrap:anywhere;
-}
-
-.existing-file-view{
-    padding:8px 13px;
-    border-radius:9px;
-    background:var(--white);
-    color:var(--green);
-    font-size:.8rem;
-    font-weight:800;
-    white-space:nowrap;
-}
-
-.existing-file-view:hover{
-    background:var(--gray-50);
-}
 </style>
 </head>
 <body>
@@ -416,9 +255,8 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 <div class="app-shell">
   <div class="backdrop" id="backdrop"></div>
 
-    <x-sidebar.admin />
+  <x-sidebar.admin />
 
-  <!-- ============ MAIN ============ -->
   <div class="main-col">
     <x-header.admin />
 
@@ -426,35 +264,31 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
       <div class="page-heading">
         <h1>{{ isset($module) ? 'Edit Modul' : 'Tambah Modul' }}</h1>
       </div>
+
       @if ($errors->any())
-          <div style="
-              margin-bottom: 20px;
-              padding: 16px 18px;
-              border-radius: 12px;
-              background: var(--red-bg);
-              border: 1px solid #f5c2c0;
-              color: var(--red);
-          ">
-              <strong>Form belum dapat disimpan:</strong>
-
-              <ul style="margin: 8px 0 0 20px;">
-                  @foreach ($errors->all() as $error)
-                      <li>{{ $error }}</li>
-                  @endforeach
-              </ul>
-          </div>
+        <div style="margin-bottom: 20px; padding: 16px 18px; border-radius: 12px; background: var(--red-bg); border: 1px solid #f5c2c0; color: var(--red);">
+          <strong>Form belum dapat disimpan:</strong>
+          <ul style="margin: 8px 0 0 20px;">
+            @foreach ($errors->all() as $error)
+              <li>{{ $error }}</li>
+            @endforeach
+          </ul>
+        </div>
       @endif
-      <form
-          id="modulForm"
-          action="{{ isset($module) ? route('modul.update', $module) : route('modul.store') }}"
-          method="POST"
-          enctype="multipart/form-data"
-      >
-          @csrf
 
-          @if(isset($module))
-              @method('PUT')
-          @endif
+      <form
+        class="form-panel"
+        id="modulForm"
+        action="{{ isset($module) ? route('modul.update', $module) : route('modul.store') }}"
+        method="POST"
+        enctype="multipart/form-data"
+        novalidate
+      >
+        @csrf
+        @if(isset($module))
+          @method('PUT')
+        @endif
+
         <div class="form-grid">
           <!-- ============ KOLOM KIRI: DATA MODUL ============ -->
           <div>
@@ -474,9 +308,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
                   <select id="levelModul" name="level" required aria-describedby="levelError">
                     <option value="" disabled {{ old('level', $module->level ?? '') == '' ? 'selected' : '' }}>Pilih Level</option>
                     @foreach(['A1', 'A2', 'B1', 'B2'] as $lvl)
-                      <option value="{{ $lvl }}" {{ old('level', $module->level ?? '') === $lvl ? 'selected' : '' }}>
-                        {{ $lvl }}
-                      </option>
+                      <option value="{{ $lvl }}" {{ old('level', $module->level ?? '') === $lvl ? 'selected' : '' }}>{{ $lvl }}</option>
                     @endforeach
                   </select>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
@@ -490,7 +322,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
               <div class="field">
                 <label for="kategoriModul">Kategori</label>
                 <div class="select-wrap">
-                    @php
+                  @php
                     $currentKategori = old('kategori', $module->kategori ?? '');
                     $kategoriOptions = [
                       'materi' => 'Materi',
@@ -503,9 +335,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
                   <select id="kategoriModul" name="kategori" required aria-describedby="kategoriError">
                     <option value="" disabled {{ $currentKategori == '' ? 'selected' : '' }}>Pilih Kategori</option>
                     @foreach($kategoriOptions as $val => $label)
-                      <option value="{{ $val }}" {{ $currentKategori === $val ? 'selected' : '' }}>
-                        {{ $label }}
-                      </option>
+                      <option value="{{ $val }}" {{ $currentKategori === $val ? 'selected' : '' }}>{{ $label }}</option>
                     @endforeach
                   </select>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
@@ -524,144 +354,26 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
           </div>
 
           <!-- ============ KOLOM KANAN: UPLOAD FILE ============ -->
-<div>
-    <div class="upload-panel-label" id="uploadLabel">
-        {{ isset($module) ? 'File PDF Modul' : 'Upload File' }}
-    </div>
+          <div>
+            <div class="upload-panel-label" id="uploadLabel">Upload File PDF</div>
 
-    @if(isset($module) && $module->file_path)
-        <div class="existing-file-card">
-            <div class="existing-file-icon">
-                <svg viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                    <line x1="16" y1="13" x2="8" y2="13"/>
-                    <line x1="16" y1="17" x2="8" y2="17"/>
-                </svg>
+            <div class="dropzone" id="dropzone">
+              <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4.5 4.5 0 0 1-1.4-8.8A5.5 5.5 0 0 1 16.3 7 4 4 0 0 1 17 15"/><path d="M12 12v8"/><path d="m9 15 3-3 3 3"/></svg>
+              <div class="dropzone-title">Drag &amp; drop file di sini</div>
+              <div class="dropzone-or">atau</div>
+              <button type="button" class="dropzone-btn" id="chooseFileBtn">Pilih File</button>
+              <input type="file" id="fileInput" name="file" accept=".pdf,application/pdf" hidden>
             </div>
 
-            <div class="existing-file-info">
-                <strong>PDF saat ini</strong>
-                <span>{{ basename($module->file_path) }}</span>
+            <div class="file-chip" id="fileChip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+              <span class="file-chip-name" id="fileChipName"></span>
+              <button type="button" class="file-chip-remove" id="fileChipRemove" aria-label="Hapus file">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
             </div>
 
-            <a
-                href="{{ asset('storage/' . $module->file_path) }}"
-                target="_blank"
-                class="existing-file-view"
-            >
-                Lihat PDF
-            </a>
-        </div>
-    @endif
-
-    <div class="dropzone" id="dropzone">
-        <svg class="dropzone-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.6"
-            stroke-linecap="round"
-            stroke-linejoin="round">
-            <path d="M7 18a4.5 4.5 0 0 1-1.4-8.8A5.5 5.5 0 0 1 16.3 7 4 4 0 0 1 17 15"/>
-            <path d="M12 12v8"/>
-            <path d="m9 15 3-3 3 3"/>
-        </svg>
-
-        <div class="dropzone-title">
-            {{ isset($module) && $module->file_path
-                ? 'Ganti PDF'
-                : 'Drag & drop file di sini' }}
-        </div>
-
-        <div class="dropzone-or">atau</div>
-
-        <button type="button" class="dropzone-btn" id="chooseFileBtn">
-            {{ isset($module) && $module->file_path
-                ? 'Pilih PDF Baru'
-                : 'Pilih' }}
-        </button>
-
-        <input
-            type="file"
-            id="fileInput"
-            name="file"
-            accept=".pdf,application/pdf"
-            hidden
-        >
-    </div>
-
-    <div class="file-chip" id="fileChip">
-        ...
-    </div>
-
-    <p class="upload-hint">
-        {{ isset($module) && $module->file_path
-            ? 'Biarkan kosong jika ingin mempertahankan PDF yang sekarang.'
-            : 'Format yang didukung: PDF. Maksimal 10 MB.' }}
-    </p>
-          
-
-            <!-- ============ PDF PREVIEW ============ -->
-
-            <div class="pdf-preview-wrapper" id="pdfPreviewWrapper">
-
-                <div class="pdf-preview-header">
-
-                    <div class="pdf-preview-title">
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            aria-hidden="true"
-                        >
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <path d="M14 2v6h6"/>
-                            <path d="M8 13h8"/>
-                            <path d="M8 17h6"/>
-                        </svg>
-
-                        <span>Preview PDF</span>
-                    </div>
-
-                    <button
-                        type="button"
-                        class="pdf-preview-remove"
-                        id="pdfPreviewRemove"
-                    >
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2.2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            aria-hidden="true"
-                        >
-                            <path d="M18 6 6 18"/>
-                            <path d="M6 6l12 12"/>
-                        </svg>
-
-                        Hapus
-                    </button>
-
-                </div>
-
-                <iframe
-                    id="pdfPreviewFrame"
-                    class="pdf-preview-frame"
-                    title="Preview PDF modul"
-                ></iframe>
-
-            </div>
+            <p class="upload-hint" id="uploadHint">Format yang didukung: PDF. Maksimal 10 MB.</p>
 
             <!-- Muncul otomatis saat Kategori = salah satu Simulasi -->
             <div class="upload-skip-note" id="uploadSkipNote">
@@ -690,7 +402,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 (function(){
   "use strict";
 
-
   var kategoriSelect = document.getElementById('kategoriModul');
   var uploadLabel = document.getElementById('uploadLabel');
   var dropzone = document.getElementById('dropzone');
@@ -698,173 +409,67 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   var uploadHint = document.getElementById('uploadHint');
   var uploadSkipNote = document.getElementById('uploadSkipNote');
   var fileInput = document.getElementById('fileInput');
-  var dropzoneFileName = document.getElementById('dropzoneFileName');
+  var chooseFileBtn = document.getElementById('chooseFileBtn');
   var fileChipName = document.getElementById('fileChipName');
   var fileChipRemove = document.getElementById('fileChipRemove');
-  var pdfPreviewWrapper = document.getElementById('pdfPreviewWrapper');
-  var pdfPreviewFrame = document.getElementById('pdfPreviewFrame');
-  var pdfPreviewRemove = document.getElementById('pdfPreviewRemove');
-
   var selectedFile = null;
-  var pdfPreviewUrl = null;
 
-  function isSimulasi(value) {
-      return value === 'simulasi_horen' ||
-            value === 'simulasi_lesen' ||
-            value === 'simulasi_schreiben' ||
-            value === 'simulasi_sprechen';
+  function isSimulasi(value){ 
+    return value === 'simulasi_horen' || 
+           value === 'simulasi_lesen' || 
+           value === 'simulasi_schreiben' || 
+           value === 'simulasi_sprechen'; 
   }
 
-  function updateUploadVisibility() {
-      var value = kategoriSelect.value;
+  function updateUploadVisibility(){
+    var value = kategoriSelect.value;
+    var showUpload = value === 'materi';
+    var showSkipNote = isSimulasi(value);
 
-      var showUpload = value === 'materi';
-      var showSkipNote = isSimulasi(value);
+    uploadLabel.style.display = showUpload ? 'block' : 'none';
+    dropzone.style.display = showUpload ? 'flex' : 'none';
+    uploadHint.style.display = showUpload ? 'block' : 'none';
+    if (!showUpload) fileChip.classList.remove('show');
+    else fileChip.classList.toggle('show', !!selectedFile);
 
-      uploadLabel.style.display = showUpload ? 'block' : 'none';
-      dropzone.style.display = showUpload ? 'flex' : 'none';
-      uploadHint.style.display = showUpload ? 'block' : 'none';
-
-      if (!showUpload) {
-          fileChip.classList.remove('show');
-      } else {
-          fileChip.classList.toggle('show', !!selectedFile);
-      }
-
-      uploadSkipNote.classList.toggle('show', showSkipNote);
+    uploadSkipNote.classList.toggle('show', showSkipNote);
   }
-
+  
   kategoriSelect.addEventListener('change', updateUploadVisibility);
   updateUploadVisibility();
 
-  function setSelectedFile(file) {
-
-      selectedFile = file;
-
-      // Hapus object URL PDF sebelumnya
-      if (pdfPreviewUrl) {
-          URL.revokeObjectURL(pdfPreviewUrl);
-          pdfPreviewUrl = null;
-      }
-
-      if (file) {
-
-          // ==========================================
-          // Tampilkan nama file di dalam dropzone
-          // ==========================================
-
-          dropzoneFileName.textContent = file.name;
-          dropzoneFileName.style.display = 'block';
-
-          // ==========================================
-          // Tampilkan file chip
-          // ==========================================
-
-          fileChipName.textContent = file.name;
-          fileChip.classList.add('show');
-
-          // ==========================================
-          // Tandai dropzone
-          // ==========================================
-
-          dropzone.classList.add('file-selected');
-
-          // ==========================================
-          // Preview PDF
-          // ==========================================
-
-          if (file.type === 'application/pdf') {
-
-              pdfPreviewUrl = URL.createObjectURL(file);
-
-              pdfPreviewFrame.src = pdfPreviewUrl;
-
-              pdfPreviewWrapper.classList.add('show');
-
-          } else {
-
-              pdfPreviewFrame.removeAttribute('src');
-
-              pdfPreviewWrapper.classList.remove('show');
-          }
-
-      } else {
-
-          // ==========================================
-          // Reset nama file
-          // ==========================================
-
-          dropzoneFileName.textContent = '';
-          dropzoneFileName.style.display = 'none';
-
-          // ==========================================
-          // Reset file chip
-          // ==========================================
-
-          fileChipName.textContent = '';
-          fileChip.classList.remove('show');
-
-          // ==========================================
-          // Reset dropzone
-          // ==========================================
-
-          dropzone.classList.remove('file-selected');
-
-          // ==========================================
-          // Reset PDF preview
-          // ==========================================
-
-          pdfPreviewFrame.removeAttribute('src');
-
-          pdfPreviewWrapper.classList.remove('show');
-      }
+  function setSelectedFile(file){
+    selectedFile = file;
+    if (file){
+      fileChipName.textContent = file.name;
+      fileChip.classList.add('show');
+    } else {
+      fileChip.classList.remove('show');
+    }
   }
 
-  fileInput.addEventListener('change', function() {
+  if (chooseFileBtn && fileInput) {
+    chooseFileBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      fileInput.click();
+    });
+  }
 
-      if (!fileInput.files || !fileInput.files[0]) {
-          return;
+  if (dropzone && fileInput) {
+    dropzone.addEventListener('click', function(e){
+      if (e.target !== chooseFileBtn && !chooseFileBtn.contains(e.target)) {
+        fileInput.click();
       }
+    });
+  }
 
-      var file = fileInput.files[0];
-
-      // Pastikan PDF
-      if (file.type !== 'application/pdf') {
-
-          alert('File harus berupa PDF.');
-
-          fileInput.value = '';
-
-          setSelectedFile(null);
-
-          return;
-      }
-
-      // Maksimal 10 MB
-      var maxSize = 10 * 1024 * 1024;
-
-      if (file.size > maxSize) {
-
-          alert('Ukuran file maksimal 10 MB.');
-
-          fileInput.value = '';
-
-          setSelectedFile(null);
-
-          return;
-      }
-
-      setSelectedFile(file);
+  fileInput.addEventListener('change', function(){
+    if (fileInput.files && fileInput.files[0]) setSelectedFile(fileInput.files[0]);
   });
-
+  
   fileChipRemove.addEventListener('click', function(){
     setSelectedFile(null);
     fileInput.value = '';
-  });
-
-  pdfPreviewRemove.addEventListener('click', function() {
-      setSelectedFile(null);
-      fileInput.value = '';
   });
 
   ['dragenter', 'dragover'].forEach(function(evt){
@@ -879,79 +484,46 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
       dropzone.classList.remove('is-dragover');
     });
   });
-
   dropzone.addEventListener('drop', function(e){
-      var files = e.dataTransfer && e.dataTransfer.files;
-
-      if (files && files[0]) {
-          try {
-              var dataTransfer = new DataTransfer();
-
-              dataTransfer.items.add(files[0]);
-
-              fileInput.files = dataTransfer.files;
-
-              setSelectedFile(files[0]);
-          } catch (error) {
-              console.error('Gagal memasukkan file hasil drag & drop:', error);
-          }
-      }
+    var files = e.dataTransfer && e.dataTransfer.files;
+    if (files && files[0]) {
+      fileInput.files = files;
+      setSelectedFile(files[0]);
+    }
   });
 
-  /* ---- Validasi form ---- */
   var form = document.getElementById('modulForm');
   var judulInput = document.getElementById('judulModul');
   var levelSelect = document.getElementById('levelModul');
 
   function setFieldError(inputId, errorId, show){
-      document
-          .getElementById(inputId)
-          .setAttribute('aria-invalid', show ? 'true' : 'false');
-
-      document
-          .getElementById(errorId)
-          .classList.toggle('show', show);
+    document.getElementById(inputId).setAttribute('aria-invalid', show ? 'true' : 'false');
+    document.getElementById(errorId).classList.toggle('show', show);
   }
 
   form.addEventListener('submit', function(e){
+    var judulOk = judulInput.value.trim().length > 0;
+    var levelOk = levelSelect.value !== '';
+    var kategoriOk = kategoriSelect.value !== '';
 
-      var judulOk = judulInput.value.trim().length > 0;
-      var levelOk = levelSelect.value !== '';
-      var kategoriOk = kategoriSelect.value !== '';
+    setFieldError('judulModul', 'judulError', !judulOk);
+    setFieldError('levelModul', 'levelError', !levelOk);
+    setFieldError('kategoriModul', 'kategoriError', !kategoriOk);
 
-      setFieldError(
-          'judulModul',
-          'judulError',
-          !judulOk
-      );
-
-      setFieldError(
-          'levelModul',
-          'levelError',
-          !levelOk
-      );
-
-      setFieldError(
-          'kategoriModul',
-          'kategoriError',
-          !kategoriOk
-      );
-
-      if (!judulOk || !levelOk || !kategoriOk) {
-          e.preventDefault();
-          return;
-      }
-
-      /*
-      * Jangan e.preventDefault() kalau valid.
-      *
-      * Biarkan browser mengirim form ke:
-      * route('modul.store')
-      *
-      * Laravel kemudian menjalankan:
-      * ModuleController@store
-      */
+    if (!judulOk || !levelOk || !kategoriOk) {
+      e.preventDefault();
+    }
   });
+
+  var sidebar = document.getElementById('sidebar');
+  var menuToggle = document.getElementById('menuToggle');
+  var sidebarClose = document.getElementById('sidebarClose');
+  var backdrop = document.getElementById('backdrop');
+  function openSidebar(){ sidebar.classList.add('open'); backdrop.classList.add('show'); menuToggle.setAttribute('aria-expanded', 'true'); }
+  function closeSidebar(){ sidebar.classList.remove('open'); backdrop.classList.remove('show'); menuToggle.setAttribute('aria-expanded', 'false'); }
+  menuToggle?.addEventListener('click', openSidebar);
+  sidebarClose?.addEventListener('click', closeSidebar);
+  backdrop?.addEventListener('click', closeSidebar);
 })();
 </script>
 </body>
