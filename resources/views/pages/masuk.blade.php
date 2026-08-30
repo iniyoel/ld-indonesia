@@ -6,14 +6,12 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <title>LD Indonesia</title>
 <meta name="description" content="Masuk ke akun LD Indonesia untuk mengakses materi, latihan soal, dan progres belajar bahasa Jerman Anda.">
-<!-- Halaman login tidak perlu diindeks mesin pencari -->
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-/* ============ RESET & TOKENS (konsisten dengan landing page) ============ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root{
@@ -85,17 +83,18 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
 .auth-form-wrap{ width: 100%; max-width: 400px; margin: 0 auto; }
 
-.brand{ display: inline-flex; align-items: center; gap: 10px; margin-bottom: 56px; }
-.brand-mark{ width: 46px; height: 46px; flex-shrink: 0; }
+/* Logo Kiri */
+.brand{ display: inline-flex; align-items: center; gap: 12px; margin-bottom: 40px; }
+.brand-logo-img{ width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--pink); flex-shrink: 0; }
 .brand-text{ display: flex; flex-direction: column; line-height: 1.15; }
 .brand-text strong{ font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; color: var(--navy); }
 .brand-text strong span{ color: var(--pink); }
 .brand-text small{ font-size: 0.72rem; color: var(--gray-600); font-weight: 500; }
 
-.auth-heading h1{ font-size: 1.4rem; margin-bottom: 6px; }
-.auth-heading p{ color: var(--gray-500); font-size: 0.92rem; margin-bottom: 30px; }
+.auth-heading h1{ font-size: 1.35rem; margin-bottom: 6px; }
+.auth-heading p{ color: var(--gray-500); font-size: 0.9rem; margin-bottom: 26px; }
 
-.field{ margin-bottom: 20px; }
+.field{ margin-bottom: 18px; }
 .field label{
   display: block;
   font-weight: 700;
@@ -129,8 +128,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   border-color: var(--pink);
   box-shadow: 0 0 0 4px var(--pink-pale);
 }
-.input-group input[aria-invalid="true"]{ border-color: var(--red); }
-.input-group input[aria-invalid="true"]:focus{ box-shadow: 0 0 0 4px rgba(224,72,63,0.12); }
 
 .toggle-visibility{
   position: absolute;
@@ -154,15 +151,12 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   font-weight: 500;
 }
 .field-error.show{ display: flex; }
-.field-error svg{ width: 14px; height: 14px; flex-shrink: 0; }
-
-.field-hint{ color: var(--gray-500); font-size: 0.82rem; margin-top: 7px; }
 
 .form-row{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 26px;
+  margin-bottom: 22px;
   flex-wrap: wrap;
   gap: 10px;
 }
@@ -196,26 +190,31 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   font-family: var(--font-body);
   font-weight: 700;
   font-size: 0.96rem;
-  padding: 14px 26px;
+  padding: 13px 26px;
   border-radius: var(--radius-pill);
   transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.15s ease;
+  margin-bottom: 12px;
 }
 .btn:hover{ transform: translateY(-2px); }
+
 .btn-primary{
-  background: linear-gradient(135deg, var(--pink) 0%, var(--pink-dark) 100%);
-  color: #fff;
-  box-shadow: var(--shadow-lg);
+  background: #FDE4EE;
+  color: #D63D79;
+  border: 1px solid #F5C2D9;
 }
-.btn-primary:disabled{ opacity: 0.7; cursor: not-allowed; transform: none; }
+.btn-primary:hover{ background: #FBD5E6; }
+
 .btn-secondary{
-  background: var(--pink-pale);
-  color: var(--pink-dark);
+  background: #FCEFD9;
+  color: #C98A1A;
+  border: 1px solid #F5DCB8;
 }
+.btn-secondary:hover{ background: #FCE4BC; }
 
 .spinner{
   width: 16px; height: 16px;
-  border: 2px solid rgba(255,255,255,0.5);
-  border-top-color: #fff;
+  border: 2px solid rgba(214,61,121,0.3);
+  border-top-color: var(--pink-dark);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
   display: none;
@@ -223,38 +222,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 .is-loading .spinner{ display: inline-block; }
 .is-loading .btn-label{ opacity: 0.85; }
 @keyframes spin{ to{ transform: rotate(360deg); } }
-
-.auth-footer-note{
-  text-align: center;
-  margin-top: 26px;
-  font-size: 0.86rem;
-  color: var(--gray-500);
-}
-
-.back-link{
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 700;
-  font-size: 0.88rem;
-  color: var(--navy-soft);
-  margin-bottom: 24px;
-}
-.back-link:hover{ color: var(--pink-dark); }
-.back-link svg{ width: 16px; height: 16px; }
-
-.auth-view{ display: none; }
-.auth-view.active{ display: block; }
-
-.sent-icon{
-  width: 64px; height: 64px;
-  border-radius: 50%;
-  background: var(--pink-pale);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--pink-dark);
-  margin-bottom: 22px;
-}
-.sent-icon svg{ width: 28px; height: 28px; }
 
 .status-banner{
   display: none;
@@ -270,9 +237,31 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   margin-bottom: 20px;
 }
 .status-banner.show{ display: flex; }
-.status-banner svg{ width: 18px; height: 18px; flex-shrink: 0; }
 
-/* ============ RIGHT PANEL ============ */
+.auth-view{ display: none; }
+.auth-view.active{ display: block; }
+
+.sent-icon{
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: var(--pink-pale);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--pink-dark);
+  margin-bottom: 22px;
+}
+
+.back-link{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--navy-soft);
+  margin-bottom: 24px;
+}
+.back-link:hover{ color: var(--pink-dark); }
+
+/* ============ RIGHT PANEL (LOGO GAMBAR KANAN) ============ */
 .auth-right{
   flex: 1 1 52%;
   position: relative;
@@ -302,9 +291,27 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 .ring-1{ width: 460px; height: 460px; }
 .ring-2{ width: 560px; height: 560px; }
 
-.seal-wrap{ position: relative; display: flex; align-items: center; gap: 26px; z-index: 2; }
-.seal-badge-lg{ width: 240px; height: 240px; filter: drop-shadow(0 18px 30px rgba(92,54,32,0.18)); }
-.seal-star{ width: 26px; height: 26px; color: rgba(30,42,71,0.35); flex-shrink: 0; }
+.seal-wrap{
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  width: 280px;
+  height: 280px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  box-shadow: 0 18px 30px rgba(92,54,32,0.15);
+  border: 4px solid var(--white);
+  padding: 20px;
+}
+
+.seal-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
 
 .auth-right-caption{
   position: relative;
@@ -321,7 +328,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   margin-top: 4px;
 }
 
-/* ============ RESPONSIVE ============ */
 @media (max-width: 900px){
   .auth-right{ display: none; }
   .auth-left{ flex: 1 1 100%; padding: 40px 24px; }
@@ -333,9 +339,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     box-shadow: var(--shadow-md);
   }
 }
-@media (max-width: 420px){
-  .form-row{ flex-direction: column; align-items: flex-start; }
-}
 </style>
 </head>
 <body>
@@ -345,11 +348,8 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   <!-- ============ LEFT: FORM ============ -->
   <section class="auth-left" id="authMain">
     <div class="auth-form-wrap">
-      <a href="index.html" class="brand" aria-label="LD Indonesia — kembali ke beranda">
-        <svg class="brand-mark" viewBox="0 0 48 48" fill="none" role="img" aria-hidden="true">
-          <path d="M24 4c-6 0-10 5-10 5s3 1 4 4c-3-1-6 0-7 3 3 0 5 1 6 3-3 1-5 3-5 6 3-1 5-1 7 0-1 3 0 6 2 8 1-3 2-5 3-6 1 1 2 3 3 6 2-2 3-5 2-8 2-1 4-1 7 0 0-3-2-5-5-6 1-2 3-3 6-3-1-3-4-4-7-3 1-3 4-4 4-4s-4-5-10-5z" fill="var(--maroon,#5C3620)"/>
-          <circle cx="24" cy="17" r="4" fill="var(--gold,#D4A017)"/>
-        </svg>
+      <a href="{{ route('home') }}" class="brand" aria-label="LD Indonesia — kembali ke beranda">
+        <img src="{{ asset('images/logo-ld.jpeg') }}" alt="Logo LD Indonesia" class="brand-logo-img">
         <span class="brand-text">
           <strong>LD <span>INDONESIA</span></strong>
           <small>Private Bahasa Jerman</small>
@@ -359,7 +359,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
       <!-- ============ VIEW 1: LOGIN ============ -->
       <div class="auth-view active" id="loginView">
         <div class="auth-heading">
-          <h1>Selamat datang kembali!</h1>
+          <h1>Selamat datang kembali !</h1>
           <p>Masuk untuk melanjutkan pembelajaran Anda.</p>
         </div>
 
@@ -376,10 +376,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
               <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
               <input type="email" id="loginEmail" name="email" autocomplete="username" value="{{ old('email') }}" placeholder="Masukkan email Anda" aria-describedby="loginEmailError" required>
             </div>
-            <p class="field-error" id="loginEmailError">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
-              <span>Masukkan alamat email yang valid.</span>
-            </p>
+            <p class="field-error" id="loginEmailError"><span>Masukkan alamat email yang valid.</span></p>
           </div>
 
           <div class="field">
@@ -391,10 +388,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
               </button>
             </div>
-            <p class="field-error" id="loginPasswordError">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
-              <span>Password wajib diisi.</span>
-            </p>
+            <p class="field-error" id="loginPasswordError"><span>Password wajib diisi.</span></p>
           </div>
 
           <div class="form-row">
@@ -409,9 +403,11 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
             <span class="spinner" aria-hidden="true"></span>
             <span class="btn-label">Masuk</span>
           </button>
-        </form>
 
-        <p class="auth-footer-note">Belum punya akun? Hubungi admin via <a href="https://wa.me/6281234567890?text=Halo%2C%20saya%20ingin%20membuat%20akun%20LD%20Indonesia" class="link-pink" target="_blank" rel="noopener">WhatsApp</a> untuk mulai belajar.</p>
+          <a href="{{ route('home') }}" class="btn btn-secondary">
+            <span class="btn-label">Kembali</span>
+          </a>
+        </form>
       </div>
 
       <!-- ============ VIEW 2: FORGOT PASSWORD ============ -->
@@ -431,42 +427,24 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
             <label for="forgotEmail">Email</label>
             <div class="input-group">
               <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
-              <input type="email" id="forgotEmail" name="email" autocomplete="username" placeholder="Masukkan email Anda" aria-describedby="forgotEmailError" required>
+              <input type="email" id="forgotEmail" name="email" autocomplete="username" placeholder="Masukkan email Anda" required>
             </div>
-            <p class="field-error" id="forgotEmailError">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
-              <span>Masukkan alamat email yang valid.</span>
-            </p>
           </div>
 
           <div class="field">
             <label for="forgotPassword">Password Baru</label>
             <div class="input-group">
               <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-              <input type="password" id="forgotPassword" name="password" autocomplete="new-password" placeholder="Buat password baru" aria-describedby="forgotPasswordError" required style="padding-right:44px;">
-              <button type="button" class="toggle-visibility" data-toggle-for="forgotPassword" aria-label="Tampilkan password">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
+              <input type="password" id="forgotPassword" name="password" autocomplete="new-password" placeholder="Buat password baru" required style="padding-right:44px;">
             </div>
-            <p class="field-error" id="forgotPasswordError">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
-              <span>Password minimal 8 karakter.</span>
-            </p>
           </div>
 
           <div class="field">
             <label for="forgotPasswordConfirmation">Konfirmasi Password</label>
             <div class="input-group">
               <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-              <input type="password" id="forgotPasswordConfirmation" name="password_confirmation" autocomplete="new-password" placeholder="Ulangi password baru" aria-describedby="forgotPasswordConfirmationError" required style="padding-right:44px;">
-              <button type="button" class="toggle-visibility" data-toggle-for="forgotPasswordConfirmation" aria-label="Tampilkan password">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
+              <input type="password" id="forgotPasswordConfirmation" name="password_confirmation" autocomplete="new-password" placeholder="Ulangi password baru" required style="padding-right:44px;">
             </div>
-            <p class="field-error" id="forgotPasswordConfirmationError">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
-              <span>Konfirmasi password tidak cocok.</span>
-            </p>
           </div>
 
           <button type="submit" class="btn btn-primary" id="forgotSubmit">
@@ -479,7 +457,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
       <!-- ============ VIEW 3: EMAIL SENT ============ -->
       <div class="auth-view" id="sentView">
         <div class="sent-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/><path d="m9 13 2 2 4-4" transform="translate(0,0)"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/><path d="m9 13 2 2 4-4"/></svg>
         </div>
         <div class="auth-heading">
           <h1>Password Berhasil Diubah</h1>
@@ -490,7 +468,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     </div>
   </section>
 
-  <!-- ============ RIGHT: VISUAL ============ -->
+  <!-- ============ RIGHT: VISUAL (MENGGUNAKAN LOGO public/images/logo-ld.jpeg) ============ -->
   <aside class="auth-right" aria-hidden="true">
     <div class="deco-dots top-left"><span></span><span></span><span></span><span></span><span></span><span></span></div>
     <div class="deco-dots bottom-right"><span></span><span></span><span></span><span></span><span></span><span></span></div>
@@ -498,26 +476,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     <div class="deco-ring ring-2"></div>
 
     <div class="seal-wrap">
-      <svg class="seal-star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 9.8l-5.5 4.8L18 22l-6-3.9L6 22l1.5-7.4L2 9.8l7.1-.9z"/></svg>
-
-      <svg class="seal-badge-lg" viewBox="0 0 240 240">
-        <circle cx="120" cy="120" r="112" fill="#FFFFFF" stroke="#1E2A47" stroke-width="3.5"/>
-        <circle cx="120" cy="120" r="98" fill="none" stroke="#D4A017" stroke-width="1.4" stroke-dasharray="2 3.4"/>
-        <path id="sealArcTop" d="M 32 120 A 88 88 0 0 1 208 120" fill="none"/>
-        <path id="sealArcBottom" d="M 208 132 A 88 88 0 0 1 32 132" fill="none"/>
-        <text font-family="Baloo 2, sans-serif" font-size="16" font-weight="700" fill="#1E2A47" letter-spacing="2.5">
-          <textPath href="#sealArcTop" startOffset="50%" text-anchor="middle">LD INDONESIA</textPath>
-        </text>
-        <text font-family="Baloo 2, sans-serif" font-size="14" font-weight="700" fill="#D63D79" letter-spacing="3">
-          <textPath href="#sealArcBottom" startOffset="50%" text-anchor="middle">A1 · A2 · B1 · B2</textPath>
-        </text>
-        <circle cx="120" cy="120" r="42" fill="#FDECF3" stroke="#F3C6D9" stroke-width="1"/>
-        <path d="M120 96c-7 0-12 6-13 12-4-2-8 0-9 4 3 0 5 1 6 3-3 1-5 3-5 6 3-1 5-1 7 0-1 3 0 6 2 8 1-3 2-5 3-6 1 1 2 3 3 6 2-2 3-5 2-8 2-1 4-1 7 0 0-3-2-5-5-6 1-2 3-3 6-3-1-4-5-6-9-4-1-6-6-12-13-12z" fill="#5C3620" transform="translate(0,4) scale(0.9)" style="transform-origin:120px 120px;"/>
-        <text x="120" y="150" text-anchor="middle" font-family="Inter, sans-serif" font-size="5.5" font-weight="700" fill="#5C3620" letter-spacing="0.5">PRIVATE MANDIRI</text>
-        <text x="120" y="157" text-anchor="middle" font-family="Inter, sans-serif" font-size="5.5" font-weight="700" fill="#5C3620" letter-spacing="0.5">INDONESIA</text>
-      </svg>
-
-      <svg class="seal-star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 9.8l-5.5 4.8L18 22l-6-3.9L6 22l1.5-7.4L2 9.8l7.1-.9z"/></svg>
+      <img src="{{ asset('images/logo-ld.jpeg') }}" alt="Logo LD Indonesia" class="seal-logo-img">
     </div>
 
     <div class="auth-right-caption">
@@ -531,17 +490,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 (function(){
   "use strict";
 
-  /* ==================================================================
-     CATATAN
-     - Login sekarang diproses SUNGGUHAN di server oleh AuthController
-       (lihat routes/web.php & app/Http/Controllers/Auth/AuthController.php).
-       Form ini submit biasa (POST ke route('login.attempt')); JS di bawah
-       hanya menangani validasi tampilan sebelum form dikirim, plus
-       switch antar-tampilan (login/lupa password) dan show/hide password.
-     - Redirect setelah login (ke dashboard-siswa/tutor/admin) ditentukan
-       oleh AuthController::ROLE_REDIRECTS berdasarkan kolom `role` user
-       di database — BUKAN lagi oleh JS di halaman ini.
-  ================================================================== */
   function resetPasswordDirect(email, password, confirmation){
     var csrfMeta = document.querySelector('meta[name="csrf-token"]');
     var csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
@@ -554,24 +502,19 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
         'X-Requested-With': 'XMLHttpRequest',
         'X-CSRF-TOKEN': csrfToken
       },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-        password_confirmation: confirmation
-      })
+      body: JSON.stringify({ email: email, password: password, password_confirmation: confirmation })
     }).then(function(response){
       return response.text().then(function(text){
         var data = {};
         try { data = text ? JSON.parse(text) : {}; } catch (e) { data = {}; }
         if (!response.ok) {
-          throw new Error(data.message || data.errors && data.errors.email ? data.errors.email[0] : 'Gagal mengubah password');
+          throw new Error(data.message || 'Gagal mengubah password');
         }
         return data;
       });
     });
   }
 
-  /* ---- View switching ---- */
   var views = {
     login: document.getElementById('loginView'),
     forgot: document.getElementById('forgotView'),
@@ -581,89 +524,47 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     Object.keys(views).forEach(function(key){
       views[key].classList.toggle('active', key === name);
     });
-    var heading = views[name].querySelector('h1');
-    if (heading) heading.setAttribute('tabindex', '-1'), heading.focus();
   }
 
   document.getElementById('showForgot').addEventListener('click', function(){ showView('forgot'); });
   document.getElementById('backToLoginFromForgot').addEventListener('click', function(){ showView('login'); });
   document.getElementById('backToLoginFromSent').addEventListener('click', function(){ showView('login'); });
 
-  /* ---- Password visibility toggle ---- */
   document.querySelectorAll('.toggle-visibility').forEach(function(btn){
     btn.addEventListener('click', function(){
       var input = document.getElementById(btn.getAttribute('data-toggle-for'));
       var isHidden = input.type === 'password';
       input.type = isHidden ? 'text' : 'password';
-      btn.setAttribute('aria-label', isHidden ? 'Sembunyikan password' : 'Tampilkan password');
-      btn.innerHTML = isHidden
-        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a19.4 19.4 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a19.5 19.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>'
-        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>';
     });
   });
 
-  /* ---- Validation helpers ---- */
-  function isValidEmail(value){
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-  }
-  function setFieldError(inputId, errorId, show){
-    document.getElementById(inputId).setAttribute('aria-invalid', show ? 'true' : 'false');
-    document.getElementById(errorId).classList.toggle('show', show);
-  }
-  function setLoading(btn, loading){
-    btn.classList.toggle('is-loading', loading);
-    btn.disabled = loading;
-  }
-
-  /* ---- Login form ---- */
   var loginForm = document.getElementById('loginForm');
   var loginStatus = document.getElementById('loginStatus');
-  loginForm.addEventListener('submit', function(e){
-    var email = document.getElementById('loginEmail').value.trim();
-    var password = document.getElementById('loginPassword').value;
-    var emailOk = isValidEmail(email);
-    var passOk = password.length > 0;
-
-    setFieldError('loginEmail', 'loginEmailError', !emailOk);
-    setFieldError('loginPassword', 'loginPasswordError', !passOk);
-
-    if (!emailOk || !passOk){
-      e.preventDefault();
-      return;
-    }
-
-    // Validasi klien lolos — biarkan form submit sungguhan ke server
-    // (POST ke route('login.attempt'), ditangani AuthController::login()).
+  loginForm.addEventListener('submit', function(){
     loginStatus.classList.remove('show');
-    var btn = document.getElementById('loginSubmit');
-    setLoading(btn, true);
+    document.getElementById('loginSubmit').classList.add('is-loading');
   });
 
-  /* ---- Forgot password form ---- */
   var forgotForm = document.getElementById('forgotForm');
   forgotForm.addEventListener('submit', function(e){
     e.preventDefault();
     var email = document.getElementById('forgotEmail').value.trim();
     var password = document.getElementById('forgotPassword').value;
     var confirmation = document.getElementById('forgotPasswordConfirmation').value;
-    var emailOk = isValidEmail(email);
-    var passOk = password.length >= 8;
-    var confirmOk = confirmation.length >= 8 && confirmation === password;
 
-    setFieldError('forgotEmail', 'forgotEmailError', !emailOk);
-    setFieldError('forgotPassword', 'forgotPasswordError', !passOk);
-    setFieldError('forgotPasswordConfirmation', 'forgotPasswordConfirmationError', !confirmOk);
-
-    if (!emailOk || !passOk || !confirmOk) return;
+    if (!email || password.length < 8 || password !== confirmation) {
+      window.alert('Pastikan data reset password valid.');
+      return;
+    }
 
     var btn = document.getElementById('forgotSubmit');
-    setLoading(btn, true);
+    btn.classList.add('is-loading');
 
     resetPasswordDirect(email, password, confirmation).then(function(){
-      setLoading(btn, false);
+      btn.classList.remove('is-loading');
       showView('sent');
     }).catch(function(err){
-      setLoading(btn, false);
+      btn.classList.remove('is-loading');
       window.alert(err.message || 'Gagal mengubah password');
     });
   });

@@ -5,56 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LD Indonesia</title>
 <meta name="description" content="LD Indonesia adalah bimbingan belajar bahasa Jerman online untuk persiapan ujian A1, A2, B1, dan B2 (Goethe/ASM). Belajar bersama tutor berpengalaman, modul lengkap, latihan soal, dan grup belajar.">
-<meta name="keywords" content="bimbel bahasa jerman, kursus bahasa jerman, persiapan ujian A1 A2 B1 B2, LD Indonesia, belajar bahasa jerman online, goethe zertifikat, ASM jerman">
-<meta name="author" content="LD Indonesia">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="https://www.ldindonesia.co.id/">
-
-<!-- Open Graph -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="LD Indonesia">
-<meta property="og:title" content="LD Indonesia — Bimbel Bahasa Jerman A1, A2, B1, B2">
-<meta property="og:description" content="Persiapan ujian bahasa Jerman A1–B2 dengan metode belajar praktis, terstruktur, dan mudah dipahami bersama tutor berpengalaman.">
-<meta property="og:url" content="https://www.ldindonesia.co.id/">
-<meta property="og:locale" content="id_ID">
-
-<!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="LD Indonesia — Bimbel Bahasa Jerman A1, A2, B1, B2">
-<meta name="twitter:description" content="Persiapan ujian bahasa Jerman A1–B2 dengan metode belajar praktis, terstruktur, dan mudah dipahami.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "EducationalOrganization",
-  "name": "LD Indonesia",
-  "alternateName": "LD Indonesia - Bimbel Bahasa Jerman",
-  "url": "https://www.ldindonesia.co.id/",
-  "description": "Bimbingan belajar bahasa Jerman untuk persiapan ujian A1, A2, B1, dan B2.",
-  "sameAs": [
-    "https://instagram.com/ldindonesia",
-    "https://tiktok.com/@ldindonesia",
-    "https://youtube.com/@ldindonesia"
-  ],
-  "hasOfferCatalog": {
-    "@type": "OfferCatalog",
-    "name": "Paket Belajar Bahasa Jerman",
-    "itemListElement": [
-      {"@type": "Offer", "itemOffered": {"@type": "Course", "name": "Paket A1"}, "price": "499000", "priceCurrency": "IDR"},
-      {"@type": "Offer", "itemOffered": {"@type": "Course", "name": "Paket A2"}, "price": "699000", "priceCurrency": "IDR"},
-      {"@type": "Offer", "itemOffered": {"@type": "Course", "name": "Paket B1"}, "price": "899000", "priceCurrency": "IDR"},
-      {"@type": "Offer", "itemOffered": {"@type": "Course", "name": "Paket B2"}, "price": "1099000", "priceCurrency": "IDR"}
-    ]
-  }
-}
-</script>
-
 <style>
-/* ============ RESET & TOKENS ============ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
@@ -68,7 +25,6 @@ html { scroll-behavior: smooth; }
   --purple: #7C6FE0;
   --purple-dark: #6558C9;
   --gold: #D4A017;
-  --cream: #FFFBF8;
   --gray-50: #FAF9F7;
   --gray-100: #F2F0ED;
   --gray-200: #E7E4E0;
@@ -98,11 +54,6 @@ body{
   background: var(--white);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-}
-
-@media (prefers-reduced-motion: reduce){
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
 }
 
 img, svg { display: block; max-width: 100%; }
@@ -173,10 +124,11 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
 }
 .btn-outline:hover{ background: var(--pink-pale); }
 .btn-ghost-navy{
-  background: var(--navy);
+  background: var(--pink);
   color: var(--white);
+  border-radius: var(--radius-pill);
 }
-.btn-ghost-navy:hover{ background: #142038; }
+.btn-ghost-navy:hover{ background: var(--pink-dark); }
 .btn-purple{
   background: linear-gradient(135deg, var(--purple) 0%, var(--purple-dark) 100%);
   color: var(--white);
@@ -187,7 +139,6 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
 
 .icon{ width: 20px; height: 20px; flex-shrink: 0; }
 
-/* ============ SKIP LINK ============ */
 .skip-link{
   position: absolute;
   left: -999px;
@@ -217,11 +168,11 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
   padding: 14px 24px;
 }
 .brand{ display: flex; align-items: center; gap: 10px; }
-.brand-mark{ width: 44px; height: 44px; flex-shrink: 0; }
+.brand-logo-img{ width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--pink); flex-shrink: 0; }
 .brand-text{ display: flex; flex-direction: column; line-height: 1.15; }
-.brand-text strong{ font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; color: var(--navy); letter-spacing: 0.01em; }
+.brand-text strong{ font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; color: var(--navy); }
 .brand-text strong span{ color: var(--pink); }
-.brand-text small{ font-size: 0.66rem; color: var(--gray-600); font-weight: 500; }
+.brand-text small{ font-size: 0.64rem; color: var(--gray-600); font-weight: 500; }
 
 .nav-toggle{
   display: none;
@@ -231,7 +182,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
 }
 .nav-toggle:hover{ background: var(--gray-100); }
 
-.main-nav ul{ display: flex; align-items: center; gap: 34px; }
+.main-nav ul{ display: flex; align-items: center; gap: 30px; }
 .main-nav a{
   font-weight: 600;
   font-size: 0.95rem;
@@ -254,63 +205,123 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
 
 .header-actions{ display: flex; align-items: center; gap: 12px; }
 
-/* ============ HERO ============ */
+.btn-whatsapp-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--white);
+  color: var(--pink-dark);
+  border: 1.5px solid var(--pink);
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+.btn-whatsapp-header:hover { background: var(--pink-pale); }
+
+.btn-login-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--pink);
+  color: var(--white);
+  padding: 8px 22px;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+.btn-login-header:hover { background: var(--pink-dark); }
+
+/* ============ HERO (BLUR KIRI & KANAN) ============ */
 .hero{
   position: relative;
   overflow: hidden;
-  background: linear-gradient(115deg, var(--pink-pale) 0%, #FDE4EE 45%, #F8CFE0 100%);
-  padding: 72px 0 88px;
-}
-.hero::before{
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, rgba(30,42,71,0.06) 1.5px, transparent 1.5px);
-  background-size: 22px 22px;
-  -webkit-mask-image: linear-gradient(to left, black, transparent 55%);
-  mask-image: linear-gradient(to left, black, transparent 55%);
-  pointer-events: none;
+  background: linear-gradient(135deg, #FCE9AE 0%, #F8C6DA 48%, #F294C1 100%);
+  padding: 0;
 }
 .hero-grid{
   position: relative;
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
-  gap: 48px;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
   align-items: center;
+  min-height: 440px;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 24px;
 }
-.hero-copy h1{ font-size: clamp(2rem, 4vw, 2.9rem); margin-bottom: 18px; }
+.hero-copy {
+  padding: 64px 0;
+  z-index: 2;
+  text-align: left;
+}
+.hero-copy h1{ font-size: clamp(1.8rem, 3.5vw, 2.6rem); margin-bottom: 14px; }
 .hero-copy h1 .accent{ color: var(--pink-dark); }
-.hero-copy p{ color: var(--gray-600); font-size: 1.05rem; max-width: 480px; margin-bottom: 26px; }
+.hero-copy p{ color: var(--gray-600); font-size: 0.98rem; max-width: 440px; margin-bottom: 22px; }
 
-.level-pills{ display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+.level-pills{ display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
 .level-pill{
   background: var(--white);
   color: var(--pink-dark);
   font-weight: 700;
-  font-size: 0.9rem;
-  padding: 8px 20px;
+  font-size: 0.85rem;
+  padding: 6px 18px;
   border-radius: var(--radius-pill);
   box-shadow: var(--shadow-sm);
 }
 
-.hero-ctas{ display: flex; gap: 14px; flex-wrap: wrap; }
+.hero-ctas{ display: flex; gap: 12px; flex-wrap: wrap; }
 
-.hero-visual{ position: relative; height: 420px; }
-.gate-illustration{
-  position: absolute;
-  right: 0; bottom: 0;
-  width: 88%;
-  filter: drop-shadow(0 20px 30px rgba(30,42,71,0.18));
+.hero-visual{ 
+  position: absolute; 
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 50vw;
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  overflow: hidden;
+  pointer-events: none;
 }
+
+/* Siluet landmark full kanan, dengan efek blur/fade di sisi KIRI dan KANAN */
+.hero-bg-landmark {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: right center;
+  opacity: 0.35;
+  mix-blend-mode: overlay;
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 25%, rgba(0,0,0,1) 85%, rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 25%, rgba(0,0,0,1) 85%, rgba(0,0,0,0) 100%);
+}
+
 .seal-badge{
-  position: absolute;
-  top: 8px; left: -6px;
-  width: 200px; height: 200px;
+  position: relative;
+  width: 240px; height: 240px;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 16px 32px rgba(30,42,71,0.12);
+  border: 4px solid var(--white);
+  z-index: 2;
 }
-.seal-badge svg{ width: 100%; height: 100%; }
+.seal-badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
 
 /* ============ FASILITAS ============ */
-.section{ padding: 96px 0; }
+.section{ padding: 80px 0; }
 .section-alt{ background: var(--gray-50); }
 
 .facility-grid{
@@ -322,7 +333,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
   background: var(--white);
   border: 1px solid var(--gray-100);
   border-radius: var(--radius-md);
-  padding: 30px 24px;
+  padding: 26px 20px;
   text-align: center;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
@@ -332,12 +343,12 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
   border-color: transparent;
 }
 .facility-icon{
-  width: 56px; height: 56px;
-  border-radius: 16px;
+  width: 50px; height: 50px;
+  border-radius: 14px;
   display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 18px;
+  margin: 0 auto 16px;
 }
-.facility-icon svg{ width: 26px; height: 26px; }
+.facility-icon svg{ width: 24px; height: 24px; }
 .icon-1{ background: #FDECD9; color: #D98A2B; }
 .icon-2{ background: #FCE3EC; color: var(--pink-dark); }
 .icon-3{ background: #FDE7EC; color: #E0507B; }
@@ -345,8 +356,8 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
 .icon-5{ background: #FDE7EF; color: var(--pink-dark); }
 .icon-6{ background: #ECE9FB; color: var(--purple-dark); }
 
-.facility-card h3{ font-size: 1.05rem; margin-bottom: 8px; }
-.facility-card p{ font-size: 0.88rem; color: var(--gray-600); }
+.facility-card h3{ font-size: 1rem; margin-bottom: 6px; }
+.facility-card p{ font-size: 0.85rem; color: var(--gray-600); }
 
 /* ============ TUTOR ============ */
 .tutor-wrap{ position: relative; }
@@ -363,129 +374,81 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
 .tutor-track::-webkit-scrollbar{ display: none; }
 .tutor-card{
   scroll-snap-align: start;
-  flex: 0 0 420px;
-
+  flex: 0 0 320px;
   display: flex;
   align-items: center;
-
-  min-height: 150px;
-  padding: 18px;
-
+  min-height: 140px;
+  padding: 16px;
   background: var(--white);
   border: 1px solid var(--gray-100);
   border-radius: var(--radius-md);
-
   overflow: hidden;
-
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
-
 .tutor-card:hover{
   box-shadow: var(--shadow-md);
   transform: translateY(-4px);
 }
-
-
-/* FOTO TUTOR */
 .tutor-photo{
-  width: 110px;
-  height: 110px;
-
-  flex: 0 0 110px;
-
+  width: 80px;
+  height: 80px;
+  flex: 0 0 80px;
   display: flex;
   align-items: center;
   justify-content: center;
-
   overflow: hidden;
-
   border-radius: 50%;
 }
-
-
-/* FOTO ASLI */
 .tutor-photo img{
   width: 100%;
   height: 100%;
-
   display: block;
-
   object-fit: cover;
-  object-position: center center;
-
   border-radius: 50%;
 }
-
-
-/* FOTO DEFAULT / SVG */
 .tutor-photo svg{
   width: 100%;
   height: 100%;
-
   display: block;
-
   border-radius: 50%;
 }
-
-
-/* INFORMASI TUTOR */
 .tutor-info{
   flex: 1;
-
   min-width: 0;
-
-  padding: 0 0 0 18px;
+  padding: 0 0 0 14px;
 }
-
 .tutor-info h3{
-  font-size: 1.05rem;
+  font-size: 0.98rem;
   margin: 0 0 2px;
-
   color: var(--navy);
 }
-
-.tutor-role{
-  color: var(--pink-dark);
-  font-weight: 700;
-  font-size: 0.78rem;
-
-  margin-bottom: 8px;
-
-  display: block;
-}
-
 .tutor-info p{
-  font-size: 0.85rem;
-  line-height: 1.55;
-
+  font-size: 0.8rem;
+  line-height: 1.45;
   color: var(--gray-600);
-
   margin: 0;
-
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
 .tutor-nav{
   display: flex;
   justify-content: center;
   gap: 12px;
-  margin-top: 22px;
+  margin-top: 20px;
 }
 .tutor-nav-btn{
-  width: 44px; height: 44px;
+  width: 40px; height: 40px;
   border-radius: 50%;
   background: var(--white);
   border: 1.5px solid var(--gray-200);
   display: flex; align-items: center; justify-content: center;
   color: var(--navy);
-  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 .tutor-nav-btn:hover{ background: var(--pink-pale); border-color: var(--pink); color: var(--pink-dark); }
 .tutor-nav-btn:disabled{ opacity: 0.35; cursor: not-allowed; }
-.tutor-nav-btn:disabled:hover{ background: var(--white); border-color: var(--gray-200); color: var(--navy); }
 
 /* ============ PAKET ============ */
 .paket-grid{
@@ -497,7 +460,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
   background: var(--white);
   border: 1px solid var(--gray-100);
   border-radius: var(--radius-lg);
-  padding: 30px 26px;
+  padding: 26px 22px;
   display: flex;
   flex-direction: column;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -516,27 +479,25 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
   color: var(--white);
   font-size: 0.7rem;
   font-weight: 700;
-  padding: 5px 14px;
+  padding: 4px 12px;
   border-radius: var(--radius-pill);
-  letter-spacing: 0.04em;
 }
-.paket-level{ font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; color: var(--pink-dark); }
+.paket-level{ font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; color: var(--pink-dark); }
 .paket-card.featured .paket-level{ color: var(--purple-dark); }
-.paket-tier{ font-size: 0.78rem; color: var(--gray-400); font-weight: 600; margin-bottom: 14px; }
-.paket-price{ font-family: var(--font-display); font-size: 1.65rem; font-weight: 800; color: var(--navy); margin-bottom: 18px; }
-.paket-price span{ font-size: 0.85rem; font-weight: 500; color: var(--gray-400); }
-.paket-features{ margin-bottom: 24px; flex-grow: 1; }
+.paket-tier{ font-size: 0.76rem; color: var(--gray-400); font-weight: 600; margin-bottom: 12px; }
+.paket-price{ font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; color: var(--navy); margin-bottom: 16px; }
+.paket-features{ margin-bottom: 20px; flex-grow: 1; }
 .paket-features li{
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  font-size: 0.88rem;
+  gap: 8px;
+  font-size: 0.85rem;
   color: var(--gray-600);
-  margin-bottom: 11px;
+  margin-bottom: 10px;
 }
-.paket-features svg{ width: 16px; height: 16px; flex-shrink: 0; margin-top: 3px; color: var(--pink); }
+.paket-features svg{ width: 15px; height: 15px; flex-shrink: 0; margin-top: 3px; color: var(--pink); }
 .paket-card.featured .paket-features svg{ color: var(--purple); }
-.paket-note{ text-align: center; color: var(--gray-400); font-size: 0.8rem; margin-top: 28px; }
+.paket-note{ text-align: center; color: var(--gray-400); font-size: 0.78rem; margin-top: 24px; }
 
 /* ============ CARA BOOKING ============ */
 .step-grid{
@@ -545,16 +506,16 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
   gap: 0;
   position: relative;
 }
-.step-item{ text-align: center; padding: 0 16px; position: relative; }
-.step-icon-wrap{ position: relative; display: inline-flex; margin-bottom: 18px; }
+.step-item{ text-align: center; padding: 0 14px; position: relative; }
+.step-icon-wrap{ position: relative; display: inline-flex; margin-bottom: 16px; }
 .step-icon{
-  width: 76px; height: 76px;
+  width: 68px; height: 68px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   background: var(--white);
   box-shadow: var(--shadow-sm);
 }
-.step-icon svg{ width: 32px; height: 32px; }
+.step-icon svg{ width: 28px; height: 28px; }
 .step-1 .step-icon{ color: var(--pink-dark); background: var(--pink-pale); }
 .step-2 .step-icon{ color: #D98A2B; background: #FDECD9; }
 .step-3 .step-icon{ color: var(--purple-dark); background: #ECE9FB; }
@@ -562,117 +523,87 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
 .step-num{
   position: absolute;
   top: -4px; right: -4px;
-  width: 26px; height: 26px;
+  width: 24px; height: 24px;
   border-radius: 50%;
   background: var(--navy);
   color: var(--white);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
   display: flex; align-items: center; justify-content: center;
   border: 2px solid var(--white);
 }
 .step-arrow{
   position: absolute;
-  top: 38px; right: -8px;
+  top: 32px; right: -12px;
   color: var(--gray-200);
-  width: 24px; height: 24px;
+  width: 20px; height: 20px;
 }
-.step-item h3{ font-size: 1rem; margin-bottom: 8px; }
-.step-item p{ font-size: 0.85rem; color: var(--gray-600); }
-
-/* ============ FAQ ============ */
-.faq-list{ max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
-.faq-item{
-  background: var(--white);
-  border: 1px solid var(--gray-100);
-  border-radius: var(--radius-md);
-  padding: 4px 22px;
-}
-.faq-item summary{
-  list-style: none;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 0;
-  font-weight: 700;
-  color: var(--navy);
-  font-size: 0.98rem;
-}
-.faq-item summary::-webkit-details-marker{ display: none; }
-.faq-item summary .chev{ width: 20px; height: 20px; color: var(--pink-dark); transition: transform 0.2s ease; flex-shrink: 0; margin-left: 16px; }
-.faq-item[open] summary .chev{ transform: rotate(180deg); }
-.faq-item p{ padding-bottom: 20px; color: var(--gray-600); font-size: 0.92rem; }
-
-/* ============ CTA BAND ============ */
-.cta-band{
-  background: linear-gradient(120deg, var(--navy) 0%, #2A3B63 100%);
-  border-radius: var(--radius-lg);
-  padding: 52px 48px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  flex-wrap: wrap;
-  color: var(--white);
-}
-.cta-band h2{ color: var(--white); font-size: 1.5rem; margin-bottom: 6px; }
-.cta-band p{ color: rgba(255,255,255,0.72); font-size: 0.95rem; }
-.cta-band-actions{ display: flex; gap: 12px; flex-wrap: wrap; }
+.step-item h3{ font-size: 0.95rem; margin-bottom: 6px; }
+.step-item p{ font-size: 0.82rem; color: var(--gray-600); }
 
 /* ============ FOOTER ============ */
-.site-footer{ background: var(--pink-pale); padding: 56px 0 26px; margin-top: 40px; }
-.footer-grid{
-  display: grid;
-  grid-template-columns: 1.3fr 1fr 1fr;
-  gap: 40px;
-  padding-bottom: 36px;
+.site-footer{ background: #FFF4F8; padding: 48px 0 24px; border-top: 1px solid var(--gray-100); }
+.footer-inner-row{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 32px;
+  padding-bottom: 32px;
   border-bottom: 1px solid rgba(30,42,71,0.08);
 }
-.footer-brand p{ color: var(--gray-600); font-size: 0.88rem; margin-top: 10px; max-width: 280px; }
-.footer-col h4{ font-family: var(--font-display); font-size: 0.95rem; color: var(--navy); margin-bottom: 16px; }
-.social-row{ display: flex; gap: 12px; }
+.footer-brand-wrap { display: flex; align-items: center; gap: 12px; }
+.footer-social-wrap { display: flex; align-items: center; gap: 16px; }
+.footer-social-wrap span { font-weight: 600; font-size: 0.9rem; color: var(--navy); }
+.footer-social-icons { display: flex; gap: 10px; }
+.footer-contact-wrap { display: flex; align-items: center; gap: 16px; }
+.footer-contact-wrap span { font-weight: 600; font-size: 0.9rem; color: var(--navy); }
+
 .social-btn{
-  width: 42px; height: 42px;
+  width: 38px; height: 38px;
   border-radius: 50%;
   background: var(--white);
   display: flex; align-items: center; justify-content: center;
   color: var(--navy);
   box-shadow: var(--shadow-sm);
-  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease;
 }
-.social-btn:hover{ background: var(--pink); color: var(--white); transform: translateY(-3px); }
-.social-btn svg{ width: 19px; height: 19px; }
-.contact-link{
+.social-btn:hover{ background: var(--pink); color: var(--white); }
+.social-btn svg{ width: 17px; height: 17px; }
+
+.contact-link-row{
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   background: var(--white);
-  padding: 10px 18px;
+  padding: 8px 16px;
   border-radius: var(--radius-pill);
   font-weight: 700;
   font-size: 0.85rem;
   color: var(--navy);
   box-shadow: var(--shadow-sm);
 }
-.contact-link svg{ width: 18px; height: 18px; color: #2CB84E; }
-.contact-link:hover{ color: var(--pink-dark); }
+.contact-link-row svg{ width: 16px; height: 16px; color: #2CB84E; }
+.contact-link-row:hover{ color: var(--pink-dark); }
+
 .footer-bottom{
-  padding-top: 22px;
+  padding-top: 20px;
   text-align: center;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: var(--gray-400);
 }
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 980px){
-  .hero-grid{ grid-template-columns: 1fr; }
-  .hero-visual{ height: 320px; order: -1; }
+  .hero-grid{ grid-template-columns: 1fr; min-height: auto; padding-left: 24px; padding-right: 24px; }
+  .hero-visual{ position: relative; width: 100%; height: 280px; order: -1; }
+  .hero-copy { padding: 36px 0; }
+  .hero-bg-landmark { -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,1)); mask-image: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,1)); }
   .facility-grid{ grid-template-columns: repeat(2, 1fr); }
   .paket-grid{ grid-template-columns: repeat(2, 1fr); }
-  .step-grid{ grid-template-columns: repeat(2, 1fr); gap: 40px 0; }
+  .step-grid{ grid-template-columns: repeat(2, 1fr); gap: 32px 0; }
   .step-arrow{ display: none; }
-  .footer-grid{ grid-template-columns: 1fr 1fr; }
-  .footer-brand{ grid-column: 1 / -1; }
+  .footer-inner-row{ flex-direction: column; align-items: flex-start; gap: 20px; }
 }
 
 @media (max-width: 760px){
@@ -694,37 +625,11 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
   .main-nav a{ display: block; padding: 13px 16px; border-radius: var(--radius-sm); }
   .main-nav a:hover{ background: var(--pink-pale); }
   .main-nav a::after{ display: none; }
-  .header-actions .btn-outline{ display: none; }
+  .header-actions .btn-whatsapp-header{ display: none; }
   .facility-grid{ grid-template-columns: 1fr; }
   .paket-grid{ grid-template-columns: 1fr; }
   .step-grid{ grid-template-columns: 1fr; }
-  .cta-band{ flex-direction: column; text-align: center; }
-  .footer-grid{ grid-template-columns: 1fr; gap: 28px; }
-  .section{ padding: 64px 0; }
-  .hero{ padding: 48px 0 64px; }
-  .tutor-card{
-  flex-basis: 330px;
-  padding: 14px;
-}
-
-.tutor-photo{
-  width: 90px;
-  height: 90px;
-  flex-basis: 90px;
-}
-
-.tutor-info{
-  padding-left: 14px;
-}
-
-.tutor-info h3{
-  font-size: 0.95rem;
-}
-
-.tutor-info p{
-  font-size: 0.8rem;
-  -webkit-line-clamp: 3;
-}
+  .section{ padding: 50px 0; }
 }
 </style>
 </head>
@@ -735,13 +640,10 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
 <header class="site-header">
   <div class="header-inner">
     <a href="#beranda" class="brand" aria-label="LD Indonesia — kembali ke beranda">
-      <svg class="brand-mark" viewBox="0 0 48 48" fill="none" role="img" aria-hidden="true">
-        <path d="M24 2 L44 10 V24 C44 36 35 44 24 46 C13 44 4 36 4 24 V10 Z" fill="#1E2A47"/>
-        <path d="M24 5 L41 12 V24 C41 34.5 33.5 41.5 24 43.4 C14.5 41.5 7 34.5 7 24 V12 Z" fill="none" stroke="#D4A017" stroke-width="1.4"/>
-        <text x="24" y="29" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="700" font-size="15" fill="#D4A017">LD</text>
-      </svg>
+      <img src="{{ asset('images/logo-ld.jpeg') }}" alt="Logo LD Indonesia" class="brand-logo-img">
       <span class="brand-text">
         <strong>LD <span>INDONESIA</span></strong>
+        <small>Belajar Bahasa Jerman Dengan Mudah</small>
       </span>
     </a>
 
@@ -752,27 +654,27 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
     <nav class="main-nav" id="mainNav" aria-label="Navigasi utama">
       <ul>
         <li><a href="#beranda" class="active" data-nav>Beranda</a></li>
-        <li><a href="#fasilitas" data-nav>Fasilitas</a></li>
-        <li><a href="#tutor" data-nav>Tutor</a></li>
         <li><a href="#paket" data-nav>Paket</a></li>
+        <li><a href="#tutor" data-nav>Tutor</a></li>
+        <li><a href="#fasilitas" data-nav>Fasilitas</a></li>
       </ul>
     </nav>
 
     <div class="header-actions">
-      <a class="btn btn-outline btn-sm" href="https://wa.me/6281234567890?text=Halo%20LD%20Indonesia%2C%20saya%20ingin%20bertanya%20tentang%20paket%20belajar" target="_blank" rel="noopener">
+      <a class="btn-whatsapp-header" href="https://wa.me/6281234567890?text=Halo%20LD%20Indonesia%2C%20saya%20ingin%20bertanya%20tentang%20paket%20belajar" target="_blank" rel="noopener">
         <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.6 1.5 5.1L2 22l5-1.5C8.4 21.5 10.1 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.7 0-3.3-.5-4.6-1.3l-.3-.2-3 .9.9-2.9-.2-.3C4 14.9 3.5 13.5 3.5 12 3.5 7.3 7.3 3.5 12 3.5S20.5 7.3 20.5 12 16.7 20 12 20zm5-6.6c-.3-.1-1.6-.8-1.8-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5C10 8.6 9.5 7.3 9.3 6.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-1 1-1 2.3 0 1.4 1 2.7 1.1 2.9.1.2 2 3 4.8 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.3 0-.1-.2-.2-.5-.3z"/></svg>
         Hubungi Kami
       </a>
-      <a class="btn btn-ghost-navy btn-sm" href="/masuk.html">Masuk</a>
+      <a class="btn-login-header" href="{{ route('login') }}">Masuk</a>
     </div>
   </div>
 </header>
 
 <main id="main">
 
-  <!-- ============ HERO ============ -->
+  <!-- ============ HERO (BLUR KIRI & KANAN) ============ -->
   <section class="hero" id="beranda" aria-labelledby="hero-title">
-    <div class="container hero-grid">
+    <div class="hero-grid">
       <div class="hero-copy">
         <h1 id="hero-title">Belajar Bahasa Jerman<br>Bersama <span class="accent">LD Indonesia</span></h1>
         <p>Persiapan ujian A1, A2, B1, B2 dengan metode belajar praktis, terstruktur, dan mudah dipahami.</p>
@@ -792,37 +694,11 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
       </div>
 
       <div class="hero-visual" aria-hidden="true">
-        <svg class="gate-illustration" viewBox="0 0 420 360" fill="none">
-          <rect x="0" y="330" width="420" height="30" fill="#F3C6D9"/>
-          <g fill="#FBE0EC" stroke="#E7A9C4" stroke-width="1.5">
-            <rect x="40" y="120" width="30" height="210"/>
-            <rect x="100" y="120" width="30" height="210"/>
-            <rect x="160" y="120" width="30" height="210"/>
-            <rect x="230" y="120" width="30" height="210"/>
-            <rect x="290" y="120" width="30" height="210"/>
-            <rect x="350" y="120" width="30" height="210"/>
-          </g>
-          <rect x="30" y="95" width="360" height="28" fill="#F6CBDD" stroke="#E7A9C4" stroke-width="1.5"/>
-          <polygon points="30,95 210,40 390,95" fill="#F3C6D9" stroke="#E7A9C4" stroke-width="1.5"/>
-          <circle cx="210" cy="72" r="9" fill="#FFFFFF" stroke="#E7A9C4" stroke-width="1.5"/>
-        </svg>
+        <!-- Siluet landmark full kanan, dengan efek fade/blur di sisi kiri dan kanan -->
+        <img src="{{ asset('images/Les-Jerman.png') }}" alt="Siluet Gerbang Brandenburg" class="hero-bg-landmark">
 
         <div class="seal-badge">
-          <svg viewBox="0 0 200 200" role="img" aria-label="Lencana LD Indonesia A1 A2 B1 B2">
-            <circle cx="100" cy="100" r="96" fill="#FFFFFF" stroke="#1E2A47" stroke-width="3"/>
-            <circle cx="100" cy="100" r="84" fill="none" stroke="#D4A017" stroke-width="1.2" stroke-dasharray="2 3"/>
-            <path id="arcTop" d="M 28 100 A 72 72 0 0 1 172 100" fill="none"/>
-            <path id="arcBottom" d="M 172 108 A 72 72 0 0 1 28 108" fill="none"/>
-            <text font-family="Baloo 2, sans-serif" font-size="13" font-weight="700" fill="#1E2A47" letter-spacing="2">
-              <textPath href="#arcTop" startOffset="50%" text-anchor="middle">LD INDONESIA</textPath>
-            </text>
-            <text font-family="Baloo 2, sans-serif" font-size="12" font-weight="700" fill="#D63D79" letter-spacing="3">
-              <textPath href="#arcBottom" startOffset="50%" text-anchor="middle">A1 · A2 · B1 · B2</textPath>
-            </text>
-            <circle cx="100" cy="100" r="34" fill="#FDECF3"/>
-            <path d="M100 78c11 0 20 9 20 20s-9 20-20 20-20-9-20-20 9-20 20-20z" fill="none" stroke="#D63D79" stroke-width="2.4"/>
-            <path d="M92 100l6 6 12-13" fill="none" stroke="#D63D79" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <img src="{{ asset('images/logo-ld.jpeg') }}" alt="Logo LD Indonesia">
         </div>
       </div>
     </div>
@@ -832,7 +708,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
   <section class="section" id="fasilitas" aria-labelledby="fasilitas-title">
     <div class="container">
       <div class="section-head">
-        <span class="eyebrow">Fasilitas</span>
+        <span class="eyebrow">FASILITAS</span>
         <h2 id="fasilitas-title">Fasilitas Belajar Lengkap</h2>
         <p>Semua yang Anda butuhkan untuk belajar bahasa Jerman dengan optimal.</p>
       </div>
@@ -851,7 +727,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
         <article class="facility-card">
           <div class="facility-icon icon-3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 20 9-9-2-2-9 9-4 4z"/><path d="M2 22l3-1 1-3"/><path d="m14.5 6.5 3 3"/></svg></div>
           <h3>Latihan Soal</h3>
-          <p>Soal latihan mirip asli untuk setiap level.</p>
+          <p>Soal latihan mirip ujian asli untuk setiap level.</p>
         </article>
         <article class="facility-card">
           <div class="facility-icon icon-4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
@@ -876,9 +752,9 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
   <section class="section section-alt" id="tutor" aria-labelledby="tutor-title">
     <div class="container">
       <div class="section-head">
-        <span class="eyebrow">Tutor Kami</span>
+        <span class="eyebrow">TUTOR KAMI</span>
         <h2 id="tutor-title">Belajar Bersama Tutor Berpengalaman</h2>
-        <p>Tutor profesional siap membimbing perjalanan belajarmu.</p>
+        <p>Tutor profesional yang siap membimbing perjalanan belajarmu.</p>
       </div>
 
       <div class="tutor-wrap">
@@ -893,38 +769,25 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
         @php
             $cardColor = $tutorCardColors[$index % count($tutorCardColors)];
             $iconColor = $tutorIconColors[$index % count($tutorIconColors)];
-
             $photoPath = $tutor->profile_photo_path;
         @endphp
         
         <li class="tutor-card" role="listitem">
           <div class="tutor-photo" style="background:{{ $cardColor }};">
               @if($photoPath)
-                  <img
-                      src="{{ asset('storage/' . $photoPath) }}"
-                      alt="Foto {{ $tutor->name }}"
-                  >
+                  <img src="{{ asset('storage/' . $photoPath) }}" alt="Foto {{ $tutor->name }}">
               @else
                   <svg viewBox="0 0 100 100" aria-hidden="true">
-                      <circle
-                          cx="50"
-                          cy="38"
-                          r="18"
-                          fill="{{ $iconColor }}"
-                      />
-                      <path
-                          d="M15 92c0-19 15-34 35-34s35 15 35 34"
-                          fill="{{ $iconColor }}"
-                      />
+                      <circle cx="50" cy="38" r="18" fill="{{ $iconColor }}"/>
+                      <path d="M15 92c0-19 15-34 35-34s35 15 35 34" fill="{{ $iconColor }}"/>
                   </svg>
               @endif
           </div>
 
           <div class="tutor-info">
               <h3>{{ $tutor->name }}</h3>
-              <p>
-                  {{ $tutor->description ?: 'Tutor profesional LD Indonesia siap membantu perjalanan belajar bahasa Jerman.' }}
-              </p>
+              <span class="tutor-role" style="color:var(--pink-dark);font-weight:700;font-size:0.78rem;margin-bottom:6px;display:block;">Tutor {{ $tutor->level ? 'A1 - ' . $tutor->level : 'Bahasa Jerman' }}</span>
+              <p>{{ $tutor->description ?: 'Tutor profesional LD Indonesia siap membantu perjalanan belajar bahasa Jerman.' }}</p>
           </div>
         </li>
       @endforeach
@@ -945,7 +808,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
   <section class="section" id="paket" aria-labelledby="paket-title">
     <div class="container">
       <div class="section-head">
-        <span class="eyebrow">Paket Belajar</span>
+        <span class="eyebrow">PAKET BELAJAR</span>
         <h2 id="paket-title">Pilih Paket Sesuai Kebutuhanmu</h2>
         <p>Belajar lebih terarah dengan paket yang fleksibel dan terjangkau.</p>
       </div>
@@ -1016,7 +879,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
   <section class="section section-alt" id="cara-booking" aria-labelledby="booking-title">
     <div class="container">
       <div class="section-head">
-        <span class="eyebrow">Cara Booking</span>
+        <span class="eyebrow">CARA BOOKING</span>
         <h2 id="booking-title">Mudah Daftar &amp; Konsultasi</h2>
         <p>Ikuti langkah mudah berikut untuk mulai belajar bersama kami.</p>
       </div>
@@ -1029,7 +892,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
             <svg class="step-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </div>
           <h3>Hubungi Admin</h3>
-          <p>Klik tombol WhatsApp untuk menghubungi admin.</p>
+          <p>Klik tombol WhatsApp untuk menghubungi admin kami.</p>
         </div>
 
         <div class="step-item step-2">
@@ -1064,59 +927,35 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
     </div>
   </section>
 
-  
-
-  <!-- ============ CTA BAND ============ -->
-  <section class="section" style="padding-top:0;">
-    <div class="container">
-      <div class="cta-band">
-        <div>
-          <h2>Siap Mulai Belajar Bahasa Jerman?</h2>
-          <p>Konsultasi gratis dengan admin kami dan temukan paket yang tepat untukmu.</p>
-        </div>
-        <div class="cta-band-actions">
-          <a href="https://wa.me/6281234567890" class="btn btn-primary" target="_blank" rel="noopener">Hubungi Admin</a>
-          <a href="#paket" class="btn btn-outline" style="background:transparent;color:#fff;border-color:rgba(255,255,255,0.4);" data-nav>Lihat Paket</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
 </main>
 
 <!-- ============ FOOTER ============ -->
 <footer class="site-footer">
   <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <a href="#beranda" class="brand" aria-label="LD Indonesia">
-          <svg class="brand-mark" viewBox="0 0 48 48" fill="none" role="img" aria-hidden="true">
-            <path d="M24 2 L44 10 V24 C44 36 35 44 24 46 C13 44 4 36 4 24 V10 Z" fill="#1E2A47"/>
-            <text x="24" y="29" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="700" font-size="15" fill="#D4A017">LD</text>
-          </svg>
-          <span class="brand-text">
-            <strong>LD <span style="color:var(--pink);">INDONESIA</span></strong>
-            <small>Belajar Bahasa Jerman Dengan Mudah</small>
-          </span>
-        </a>
-        <p>Bimbingan belajar bahasa Jerman untuk persiapan ujian A1, A2, B1, dan B2 dengan tutor berpengalaman dan materi terstruktur.</p>
+    <div class="footer-inner-row">
+      <div class="footer-brand-wrap">
+        <img src="{{ asset('images/logo-ld.jpeg') }}" alt="Logo LD Indonesia" class="brand-logo-img" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:1.5px solid var(--pink);">
+        <span class="brand-text">
+          <strong>LD <span>INDONESIA</span></strong>
+          <small>Belajar Bahasa Jerman Dengan Mudah</small>
+        </span>
       </div>
 
-      <div class="footer-col">
-        <h4>Ikuti Kami di</h4>
-        <div class="social-row">
-          <a class="social-btn" href="https://www.instagram.com/ld.indonesia/" target="_blank" rel="noopener" aria-label="Instagram LD Indonesia">
+      <div class="footer-social-wrap">
+        <span>Ikuti kami di</span>
+        <div class="footer-social-icons">
+          <a class="social-btn" href="https://www.instagram.com/ld.indonesia/" target="_blank" rel="noopener" aria-label="Instagram">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
           </a>
-          <a class="social-btn" href="https://www.tiktok.com/@ld_indonesia" target="_blank" rel="noopener" aria-label="TikTok LD Indonesia">
+          <a class="social-btn" href="https://www.tiktok.com/@ld_indonesia" target="_blank" rel="noopener" aria-label="TikTok">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.6 2h-3.2v13.7a3 3 0 1 1-2.1-2.9V9.5a6.2 6.2 0 1 0 5.3 6.1V8.4a7.6 7.6 0 0 0 4.4 1.4V6.6a4.4 4.4 0 0 1-4.4-4.6z"/></svg>
           </a>
         </div>
       </div>
 
-      <div class="footer-col">
-        <h4>Hubungi Kami</h4>
-        <a class="contact-link" href="https://wa.me/6281234567890" target="_blank" rel="noopener">
+      <div class="footer-contact-wrap">
+        <span>Hubungi Kami</span>
+        <a class="contact-link-row" href="https://wa.me/6281234567890" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.6 1.5 5.1L2 22l5-1.5C8.4 21.5 10.1 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
           Chat via WhatsApp
         </a>
