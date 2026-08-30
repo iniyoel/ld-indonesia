@@ -194,7 +194,8 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 .dropzone-or{ font-size: 0.86rem; color: var(--gray-400); margin-bottom: 14px; }
 .dropzone-btn{
   background: var(--pink-pale); color: var(--pink-dark); font-weight: 700; font-size: 0.9rem;
-  padding: 10px 26px; border-radius: var(--radius-pill);
+  padding: 10px 26px; border-radius: var(--radius-pill); cursor: pointer;
+  display: inline-block;
 }
 .dropzone-btn:hover{ background: var(--pink-light); }
 .upload-hint{ font-size: 0.82rem; color: var(--gray-500); margin-top: 12px; }
@@ -206,7 +207,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 .file-chip.show{ display: flex; }
 .file-chip svg{ width: 20px; height: 20px; color: var(--green); flex-shrink: 0; }
 .file-chip-name{ flex-grow: 1; font-size: 0.86rem; font-weight: 600; color: var(--navy); word-break: break-all; }
-.file-chip-remove{ color: var(--gray-500); flex-shrink: 0; }
+.file-chip-remove{ color: var(--gray-500); flex-shrink: 0; cursor: pointer; }
 .file-chip-remove:hover{ color: var(--red); }
 .file-chip-remove svg{ width: 16px; height: 16px; color: inherit; }
 
@@ -225,7 +226,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   padding: 14px 30px; border-radius: var(--radius-pill);
   background: linear-gradient(135deg, var(--pink) 0%, var(--pink-dark) 100%); color: var(--white);
   font-weight: 700; font-size: 0.96rem; box-shadow: 0 12px 28px rgba(236,78,140,0.22);
-  transition: transform 0.18s ease;
+  transition: transform 0.18s ease; cursor: pointer;
 }
 .btn-next:hover{ transform: translateY(-2px); }
 .btn-next svg{ width: 17px; height: 17px; }
@@ -264,16 +265,39 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
     <main class="page-content" id="mainContent">
       <div class="page-heading">
-        <h1>Tambah Modul</h1>
+        <h1>{{ isset($module) ? 'Edit Modul' : 'Tambah Modul' }}</h1>
       </div>
 
-      <form class="form-panel" id="modulForm" novalidate>
+      @if ($errors->any())
+        <div style="margin-bottom: 20px; padding: 16px 18px; border-radius: 12px; background: var(--red-bg); border: 1px solid #f5c2c0; color: var(--red);">
+          <strong>Form belum dapat disimpan:</strong>
+          <ul style="margin: 8px 0 0 20px;">
+            @foreach ($errors->all() as $error)
+              <li>{{ $error }}</li>
+            @endforeach
+          </ul>
+        </div>
+      @endif
+
+      <form
+        class="form-panel"
+        id="modulForm"
+        action="{{ isset($module) ? route('modul.update', $module) : route('modul.store') }}"
+        method="POST"
+        enctype="multipart/form-data"
+        novalidate
+      >
+        @csrf
+        @if(isset($module))
+          @method('PUT')
+        @endif
+
         <div class="form-grid">
           <!-- ============ KOLOM KIRI: DATA MODUL ============ -->
           <div>
             <div class="field">
               <label for="judulModul">Judul Modul</label>
-              <input type="text" id="judulModul" name="judul" placeholder="Contoh: Artikel Der, Das, Die" aria-describedby="judulError">
+              <input type="text" id="judulModul" name="judul" placeholder="Contoh: Artikel Der, Das, Die" value="{{ old('judul', $module->judul ?? '') }}" aria-describedby="judulError">
               <p class="field-error" id="judulError">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
                 <span>Judul modul wajib diisi.</span>
@@ -285,11 +309,10 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
                 <label for="levelModul">Level</label>
                 <div class="select-wrap">
                   <select id="levelModul" name="level" required aria-describedby="levelError">
-                    <option value="" selected disabled>Pilih Level</option>
-                    <option value="A1">A1</option>
-                    <option value="A2">A2</option>
-                    <option value="B1">B1</option>
-                    <option value="B2">B2</option>
+                    <option value="" disabled {{ old('level', $module->level ?? '') == '' ? 'selected' : '' }}>Pilih Level</option>
+                    @foreach(['A1', 'A2', 'B1', 'B2'] as $lvl)
+                      <option value="{{ $lvl }}" {{ old('level', $module->level ?? '') === $lvl ? 'selected' : '' }}>{{ $lvl }}</option>
+                    @endforeach
                   </select>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
                 </div>
@@ -302,13 +325,21 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
               <div class="field">
                 <label for="kategoriModul">Kategori</label>
                 <div class="select-wrap">
+                  @php
+                    $currentKategori = old('kategori', $module->kategori ?? '');
+                    $kategoriOptions = [
+                      'materi' => 'Materi',
+                      'simulasi_horen' => 'Simulasi Hören',
+                      'simulasi_lesen' => 'Simulasi Lesen',
+                      'simulasi_schreiben' => 'Simulasi Schreiben',
+                      'simulasi_sprechen' => 'Simulasi Sprechen'
+                    ];
+                  @endphp
                   <select id="kategoriModul" name="kategori" required aria-describedby="kategoriError">
-                    <option value="" selected disabled>Pilih Kategori</option>
-                    <option value="Materi">Materi</option>
-                    <option value="Simulasi Hören">Simulasi Hören</option>
-                    <option value="Simulasi Lesen">Simulasi Lesen</option>
-                    <option value="Simulasi Schreiben">Simulasi Schreiben</option>
-                    <option value="Simulasi Sprechen">Simulasi Sprechen</option>
+                    <option value="" disabled {{ $currentKategori == '' ? 'selected' : '' }}>Pilih Kategori</option>
+                    @foreach($kategoriOptions as $val => $label)
+                      <option value="{{ $val }}" {{ $currentKategori === $val ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
                   </select>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
                 </div>
@@ -321,20 +352,20 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
             <div class="field" style="margin-bottom:0;">
               <label for="deskripsiModul">Deskripsi</label>
-              <textarea id="deskripsiModul" name="deskripsi" placeholder="Tuliskan deskripsi singkat mengenai modul ini..."></textarea>
+              <textarea id="deskripsiModul" name="deskripsi" placeholder="Tuliskan deskripsi singkat mengenai modul ini...">{{ old('deskripsi', $module->deskripsi ?? '') }}</textarea>
             </div>
           </div>
 
           <!-- ============ KOLOM KANAN: UPLOAD FILE ============ -->
           <div>
-            <div class="upload-panel-label" id="uploadLabel">Upload File</div>
+            <div class="upload-panel-label" id="uploadLabel">Upload File PDF</div>
 
             <div class="dropzone" id="dropzone">
               <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4.5 4.5 0 0 1-1.4-8.8A5.5 5.5 0 0 1 16.3 7 4 4 0 0 1 17 15"/><path d="M12 12v8"/><path d="m9 15 3-3 3 3"/></svg>
               <div class="dropzone-title">Drag &amp; drop file di sini</div>
               <div class="dropzone-or">atau</div>
-              <button type="button" class="dropzone-btn" id="chooseFileBtn">Pilih</button>
-              <input type="file" id="fileInput" accept=".pdf,.docx,.pptx,.mp4,.mp3" hidden>
+              <button type="button" class="dropzone-btn" id="chooseFileBtn">Pilih File</button>
+              <input type="file" id="fileInput" name="file" accept=".pdf,application/pdf" hidden>
             </div>
 
             <div class="file-chip" id="fileChip">
@@ -345,7 +376,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
               </button>
             </div>
 
-            <p class="upload-hint" id="uploadHint">Format yang didukung: PDF, DOCX, PPTX, MP4, MP3</p>
+            <p class="upload-hint" id="uploadHint">Format yang didukung: PDF. Maksimal 10 MB.</p>
 
             <!-- Muncul otomatis saat Kategori = salah satu Simulasi -->
             <div class="upload-skip-note" id="uploadSkipNote">
@@ -356,7 +387,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
         </div>
 
         <div class="form-actions">
-          <a href="tutor-modul-pembelajaran.html" class="back-link">
+          <a href="{{ route('modul.index') }}" class="back-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
             Kembali
           </a>
@@ -374,21 +405,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 (function(){
   "use strict";
 
-  /* ==================================================================
-     CATATAN INTEGRASI BACKEND
-     - Saat tombol "Selanjutnya" ditekan, data form (judul, level,
-       kategori, deskripsi, file) di halaman ini belum benar-benar
-       dikirim/disimpan ke server — TODO: kirim lewat
-       fetch('/api/admin/modul', {method:'POST', body: formData}).
-     - Halaman berikutnya (menambahkan soal) belum dibuat; tombol ini
-       akan mengarah ke admin-modul-soal.html dengan detail modul
-       diteruskan lewat query string sebagai contoh.
-     - Sesuai ketentuan: kolom Upload File otomatis disembunyikan saat
-       Kategori yang dipilih adalah salah satu Simulasi (Hören, Lesen,
-       Schreiben, Sprechen), karena materi berkas hanya relevan untuk
-       kategori Materi.
-  ================================================================== */
-
   var kategoriSelect = document.getElementById('kategoriModul');
   var uploadLabel = document.getElementById('uploadLabel');
   var dropzone = document.getElementById('dropzone');
@@ -401,11 +417,16 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   var fileChipRemove = document.getElementById('fileChipRemove');
   var selectedFile = null;
 
-  function isSimulasi(value){ return value.indexOf('Simulasi') === 0; }
+  function isSimulasi(value){ 
+    return value === 'simulasi_horen' || 
+           value === 'simulasi_lesen' || 
+           value === 'simulasi_schreiben' || 
+           value === 'simulasi_sprechen'; 
+  }
 
   function updateUploadVisibility(){
     var value = kategoriSelect.value;
-    var showUpload = value === 'Materi';
+    var showUpload = value === 'materi';
     var showSkipNote = isSimulasi(value);
 
     uploadLabel.style.display = showUpload ? 'block' : 'none';
@@ -416,6 +437,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
     uploadSkipNote.classList.toggle('show', showSkipNote);
   }
+  
   kategoriSelect.addEventListener('change', updateUploadVisibility);
   updateUploadVisibility();
 
@@ -452,10 +474,13 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   });
   dropzone.addEventListener('drop', function(e){
     var files = e.dataTransfer && e.dataTransfer.files;
-    if (files && files[0]) setSelectedFile(files[0]);
+    if (files && files[0]) {
+      fileInput.files = files;
+      setSelectedFile(files[0]);
+    }
   });
 
-  /* ---- Validasi form ---- */
+  /* ---- Validasi form sederhana sebelum submit ---- */
   var form = document.getElementById('modulForm');
   var judulInput = document.getElementById('judulModul');
   var levelSelect = document.getElementById('levelModul');
@@ -466,8 +491,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   }
 
   form.addEventListener('submit', function(e){
-    e.preventDefault();
-
     var judulOk = judulInput.value.trim().length > 0;
     var levelOk = levelSelect.value !== '';
     var kategoriOk = kategoriSelect.value !== '';
@@ -476,15 +499,10 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     setFieldError('levelModul', 'levelError', !levelOk);
     setFieldError('kategoriModul', 'kategoriError', !kategoriOk);
 
-    if (!judulOk || !levelOk || !kategoriOk) return;
-
-    // TODO: kirim data form (termasuk file jika kategori Materi) ke backend di sini.
-    var params = new URLSearchParams({
-      judul: judulInput.value.trim(),
-      level: levelSelect.value,
-      kategori: kategoriSelect.value
-    });
-    window.location.href = 'tutor-modul-soal.html?' + params.toString();
+    if (!judulOk || !levelOk || !kategoriOk) {
+      e.preventDefault(); // Mencegah submit jika form kosong
+    }
+    // Jika valid, biarkan form melakukan POST/PUT secara normal ke controller Laravel
   });
 
   var sidebar = document.getElementById('sidebar');
@@ -493,9 +511,9 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   var backdrop = document.getElementById('backdrop');
   function openSidebar(){ sidebar.classList.add('open'); backdrop.classList.add('show'); menuToggle.setAttribute('aria-expanded', 'true'); }
   function closeSidebar(){ sidebar.classList.remove('open'); backdrop.classList.remove('show'); menuToggle.setAttribute('aria-expanded', 'false'); }
-  menuToggle.addEventListener('click', openSidebar);
-  sidebarClose.addEventListener('click', closeSidebar);
-  backdrop.addEventListener('click', closeSidebar);
+  menuToggle?.addEventListener('click', openSidebar);
+  sidebarClose?.addEventListener('click', closeSidebar);
+  backdrop?.addEventListener('click', closeSidebar);
 })();
 </script>
 </body>

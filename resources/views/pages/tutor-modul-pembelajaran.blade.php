@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LD Indonesia</title>
-<meta name="description" content="Kelola modul pembelajaran dan simulasi LD Indonesia — tambah, ubah, dan hapus modul.">
+<meta name="description" content="Kelola modul pembelajaran dan simulasi LD Indonesia — tambah, ubah, dan rilis modul.">
 <meta name="robots" content="noindex, nofollow">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,6 +45,9 @@
   --radius-pill: 999px;
   --shadow-sm: 0 2px 8px rgba(30,42,71,0.06);
   --shadow-md: 0 10px 30px rgba(30,42,71,0.08);
+
+  --sidebar-w: 268px;
+  --topbar-h: 96px;
 }
 
 body{
@@ -105,12 +108,11 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 .table-scroll{ overflow-x: auto; }
 table{ width: 100%; border-collapse: collapse; min-width: 880px; }
 thead th{ text-align: left; font-size: 0.85rem; font-weight: 700; color: var(--navy); background: var(--pink-light); padding: 15px 24px; white-space: nowrap; }
-thead th:first-child{ padding-left: 28px; width: 60px; }
+thead th:first-child{ padding-left: 28px; }
 tbody td{ padding: 17px 24px; font-size: 0.92rem; color: var(--gray-800); border-bottom: 1px solid var(--gray-100); vertical-align: middle; white-space: nowrap; }
 tbody td:first-child{ padding-left: 28px; }
 tbody tr:last-child td{ border-bottom: none; }
 tbody tr:hover{ background: var(--gray-50); }
-td.col-num{ color: var(--gray-500); font-weight: 600; }
 td.col-judul{ font-weight: 600; color: var(--navy); white-space: normal; min-width: 220px; }
 
 .action-group{ display: flex; align-items: center; gap: 4px; }
@@ -120,8 +122,6 @@ td.col-judul{ font-weight: 600; color: var(--navy); white-space: normal; min-wid
   transition: background 0.15s ease;
 }
 .action-btn:hover{ background: var(--pink-pale); }
-.action-btn.is-delete{ color: var(--pink); }
-.action-btn.is-delete:hover{ background: var(--red-bg); color: var(--red); }
 .action-btn svg{ width: 18px; height: 18px; }
 
 .empty-state{ padding: 64px 28px; text-align: center; }
@@ -221,6 +221,16 @@ td.col-judul{ font-weight: 600; color: var(--navy); white-space: normal; min-wid
 
         <div class="filter-spacer"></div>
 
+        <button type="submit" class="btn-add" style="border:none;">
+          Cari
+        </button>
+
+        @if(request('search') || request('level') || request('kategori'))
+          <a href="{{ route('modul.index') }}" class="btn-add">
+            Reset
+          </a>
+        @endif
+
         <a class="btn-add" href="{{ route('modul.create') }}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
           Tambah Modul
@@ -233,11 +243,40 @@ td.col-judul{ font-weight: 600; color: var(--navy); white-space: normal; min-wid
           <table>
             <thead>
               <tr>
-                <th scope="col">No</th>
-                <th scope="col">Judul</th>
-                <th scope="col">Level</th>
-                <th scope="col">Kategori</th>
-                <th scope="col">Terakhir diperbarui</th>
+                <th scope="col">
+                  <a href="{{ request()->fullUrlWithQuery(['sort' => 'judul', 'direction' => request('sort') === 'judul' && request('direction') === 'asc' ? 'desc' : 'asc', 'page' => 1]) }}" style="display:inline-flex;align-items:center;gap:6px;">
+                    Judul
+                    @if(request('sort') === 'judul')
+                      {{ request('direction') === 'asc' ? '↑' : '↓' }}
+                    @endif
+                  </a>
+                </th>
+                <th scope="col">
+                  <a href="{{ request()->fullUrlWithQuery(['sort' => 'level', 'direction' => request('sort') === 'level' && request('direction') === 'asc' ? 'desc' : 'asc', 'page' => 1]) }}" style="display:inline-flex;align-items:center;gap:6px;">
+                    Level
+                    @if(request('sort') === 'level')
+                      {{ request('direction') === 'asc' ? '↑' : '↓' }}
+                    @endif
+                  </a>
+                </th>
+                <th scope="col">
+                  <a href="{{ request()->fullUrlWithQuery(['sort' => 'kategori', 'direction' => request('sort') === 'kategori' && request('direction') === 'asc' ? 'desc' : 'asc', 'page' => 1]) }}" style="display:inline-flex;align-items:center;gap:6px;">
+                    Kategori
+                    @if(request('sort') === 'kategori')
+                      {{ request('direction') === 'asc' ? '↑' : '↓' }}
+                    @endif
+                  </a>
+                </th>
+                <th>Materi</th>
+                <th>Soal</th>
+                <th scope="col">
+                  <a href="{{ request()->fullUrlWithQuery(['sort' => 'updated_at', 'direction' => request('sort') === 'updated_at' && request('direction') === 'asc' ? 'desc' : 'asc', 'page' => 1]) }}" style="display:inline-flex;align-items:center;gap:6px;">
+                    Terakhir diperbarui
+                    @if(request('sort') === 'updated_at')
+                      {{ request('direction') === 'asc' ? '↑' : '↓' }}
+                    @endif
+                  </a>
+                </th>
                 <th scope="col">Aksi</th>
               </tr>
             </thead>
@@ -254,37 +293,98 @@ td.col-judul{ font-weight: 600; color: var(--navy); white-space: normal; min-wid
                   };
                 @endphp
                 <tr id="module-row-{{ $module->id }}">
-                  <td class="col-num">
-                    {{ $modules->firstItem() ? $modules->firstItem() + $index : $index + 1 }}
-                  </td>
+                  {{-- JUDUL --}}
                   <td class="col-judul">
                     {{ $module->judul }}
+                    @if($module->creator)
+                      <div style="font-size: 0.75rem; color: var(--gray-500); margin-top: 4px; font-weight: 500;">
+                        Dibuat oleh {{ $module->creator->name }}
+                      </div>
+                    @endif
                   </td>
-                  <td>Level {{ $module->level }}</td>
+
+                  {{-- LEVEL --}}
+                  <td>
+                    <span style="font-weight: 600;">
+                      Level {{ $module->level }}
+                    </span>
+                  </td>
+
+                  {{-- KATEGORI --}}
                   <td>{{ $kategoriLabel }}</td>
-                  <td>{{ $module->updated_at ? $module->updated_at->format('d M Y, H:i') : '-' }}</td>
+
+                  {{-- MATERI --}}
+                  <td>
+                    @if($module->file_path)
+                      <a href="{{ asset('storage/' . $module->file_path) }}" target="_blank" style="color: var(--pink-dark); font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                          <polyline points="14 2 14 8 20 8"/>
+                          <line x1="16" y1="13" x2="8" y2="13"/>
+                          <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                        Lihat PDF
+                      </a>
+                    @else
+                      <span style="color: var(--gray-400);">Tidak ada</span>
+                    @endif
+                  </td>
+
+                  {{-- JUMLAH SOAL --}}
+                  <td>
+                    <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 38px; padding: 4px 8px; border-radius: 999px; background: var(--pink-light); color: var(--pink-dark); font-weight: 800; font-size: 0.82rem;">
+                      {{ $module->questions_count ?? 0 }}
+                    </span>
+                    <span style="font-size: 0.82rem; color: var(--gray-500); margin-left: 4px;">soal</span>
+                  </td>
+
+                  {{-- TERAKHIR DIPERBARUI --}}
+                  <td>
+                    {{ $module->updated_at ? $module->updated_at->format('d M Y') : '-' }}
+                  </td>
+
+                  {{-- AKSI --}}
                   <td>
                     <div class="action-group">
+                      {{-- Kelola Soal --}}
+                      <a class="action-btn" href="{{ route('modul.soal.create', $module) }}" title="Kelola Soal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 9h8"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
+                      </a>
+
                       {{-- Edit Modul --}}
                       <a class="action-btn" href="{{ route('modul.edit', $module) }}" title="Ubah Modul">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
                       </a>
 
-                      {{-- Kelola Soal Modul --}}
-                      <a class="action-btn" href="{{ route('modul.soal.create', $module) }}" title="Kelola Soal">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                      </a>
-
-                      {{-- Hapus Modul --}}
-                      <button type="button" class="action-btn is-delete" onclick="deleteModule({{ $module->id }}, '{{ addslashes($module->judul) }}')" title="Hapus Modul">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-                      </button>
+                      {{-- Tombol Rilis / Unrelease (Hapus diganti rilis) --}}
+                      <form action="{{ route('modul.release', $module->id) }}" method="POST" style="display: inline;">
+                        @csrf
+                        @method('PATCH')
+                        <button
+                            type="submit"
+                            class="action-btn"
+                            aria-label="{{ $module->sudah_rilis ? 'Tarik Publikasi ' . $module->judul : 'Rilis ' . $module->judul }}"
+                            title="{{ $module->sudah_rilis ? 'Tarik Publikasi (Unrelease)' : 'Rilis Modul' }}"
+                        >
+                            @if($module->sudah_rilis)
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            @else
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                    <line x1="1" y1="1" x2="23" y2="23"/>
+                                </svg>
+                            @endif
+                        </button>
+                      </form>
                     </div>
                   </td>
                 </tr>
               @empty
                 <tr>
-                  <td colspan="6">
+                  <td colspan="7">
                     <div class="empty-state">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
                       <div class="empty-state-title">Modul tidak ditemukan</div>
@@ -300,28 +400,9 @@ td.col-judul{ font-weight: 600; color: var(--navy); white-space: normal; min-wid
         <!-- ============ PAGINASI & ROWS PER PAGE ============ -->
         @if($modules->total() > 0)
           <div class="table-footer">
-            <form method="GET" action="{{ url()->current() }}" class="rows-per-page">
-              @if(request('search'))
-                <input type="hidden" name="search" value="{{ request('search') }}">
-              @endif
-              @if(request('level'))
-                <input type="hidden" name="level" value="{{ request('level') }}">
-              @endif
-              @if(request('kategori'))
-                <input type="hidden" name="kategori" value="{{ request('kategori') }}">
-              @endif
-
-              Rows per page
-              <select name="per_page" id="rowsPerPage" aria-label="Jumlah baris per halaman" onchange="this.form.submit()">
-                <option value="5" {{ request('per_page', 10) == 5 ? 'selected' : '' }}>5</option>
-                <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
-                <option value="15" {{ request('per_page', 10) == 15 ? 'selected' : '' }}>15</option>
-                <option value="25" {{ request('per_page', 10) == 25 ? 'selected' : '' }}>25</option>
-              </select>
-              <span class="results-count">
-                Menampilkan <strong>{{ $modules->firstItem() }} – {{ $modules->lastItem() }}</strong> dari <strong>{{ $modules->total() }}</strong> modul
-              </span>
-            </form>
+            <div class="rows-per-page">
+              Menampilkan <strong>{{ $modules->firstItem() }} – {{ $modules->lastItem() }}</strong> dari <strong>{{ $modules->total() }}</strong> modul
+            </div>
 
             @if($modules->hasPages())
               <nav class="pagination" aria-label="Navigasi halaman">
@@ -348,11 +429,11 @@ td.col-judul{ font-weight: 600; color: var(--navy); white-space: normal; min-wid
                 {{-- NEXT --}}
                 @if($modules->hasMorePages())
                   <a href="{{ $modules->nextPageUrl() }}" class="page-btn" aria-label="Halaman berikutnya">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6 6-6"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
                   </a>
                 @else
                   <button type="button" class="page-btn" disabled aria-label="Halaman berikutnya">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6 6-6"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
                   </button>
                 @endif
               </nav>
@@ -365,37 +446,6 @@ td.col-judul{ font-weight: 600; color: var(--navy); white-space: normal; min-wid
 </div>
 
 <script>
-function deleteModule(id, title) {
-    if (!confirm('Hapus modul "' + title + '"? Semua soal dan riwayat attempt terkait akan ikut terhapus.')) {
-        return;
-    }
-
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-    fetch('/modul/' + id, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': csrfToken,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(res => res.json())
-    .then(data => {
-        alert(data.message || 'Modul berhasil dihapus.');
-        const row = document.getElementById('module-row-' + id);
-        if (row) {
-            row.remove();
-        } else {
-            window.location.reload();
-        }
-    })
-    .catch(err => {
-        console.error(err);
-        alert('Gagal menghapus modul.');
-    });
-}
-
 (function(){
   "use strict";
 
