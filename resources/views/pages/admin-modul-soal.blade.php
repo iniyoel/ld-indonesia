@@ -383,13 +383,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 (function(){
   "use strict";
 
-  /* Bentuk soal ditentukan oleh kategori modul:
-     Materi             = Pilihan Ganda
-     Hören              = Pilihan Ganda + Audio
-     Lesen              = Pilihan Ganda + Teks Bacaan pada modul
-     Schreiben          = Paragraf/Essay
-     Sprechen           = Pertanyaan/Topik Berbicara
-  */
   var category = @json($module->kategori);
   var rawQuestions = @json($questions ?? []);
   var storageBaseUrl = "{{ asset('storage') }}/";
@@ -401,7 +394,15 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     simulasi_schreiben: { type: 'paragraf', label: 'Paragraf / Essay', note: 'Siswa menjawab dengan tulisan panjang. Tidak ada pilihan ganda.' },
     simulasi_sprechen: { type: 'paragraf', label: 'Pertanyaan / Topik Berbicara', note: 'Isi pertanyaan atau topik yang akan digunakan siswa untuk latihan berbicara.' }
   };
-  var config = configMap[category] || configMap.materi;
+
+  function getActiveConfig(cat) {
+    if (cat === 'simulasi_schreiben' || cat === 'simulasi_sprechen') {
+      return { type: 'paragraf', label: 'Paragraf / Essay', note: 'Siswa menjawab dengan tulisan panjang. Tidak ada pilihan ganda.' };
+    }
+    return configMap[cat] || configMap.materi;
+  }
+
+  var config = getActiveConfig(category);
   var questions = [];
   var nextId = 1;
   var container = document.getElementById('questionsContainer');
@@ -423,8 +424,9 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   }
 
   function newQuestion(){
-    var q={id:nextId++,type:config.type,text:'',questionFile:null,options:[],correct:null,penjelasan:''};
-    if(config.type==='pilihan_ganda'){
+    var currentConfig = getActiveConfig(category);
+    var q={id:nextId++,type:currentConfig.type,text:'',questionFile:null,options:[],correct:null,penjelasan:''};
+    if(currentConfig.type==='pilihan_ganda'){
       q.options=[{text:'',file:null},{text:'',file:null},{text:'',file:null},{text:'',file:null}];
       q.correct=0;
     }
@@ -500,7 +502,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
       box.appendChild(top);
 
-      // Preview audio lama / audio baru
       if (file || existingUrl) {
           var audio = document.createElement('audio');
           audio.controls = true;
@@ -520,12 +521,14 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
   function render(){
     container.innerHTML=''; empty.hidden=questions.length>0;
+    var currentConfig = getActiveConfig(category);
+
     questions.forEach(function(q,qi){
       var row=document.createElement('div'); row.className='question-row';
       var card=document.createElement('div'); card.className='question-card';
       var h=document.createElement('h2'); h.textContent='Pertanyaan '+(qi+1); card.appendChild(h);
 
-      var note=document.createElement('div'); note.className='question-note'; note.textContent=config.note; card.appendChild(note);
+      var note=document.createElement('div'); note.className='question-note'; note.textContent=currentConfig.note; card.appendChild(note);
 
       var label=document.createElement('label'); label.textContent=category==='simulasi_sprechen'?'Pertanyaan / Topik Berbicara':'Pertanyaan';
       label.style.cssText='display:block;font-family:var(--font-display);font-weight:700;font-size:1rem;color:var(--navy);margin-bottom:8px;';
@@ -536,7 +539,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
       var typeLabel=document.createElement('label'); typeLabel.textContent='Bentuk Soal'; typeLabel.style.cssText='display:block;font-family:var(--font-display);font-weight:700;font-size:1rem;color:var(--navy);margin:18px 0 8px;';
       var type=document.createElement('div'); type.className='type-select-wrap'; type.style.width='100%';
-      type.innerHTML='<svg class="type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'+icon(config.type==='pilihan_ganda'?'pg':'para')+'</svg><select disabled><option>'+config.label+'</option></select>';
+      type.innerHTML='<svg class="type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'+icon(currentConfig.type==='pilihan_ganda'?'pg':'para')+'</svg><select disabled><option>'+currentConfig.label+'</option></select>';
       card.appendChild(typeLabel); card.appendChild(type);
 
       if(category==='simulasi_horen'){
@@ -555,7 +558,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
         ));
       }
 
-      if(config.type==='pilihan_ganda'){
+      if(currentConfig.type==='pilihan_ganda'){
         var optLabel=document.createElement('label'); optLabel.textContent='Pilihan Jawaban'; optLabel.style.cssText='display:block;font-family:var(--font-display);font-weight:700;font-size:1rem;color:var(--navy);margin-top:20px;'; card.appendChild(optLabel);
         var list=document.createElement('div'); list.className='options-list';
         q.options.forEach(function(opt,oi){
@@ -588,8 +591,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
           r.appendChild(radio);
           r.appendChild(input);
 
-          // Hören: opsi jawaban dapat berupa teks ATAU gambar.
-          if(category === 'simulasi_horen'){
+          if(category==='simulasi_horen'){
 
               var imageWrap = document.createElement('div');
 
@@ -599,7 +601,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
                   'gap:8px;' +
                   'flex-shrink:0;';
 
-              // Preview gambar lama / baru
               if(opt.file || opt.existingFileUrl){
 
                   var preview = document.createElement('img');
@@ -643,10 +644,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
                   if(imageInput.files && imageInput.files[0]){
 
                       opt.file = imageInput.files[0];
-
-                      // Media lama tidak lagi dipakai
                       opt.existingFileUrl = null;
-
                       opt.text = '';
 
                       render();
@@ -667,7 +665,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
                   );
 
               imageLabel.appendChild(imageInput);
-
               imageWrap.appendChild(imageLabel);
               r.appendChild(imageWrap);
           }
@@ -700,28 +697,28 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
       var rail=document.createElement('div');rail.className='control-rail';
       var addBtn=document.createElement('button');addBtn.type='button';addBtn.className='rail-btn';addBtn.title='Tambah pertanyaan';addBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">'+icon('plus')+'</svg>';addBtn.addEventListener('click',function(){questions.splice(qi+1,0,newQuestion());render();});
-var dup=document.createElement('button');
-dup.type='button';
-dup.className='rail-btn';
-dup.title='Duplikat pertanyaan';
-dup.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+icon('copy')+'</svg>';
-dup.addEventListener('click', function(){
-  var c = {
-    id: nextId++,
-    serverQuestionId: null, // Forces the clone to hit store instead of update
-    type: q.type,
-    text: q.text,
-    questionFile: null,
-    existingFileUrl: null,
-    options: q.options.map(function(o){
-      return { id: null, text: o.text, file: null, existingFileUrl: null };
-    }),
-    correct: q.correct,
-    penjelasan: q.penjelasan
-  };
-  questions.splice(qi + 1, 0, c);
-  render();
-});
+      var dup=document.createElement('button');
+      dup.type='button';
+      dup.className='rail-btn';
+      dup.title='Duplikat pertanyaan';
+      dup.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+icon('copy')+'</svg>';
+      dup.addEventListener('click', function(){
+        var c = {
+          id: nextId++,
+          serverQuestionId: null,
+          type: q.type,
+          text: q.text,
+          questionFile: null,
+          existingFileUrl: null,
+          options: q.options.map(function(o){
+            return { id: null, text: o.text, file: null, existingFileUrl: null };
+          }),
+          correct: q.correct,
+          penjelasan: q.penjelasan
+        };
+        questions.splice(qi + 1, 0, c);
+        render();
+      });
       var delQ=document.createElement('button');delQ.type='button';delQ.className='rail-btn is-delete';delQ.title='Hapus pertanyaan';delQ.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+icon('trash')+'</svg>';delQ.addEventListener('click',function(){if(questions.length===1){alertError('Minimal harus ada satu soal.');return;}questions.splice(qi,1);render();});
       rail.appendChild(addBtn);rail.appendChild(dup);rail.appendChild(delQ);row.appendChild(card);row.appendChild(rail);container.appendChild(row);
     });
@@ -731,6 +728,8 @@ dup.addEventListener('click', function(){
 
   function validate(){
     if(!questions.length){alertError('Minimal harus ada satu soal.');return false;}
+    var currentConfig = getActiveConfig(category);
+
     for(var i=0;i<questions.length;i++){
       var q=questions[i],n=i+1;
       if(!q.text||!q.text.trim()){alertError('Pertanyaan '+n+' belum diisi.');return false;}
@@ -742,7 +741,7 @@ dup.addEventListener('click', function(){
           alertError('Soal Hören nomor '+n+' wajib memiliki audio.');
           return false;
       }
-      if(q.type==='pilihan_ganda'){
+      if(currentConfig.type==='pilihan_ganda'){
         if(q.options.length!==4){alertError('Soal nomor '+n+' harus memiliki tepat 4 opsi.');return false;}
         for(var j=0;j<4;j++){
           var option=q.options[j];
@@ -775,7 +774,7 @@ dup.addEventListener('click', function(){
     return true;
   }
 
-document.getElementById('saveBtn').addEventListener('click', async function(){
+  document.getElementById('saveBtn').addEventListener('click', async function(){
     clearAlert();
     if(!validate()) return;
 
@@ -788,7 +787,6 @@ document.getElementById('saveBtn').addEventListener('click', async function(){
                '{{ csrf_token() }}';
 
     var storeUrl = "{{ route('modul.soal.store', $module) }}";
-    // Base URL template for update route
     var updateUrlTemplate = "{{ route('modul.soal.update', [$module, ':question_id']) }}";
 
     try {
@@ -818,7 +816,6 @@ document.getElementById('saveBtn').addEventListener('click', async function(){
           fd.append('correct_option', String(q.correct));
         }
 
-        // Determine dynamic endpoint and method
         var targetUrl = storeUrl;
         if (q.serverQuestionId) {
           targetUrl = updateUrlTemplate.replace(':question_id', q.serverQuestionId);
@@ -855,9 +852,9 @@ document.getElementById('saveBtn').addEventListener('click', async function(){
         }
       });
 
-    if(!finish.ok){
+      if(!finish.ok){
         var errorData = await finish.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Gagal menyelesaikan modul (HTTP ' + finish.status + ').');
+        throw new Error(errorData.message || 'Gagal menyelesaikan modul.');
       }
 
       successAlert.textContent = 'Semua soal berhasil disimpan.';
@@ -874,7 +871,8 @@ document.getElementById('saveBtn').addEventListener('click', async function(){
     }
   });
 
-if (rawQuestions && rawQuestions.length > 0) {
+  if (rawQuestions && rawQuestions.length > 0) {
+    var activeCfg = getActiveConfig(category);
     questions = rawQuestions.map(function(q) {
       var mappedOptions = [];
       var correctIndex = 0;
@@ -894,7 +892,7 @@ if (rawQuestions && rawQuestions.length > 0) {
             removeExistingFile: false
           };
         });
-      } else if (config.type === 'pilihan_ganda') {
+      } else if (activeCfg.type === 'pilihan_ganda') {
         mappedOptions = [
           { id: null, text: '', file: null, existingFileUrl: null },
           { id: null, text: '', file: null, existingFileUrl: null },
@@ -905,8 +903,8 @@ if (rawQuestions && rawQuestions.length > 0) {
 
       return {
         id: nextId++,
-        serverQuestionId: q.id || null, // Stores DB ID for modul.soal.update
-        type: q.tipe || q.type || config.type,
+        serverQuestionId: q.id || null,
+        type: q.tipe || q.type || activeCfg.type,
         text: q.pertanyaan || q.text || '',
         questionFile: null,
         existingFileUrl: q.file_path ? (storageBaseUrl + q.file_path) : null,
@@ -924,7 +922,7 @@ if (rawQuestions && rawQuestions.length > 0) {
   var sidebar=document.getElementById('sidebar'),menuToggle=document.getElementById('menuToggle'),sidebarClose=document.getElementById('sidebarClose'),backdrop=document.getElementById('backdrop');
   function openSidebar(){sidebar.classList.add('open');backdrop.classList.add('show');menuToggle.setAttribute('aria-expanded','true');}
   function closeSidebar(){sidebar.classList.remove('open');backdrop.classList.remove('show');menuToggle.setAttribute('aria-expanded','false');}
-  menuToggle.addEventListener('click',openSidebar);sidebarClose.addEventListener('click',closeSidebar);backdrop.addEventListener('click',closeSidebar);
+  menuToggle.addEventListener('click',openSidebar);sidebarClose.addEventListener('click',sidebarClose);backdrop.addEventListener('click',closeSidebar);
 })();
 </script>
 </body>

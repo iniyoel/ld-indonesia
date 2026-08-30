@@ -17,15 +17,17 @@ Route::get('/', function () {
 
     return view('pages.index', compact('tutors'));
 })->name('home');
+
 Route::get('/index', function () {
     $tutors = User::query()
         ->where('role', 'tutor')
         ->where('status', 'aktif')
-        ->orderBy('naodul-e')
+        ->orderBy('name') // Diperbaiki dari 'naodul-e'
         ->get();
 
     return view('pages.index', compact('tutors'));
 })->name('home.index');
+
 Route::redirect('/index.html', '/index');
 
 Route::get('/masuk', [AuthController::class, 'show'])->name('login');
@@ -34,16 +36,12 @@ Route::redirect('/masuk.html', '/masuk');
 
 Route::redirect('/keluar.html', '/keluar');
 
-// ------------------------------------------------------------------
-// Semua halaman lain — wajib login, role dicek di PageController
-// ------------------------------------------------------------------
-
 Route::get('/{page}.html', function (string $page) {
     return redirect('/' . $page, 301);
 })->where('page', '[A-Za-z0-9\-]+');
 
 Route::post('/forgot-password', function (Illuminate\Http\Request $request) {
-    $email = trim((string) $request->input('email', $request->input('email')));
+    $email = trim((string) $request->input('email'));
     $password = $request->input('password');
     $confirmation = $request->input('password_confirmation');
 
@@ -111,9 +109,7 @@ Route::middleware('auth')->group(function () {
             'role' => $role,
             'level' => $role === 'siswa' ? ($data['level'] ?? null) : null,
             'profile_photo_path' => $photoPath,
-            'description' => $role === 'tutor'
-                ? ($data['description'] ?? null)
-                : null,
+            'description' => $role === 'tutor' ? ($data['description'] ?? null) : null,
             'password_generated' => $generatePassword,
             'status' => 'aktif',
             'aktif_sampai' => $role === 'siswa' ? now()->addMonth() : null,
@@ -168,7 +164,6 @@ Route::middleware('auth')->group(function () {
     })->middleware('can:admin');
 
     Route::delete('/admin-pengguna/{user}', function (\App\Models\User $user) {
-        // Jangan biarkan admin menghapus dirinya sendiri
         if (auth()->id() === $user->id) {
             return response()->json(['message' => 'Anda tidak dapat menghapus akun Anda sendiri.'], 403);
         }
@@ -185,22 +180,15 @@ Route::middleware('auth')->group(function () {
     | Dashboard 
     |--------------------------------------------------------------------------
     */
+    Route::get('/dashboard', [PageController::class, 'dashboard'])->name('dashboard');
 
-    Route::get('/dashboard', [PageController::class, 'dashboard'])
-        ->name('dashboard');
-
-    // ------------------------------------------------------------------
-    // Modul — Admin & Tutor
-    // ------------------------------------------------------------------
-
+    /*
+    |--------------------------------------------------------------------------
+    | Modul — Admin & Tutor
+    |--------------------------------------------------------------------------
+    */
     Route::get('/modul', [ModuleController::class, 'index'])
         ->name('modul.index')
-        ->middleware('can:manage-modules');
-
-    Route::get('/admin-modul-pembelajaran', [ModuleController::class, 'index'])
-        ->middleware('can:manage-modules');
-        
-    Route::get('/tutor-modul-pembelajaran', [ModuleController::class, 'index'])
         ->middleware('can:manage-modules');
 
     Route::get('/modul/tambah', [ModuleController::class, 'create'])
@@ -232,7 +220,6 @@ Route::middleware('auth')->group(function () {
     | Soal — Admin & Tutor
     |--------------------------------------------------------------------------
     */
-
     Route::get('/modul/{module}/soal', [QuestionController::class, 'create'])
         ->name('modul.soal.create')
         ->middleware('can:manage-modules');
@@ -241,9 +228,8 @@ Route::middleware('auth')->group(function () {
         ->name('modul.soal.store')
         ->middleware('can:manage-modules');
 
-    // Route ini harus sebelum modul.soal.update agar laravel tidak mengakses route update ketika proses finish soal
-    Route::post('/modul/{module}/soal/selesai',[QuestionController::class, 'finish']
-        )->name('modul.soal.finish')
+    Route::post('/modul/{module}/soal/selesai', [QuestionController::class, 'finish'])
+        ->name('modul.soal.finish')
         ->middleware('can:manage-modules');
     
     Route::post('/modul/{module}/soal/{question}', [QuestionController::class, 'update'])
@@ -253,43 +239,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/modul/{module}/soal/{question}/destroy', [QuestionController::class, 'destroy'])
         ->name('modul.soal.destroy')
         ->middleware('can:manage-modules');
-
-    // =====================================================
-    // SISWA — Mengerjakan Modul
-    // ===================================================== 
-
-    Route::get('/modul-pembelajaran/{module}', [PageController::class, 'kerjakanModule'])
-        ->name('modul.kerjakan')
-        ->middleware('auth');
-
-    // Halaman pengerjaan soal siswa
-    Route::get('/modul/{module}/soal-pengerjaan', [PageController::class, 'kerjakanSoal'])
-        ->name('siswa.modul.questions')
-        ->middleware('auth');
-
-    // Mulai mengerjakan modul
-    Route::get('/modul/{module}/kerjakan', [ModuleController::class, 'start'])
-        ->name('siswa.modul.start')
-        ->middleware('auth');
-
-    // Selesai mengerjakan modul
-    Route::post('/modul/{module}/selesai', [ModuleController::class, 'finishAttempt'])
-        ->name('siswa.modul.finish')
-        ->middleware('auth');
-
-    Route::get('/modul/{module}/hasil/{attempt}', [PageController::class, 'hasilPengerjaan'])
-        ->name('siswa.modul.hasil')
-        ->middleware('auth');
-
-    /*
-    |--------------------------------------------------------------------------
-    | Halaman Generik
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/{page}', [PageController::class, 'show'])
-        ->where('page', '[A-Za-z0-9\-]+')
-        ->name('page');
 
     /*
     |--------------------------------------------------------------------------
@@ -307,20 +256,12 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Performa Siswa — Tutor
+    | Performa Siswa & Detail — Tutor (Dipindah ke atas sebelum route generik)
     |--------------------------------------------------------------------------
     */
     Route::get('/tutor-siswa-detail/{user}', [PageController::class, 'tutorSiswaDetail'])
         ->name('tutor.siswa.detail')
         ->middleware('can:manage-modules');
-
-    /*
-    |--------------------------------------------------------------------------
-    | Detail Performa Siswa — Tutor
-    |--------------------------------------------------------------------------
-    */
-    Route::get('/tutor-siswa-detail/{user}', [PageController::class, 'tutorSiswaDetail'])
-        ->name('tutor.siswa.detail');
 
     Route::get('/tutor-siswa-detail/{user}/hasil/{attempt}', [AdminPerformanceController::class, 'showAttempt'])
         ->name('tutor.siswa.hasil')
@@ -328,7 +269,32 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Halaman Generik (Harus selalu di bawah route-route spesifik)
+    | SISWA — Mengerjakan Modul
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/modul-pembelajaran/{module}', [PageController::class, 'kerjakanModule'])
+        ->name('modul.kerjakan')
+        ->middleware('auth');
+
+    Route::get('/modul/{module}/soal-pengerjaan', [PageController::class, 'kerjakanSoal'])
+        ->name('siswa.modul.questions')
+        ->middleware('auth');
+
+    Route::get('/modul/{module}/kerjakan', [ModuleController::class, 'start'])
+        ->name('siswa.modul.start')
+        ->middleware('auth');
+
+    Route::post('/modul/{module}/selesai', [ModuleController::class, 'finishAttempt'])
+        ->name('siswa.modul.finish')
+        ->middleware('auth');
+
+    Route::get('/modul/{module}/hasil/{attempt}', [PageController::class, 'hasilPengerjaan'])
+        ->name('siswa.modul.hasil')
+        ->middleware('auth');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Halaman Generik (SELALU DI BAWAH ROUTE SPESIFIK)
     |--------------------------------------------------------------------------
     */
     Route::get('/{page}', [PageController::class, 'show'])
@@ -348,5 +314,4 @@ Route::middleware('auth')->group(function () {
 
         return redirect()->route('login');
     })->name('logout');
-
 });

@@ -247,6 +247,27 @@ class ModuleController extends Controller
         $module->judul = $validated['judul'];
         $module->deskripsi = $validated['deskripsi'];
         $module->level = $validated['level'];
+        
+        // Cek apakah kategori berubah jenis (misal dari pilihan ganda ke essay atau sebaliknya)
+        $isOldEssay = in_array($kategoriLama, ['simulasi_schreiben', 'simulasi_sprechen'], true);
+        $isNewEssay = in_array($validated['kategori'], ['simulasi_schreiben', 'simulasi_sprechen'], true);
+
+        // Jika tipe kategori berubah drastis, bersihkan soal dan file media fisiknya
+        if ($isOldEssay !== $isNewEssay) {
+            foreach ($module->questions()->with('options')->get() as $question) {
+                if ($question->file_path) {
+                    Storage::disk('public')->delete($question->file_path);
+                }
+                foreach ($question->options as $option) {
+                    if ($option->file_path) {
+                        Storage::disk('public')->delete($option->file_path);
+                    }
+                }
+                $question->options()->delete();
+                $question->delete();
+            }
+        }
+
         $module->kategori = $validated['kategori'];
         $module->diperbarui_oleh = Auth::id();
 
