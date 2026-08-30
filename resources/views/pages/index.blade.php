@@ -731,7 +731,6 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
         </article>
         <article class="facility-card">
           <div class="facility-icon icon-4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-          <h3>Grup Belajar</h3>
           <p>Bergabung dengan komunitas dan dapatkan dukungan.</p>
         </article>
         <article class="facility-card">
@@ -817,12 +816,11 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
         <article class="paket-card">
           <span class="paket-level">Paket A1</span>
           <span class="paket-tier">Pemula</span>
-          <p class="paket-price">Rp499.000</p>
+          <p class="paket-price">Rp1.500.000</p>
           <ul class="paket-features">
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Materi PDF Lengkap</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Persiapan Ujian A1 (ASM)</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Latihan Soal</li>
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Grup Belajar</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Konsultasi Tutor</li>
           </ul>
           <a href="https://wa.me/6281234567890?text=Halo%2C%20saya%20ingin%20mendaftar%20Paket%20A1" class="btn btn-primary btn-block" target="_blank" rel="noopener">Pilih Paket</a>
@@ -831,12 +829,11 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
         <article class="paket-card">
           <span class="paket-level">Paket A2</span>
           <span class="paket-tier">Dasar</span>
-          <p class="paket-price">Rp699.000</p>
+          <p class="paket-price">Rp2.500.000</p>
           <ul class="paket-features">
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Materi PDF Lengkap</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Persiapan Ujian A2 (ASM)</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Latihan Soal</li>
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Grup Belajar</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Konsultasi Tutor</li>
           </ul>
           <a href="https://wa.me/6281234567890?text=Halo%2C%20saya%20ingin%20mendaftar%20Paket%20A2" class="btn btn-primary btn-block" target="_blank" rel="noopener">Pilih Paket</a>
@@ -846,12 +843,11 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
           <span class="paket-tag-best">Paling Populer</span>
           <span class="paket-level">Paket B1</span>
           <span class="paket-tier">Menengah</span>
-          <p class="paket-price">Rp899.000</p>
+          <p class="paket-price">Rp4.000.000</p>
           <ul class="paket-features">
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Materi PDF Lengkap</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Persiapan Ujian B1 (ASM)</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Latihan Soal</li>
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Grup Belajar</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Konsultasi Tutor</li>
           </ul>
           <a href="https://wa.me/6281234567890?text=Halo%2C%20saya%20ingin%20mendaftar%20Paket%20B1" class="btn btn-purple btn-block" target="_blank" rel="noopener">Pilih Paket</a>
@@ -860,12 +856,11 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
         <article class="paket-card">
           <span class="paket-level">Paket B2</span>
           <span class="paket-tier">Lanjutan</span>
-          <p class="paket-price">Rp1.099.000</p>
+          <p class="paket-price">Rp8.000.000</p>
           <ul class="paket-features">
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Materi PDF Lengkap</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Persiapan Ujian B2 (ASM)</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Latihan Soal</li>
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Grup Belajar</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Konsultasi Tutor</li>
           </ul>
           <a href="https://wa.me/6281234567890?text=Halo%2C%20saya%20ingin%20mendaftar%20Paket%20B2" class="btn btn-primary btn-block" target="_blank" rel="noopener">Pilih Paket</a>
