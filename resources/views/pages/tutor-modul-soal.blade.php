@@ -73,7 +73,11 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 }
 
 /* ============ APP SHELL ============ */
-.app-shell{ display: flex; min-height: 100vh; }
+.app-shell{ 
+  display: flex; 
+  min-height: 100vh; 
+  width: 100%;
+}
 
 .sidebar{
   width: var(--sidebar-w);
@@ -112,7 +116,12 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
 .sidebar-close{ display: none; }
 
-.main-col{ flex-grow: 1; min-width: 0; display: flex; flex-direction: column; }
+.main-col{ 
+  flex: 1 1 0%; 
+  min-width: 0; 
+  display: flex; 
+  flex-direction: column; 
+}
 
 .topbar{
   height: var(--topbar-h);
@@ -134,10 +143,17 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; color: var(--pink-dark); flex-shrink: 0;
 }
 
-.page-content{ padding: 32px 40px 60px; max-width: 1180px; width: 100%; margin: 0 auto; }
+.page-content{ 
+  padding: 32px 40px 60px; 
+  max-width: 1180px; 
+  width: 100%; 
+  margin: 0 auto; 
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
 
 .back-link{
-  display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px;
   border-radius: var(--radius-pill); border: 1.5px solid var(--pink-light); color: var(--pink-dark);
   font-weight: 700; font-size: 0.9rem; margin-bottom: 18px;
 }
@@ -148,23 +164,35 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 .page-heading h1{ font-size: 1.6rem; }
 
 /* ============ QUESTION ROW ============ */
-.question-row{ display: flex; gap: 16px; align-items: flex-start; margin-bottom: 20px; }
+.question-row{ 
+  display: flex; 
+  gap: 16px; 
+  align-items: flex-start; 
+  margin-bottom: 20px; 
+  width: 100%;
+  min-width: 0;
+}
 .question-card{
-  flex-grow: 1; min-width: 0;
-  background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-md);
-  border: 1px solid var(--gray-100); padding: 26px 28px;
+  flex-grow: 1; 
+  min-width: 0;
+  background: var(--white); 
+  border-radius: var(--radius-lg); 
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--gray-100); 
+  padding: 26px 28px;
+  box-sizing: border-box;
 }
 .question-card h2{ font-size: 1.15rem; margin-bottom: 16px; }
 
-.qtext-row{ display: flex; align-items: flex-start; gap: 14px; margin-bottom: 4px; }
+.qtext-row{ display: flex; align-items: flex-start; gap: 14px; margin-bottom: 4px; width: 100%; }
 .qtext-box{ flex-grow: 1; min-width: 0; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); overflow: hidden; }
 .qtext-input{
   width: 100%; padding: 13px 16px; font: inherit; font-size: 0.96rem; color: var(--gray-800);
-  outline: none; min-height: 24px;
+  outline: none; min-height: 24px; word-break: break-word;
 }
 .qtext-input:empty::before{ content: "Tulis pertanyaan di sini..."; color: var(--gray-400); }
 .qtext-toolbar{ display: flex; align-items: center; gap: 2px; padding: 8px 12px; border-top: 1px solid var(--gray-100); background: var(--gray-50); flex-wrap: wrap; }
-.tb-btn{ width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; color: var(--navy-soft); font-weight: 800; font-size: 0.86rem; }
+.tb-btn{ width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; color: var(--navy-soft); font-weight: 800; font-size: 0.86rem; cursor: pointer; }
 .tb-btn:hover{ background: var(--white); color: var(--navy); }
 .tb-btn svg{ width: 15px; height: 15px; }
 .tb-sep{ width: 1px; height: 18px; background: var(--gray-200); margin: 0 5px; }
@@ -172,7 +200,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 .icon-btn-circle{
   width: 40px; height: 40px; border-radius: 50%; background: var(--gray-100); color: var(--gray-500);
   display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;
-  position: relative;
+  position: relative; cursor: pointer;
 }
 .icon-btn-circle:hover{ background: var(--pink-pale); color: var(--pink-dark); }
 .icon-btn-circle svg{ width: 18px; height: 18px; }
@@ -195,29 +223,43 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 .type-select-wrap .chevron-icon{ position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--gray-500); pointer-events: none; }
 
 /* ---- Pilihan ganda options ---- */
-.options-list{ margin-top: 20px; display: flex; flex-direction: column; gap: 4px; }
-.option-row{ display: flex; align-items: center; gap: 14px; padding: 8px 0; }
+.options-list{ margin-top: 20px; display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.option-row{ 
+  display: flex; 
+  align-items: center; 
+  gap: 12px; 
+  padding: 8px 0; 
+  width: 100%;
+  min-width: 0;
+  flex-wrap: wrap;
+}
 .option-radio{
   width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--gray-300); flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
 }
 .option-radio .dot{ width: 11px; height: 11px; border-radius: 50%; background: transparent; }
 .option-row.is-correct .option-radio{ border-color: var(--navy); }
 .option-row.is-correct .option-radio .dot{ background: var(--navy); }
 .option-text{
-  flex-grow: 1; min-width: 0; font: inherit; font-size: 0.94rem; color: var(--gray-800);
-  border: none; border-bottom: 1px solid transparent; padding: 6px 2px; background: transparent;
+  flex: 1 1 180px; 
+  min-width: 0; 
+  font: inherit; 
+  font-size: 0.94rem; 
+  color: var(--gray-800);
+  border: none; 
+  border-bottom: 1px solid var(--gray-200); 
+  padding: 6px 2px; 
+  background: transparent;
 }
-.option-text:hover, .option-text:focus{ border-bottom-color: var(--gray-200); outline: none; }
+.option-text:hover, .option-text:focus{ border-bottom-color: var(--pink); outline: none; }
 .option-text::placeholder{ color: var(--gray-400); }
-.option-remove{ width: 26px; height: 26px; border-radius: 50%; color: var(--gray-400); flex-shrink: 0; visibility: hidden; }
-.option-row:hover .option-remove{ visibility: visible; }
+.option-remove{ width: 26px; height: 26px; border-radius: 50%; color: var(--gray-400); flex-shrink: 0; cursor: pointer; }
 .option-remove:hover{ background: var(--red-bg); color: var(--red); }
 .option-remove svg{ width: 14px; height: 14px; }
 
 .add-option-row{ display: flex; align-items: center; gap: 14px; padding: 8px 0; }
 .add-option-row .option-radio{ border-style: dashed; }
-.add-option-btn{ color: var(--gray-400); font-size: 0.94rem; font-weight: 500; }
+.add-option-btn{ color: var(--gray-400); font-size: 0.94rem; font-weight: 500; cursor: pointer; }
 .add-option-btn:hover{ color: var(--pink-dark); }
 
 /* ---- Paragraf preview ---- */
@@ -229,7 +271,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 .rail-btn{
   width: 44px; height: 44px; border-radius: 50%; background: var(--white); box-shadow: var(--shadow-sm);
   border: 1px solid var(--gray-100); color: var(--pink-dark); display: flex; align-items: center; justify-content: center;
-  transition: background 0.15s ease, transform 0.15s ease;
+  transition: background 0.15s ease, transform 0.15s ease; cursor: pointer;
 }
 .rail-btn:hover{ background: var(--pink-pale); transform: translateY(-1px); }
 .rail-btn.is-delete:hover{ background: var(--red-bg); color: var(--red); }
@@ -241,24 +283,24 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 }
 .empty-questions p{ color: var(--gray-500); font-size: 0.94rem; margin-bottom: 18px; }
 .empty-add-btn{
-  display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: var(--radius-pill);
-  background: var(--pink-pale); color: var(--pink-dark); font-weight: 700; font-size: 0.92rem;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border-radius: var(--radius-pill);
+  background: var(--pink-pale); color: var(--pink-dark); font-weight: 700; font-size: 0.92rem; cursor: pointer;
 }
 .empty-add-btn:hover{ background: var(--pink-light); }
 .empty-add-btn svg{ width: 16px; height: 16px; }
 
 /* ============ FOOTER ACTIONS ============ */
-.form-actions{ display: flex; justify-content: flex-end; margin-top: 8px; }
+.form-actions{ display: flex; justify-content: flex-end; margin-top: 14px; width: 100%; }
 .btn-save{
-  display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; border-radius: var(--radius-pill);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 32px; border-radius: var(--radius-pill);
   background: linear-gradient(135deg, var(--pink) 0%, var(--pink-dark) 100%); color: var(--white);
   font-weight: 700; font-size: 0.96rem; box-shadow: 0 12px 28px rgba(236,78,140,0.22);
-  transition: transform 0.18s ease;
+  transition: transform 0.18s ease; cursor: pointer;
 }
 .btn-save:hover{ transform: translateY(-2px); }
 .btn-save svg{ width: 17px; height: 17px; }
 
-/* ============ RESPONSIVE ============ */
+/* ============ RESPONSIVE BREAKPOINTS ============ */
 @media (max-width: 980px){
   .sidebar{ position: fixed; left: 0; top: 0; transform: translateX(-100%); transition: transform 0.22s ease; box-shadow: var(--shadow-md); }
   .sidebar.open{ transform: translateX(0); }
@@ -267,15 +309,38 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   .sidebar-brand{ justify-content: space-between; }
   .menu-toggle{ display: flex; }
   .topbar{ padding: 0 20px; }
-  .page-content{ padding: 24px 20px 48px; }
+  .page-content{ padding: 24px 16px 48px; }
   .backdrop{ display: none; position: fixed; inset: 0; background: rgba(30,42,71,0.35); z-index: 50; }
   .backdrop.show{ display: block; }
-  .question-card{ padding: 20px 18px; }
-  .qtext-row{ flex-wrap: wrap; }
-  .type-select-wrap{ width: 100%; margin-top: 10px; }
-  .control-rail{ flex-direction: row; }
+  .question-row{ flex-direction: column; gap: 12px; }
+  .question-card{ padding: 20px 18px; width: 100%; }
+  .qtext-row{ flex-wrap: wrap; gap: 10px; }
+  .type-select-wrap{ width: 100%; }
+  .control-rail{ flex-direction: row; width: 100%; justify-content: flex-end; }
 }
-@media (max-width: 640px){ .user-meta{ display: none; } }
+
+@media (max-width: 640px){
+  .page-content{
+    padding: 16px 12px 36px;
+  }
+  .page-heading h1{
+    font-size: 1.35rem;
+  }
+  .question-card{
+    padding: 16px 14px;
+    border-radius: var(--radius-md);
+  }
+  .question-card h2{
+    font-size: 1.05rem;
+    margin-bottom: 12px;
+  }
+  .form-actions{
+    flex-direction: column;
+  }
+  .btn-save{
+    width: 100%;
+  }
+}
 </style>
 </head>
 <body>
@@ -292,7 +357,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     <x-header.tutor />
 
     <main class="page-content" id="mainContent">
-      <a href="tutor-modul-form.html" class="back-link">
+      <a href="{{ url('/tutor-modul-pembelajaran') }}" class="back-link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
         Kembali
       </a>
@@ -324,23 +389,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 <script>
 (function(){
   "use strict";
-
-  /* ==================================================================
-     CATATAN INTEGRASI BACKEND
-     - Seluruh state soal (questions[]) di bawah ini hanya disimpan di
-       memori (variabel JS) selama halaman terbuka — belum dikirim ke
-       server. Saat tombol "Simpan" ditekan, TODO: kirim questions[]
-       (termasuk file gambar/audio yang dipilih) ke backend, mis.
-       fetch('/api/admin/modul/{id}/soal', {method:'POST', body: formData}).
-     - Sesuai ketentuan: urutan opsi pilihan ganda akan DIACAK oleh
-       backend saat disimpan ke database — pengacakan TIDAK dilakukan
-       di sisi front-end ini.
-     - Maksimal 4 opsi per soal pilihan ganda, dengan satu opsi
-       ditandai benar lewat radio button.
-     - Ikon gambar di sebelah pertanyaan & tiap opsi menerima file
-       gambar ATAU audio (mis. untuk soal Simulasi Hören yang butuh
-       berkas audio, atau opsi jawaban bergambar).
-  ================================================================== */
 
   var nextId = 3;
   var questions = [
@@ -377,8 +425,9 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   }
 
   function render(){
+    if (!container) return;
     container.innerHTML = '';
-    emptyQuestions.hidden = questions.length > 0;
+    if (emptyQuestions) emptyQuestions.hidden = questions.length > 0;
 
     questions.forEach(function(q, qIndex){
       var row = document.createElement('div');
@@ -590,15 +639,20 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     return wrap;
   }
 
-  document.getElementById('emptyAddBtn').addEventListener('click', function(){
-    questions.push({ id: nextId++, type: 'pg', text: '', questionFile: null, options: [{ text: 'Opsi 1', file: null }], correct: 0 });
-    render();
-  });
+  var emptyAddBtn = document.getElementById('emptyAddBtn');
+  if (emptyAddBtn) {
+    emptyAddBtn.addEventListener('click', function(){
+      questions.push({ id: nextId++, type: 'pg', text: '', questionFile: null, options: [{ text: 'Opsi 1', file: null }], correct: 0 });
+      render();
+    });
+  }
 
-  document.getElementById('saveBtn').addEventListener('click', function(){
-    // TODO: kirim `questions` (dan file terlampir) ke backend di sini.
-    window.location.href = 'tutor-modul-pembelajaran.html';
-  });
+  var saveBtn = document.getElementById('saveBtn');
+  if (saveBtn) {
+    saveBtn.addEventListener('click', function(){
+      window.location.href = "{{ url('/tutor-modul-pembelajaran') }}";
+    });
+  }
 
   render();
 
@@ -606,11 +660,22 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   var menuToggle = document.getElementById('menuToggle');
   var sidebarClose = document.getElementById('sidebarClose');
   var backdrop = document.getElementById('backdrop');
-  function openSidebar(){ sidebar.classList.add('open'); backdrop.classList.add('show'); menuToggle.setAttribute('aria-expanded', 'true'); }
-  function closeSidebar(){ sidebar.classList.remove('open'); backdrop.classList.remove('show'); menuToggle.setAttribute('aria-expanded', 'false'); }
-  menuToggle.addEventListener('click', openSidebar);
-  sidebarClose.addEventListener('click', closeSidebar);
-  backdrop.addEventListener('click', closeSidebar);
+
+  function openSidebar(){ 
+    if (sidebar) sidebar.classList.add('open'); 
+    if (backdrop) backdrop.classList.add('show'); 
+    if (menuToggle) menuToggle.setAttribute('aria-expanded', 'true'); 
+  }
+
+  function closeSidebar(){ 
+    if (sidebar) sidebar.classList.remove('open'); 
+    if (backdrop) backdrop.classList.remove('show'); 
+    if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false'); 
+  }
+
+  if (menuToggle) menuToggle.addEventListener('click', openSidebar);
+  if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
+  if (backdrop) backdrop.addEventListener('click', closeSidebar);
 })();
 </script>
 </body>

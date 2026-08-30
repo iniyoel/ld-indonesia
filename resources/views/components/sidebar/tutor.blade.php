@@ -1,4 +1,4 @@
-<aside class="ld-sidebar">
+<aside class="ld-sidebar" id="sidebar">
     <div class="sidebar-silhouettes" aria-hidden="true">
         <div class="circle circle-1"></div>
         <div class="circle circle-2"></div>

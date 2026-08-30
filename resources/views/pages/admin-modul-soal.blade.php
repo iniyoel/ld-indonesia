@@ -388,11 +388,19 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
 <div class="app-shell">
   <div class="backdrop" id="backdrop"></div>
-  <x-sidebar.admin />
+  @if(Auth::user()->role === 'tutor')
+      <x-sidebar.tutor />
+  @else
+      <x-sidebar.admin />
+  @endif
 
   <!-- ============ MAIN ============ -->
   <div class="main-col">
-    <x-header.admin />
+    @if(Auth::user()->role === 'tutor')
+        <x-header.tutor />
+    @else
+        <x-header.admin />
+    @endif
 
     <main class="page-content" id="mainContent">
       <a href="{{ route('modul.edit', $module) }}" class="back-link">
