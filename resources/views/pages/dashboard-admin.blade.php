@@ -215,11 +215,11 @@ td.col-nilai.is-pending{ color: var(--gray-400); font-weight: 600; }
 <div class="app-shell">
   <div class="backdrop" id="backdrop"></div>
 
-  <x-dashboard-sidebar />
+  <x-sidebar.admin />
 
   <!-- ============ MAIN ============ -->
   <div class="main-col">
-    <x-dashboard-header />
+    <x-header.admin />
 
     <main class="page-content" id="mainContent">
 

@@ -198,6 +198,12 @@ Route::middleware('auth')->group(function () {
         ->name('modul.index')
         ->middleware('can:manage-modules');
 
+    Route::get('/admin-modul-pembelajaran', [ModuleController::class, 'index'])
+        ->middleware('can:manage-modules');
+        
+    Route::get('/tutor-modul-pembelajaran', [ModuleController::class, 'index'])
+        ->middleware('can:manage-modules');
+
     Route::get('/modul/tambah', [ModuleController::class, 'create'])
         ->name('modul.create')
         ->middleware('can:manage-modules');

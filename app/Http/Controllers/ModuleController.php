@@ -15,7 +15,7 @@ class ModuleController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
-    | DAFTAR MODUL
+    | DAFTAR MODUL (Admin & Tutor)
     |--------------------------------------------------------------------------
     */
     public function index(Request $request)
@@ -40,7 +40,6 @@ class ModuleController extends Controller
 
         $modules = Module::with('creator')
             ->withCount('questions')
-
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('judul', 'like', '%' . $search . '%')
@@ -51,18 +50,18 @@ class ModuleController extends Controller
                     });
                 });
             })
-
             ->when($level, function ($query) use ($level) {
                 $query->where('level', $level);
             })
-
             ->orderBy($sort, $direction)
-
             ->paginate(7)
-
             ->withQueryString();
 
-        return view('pages.admin-modul-pembelajaran', compact(
+        $viewName = Auth::user()->role === 'tutor' 
+            ? 'pages.tutor-modul-pembelajaran' 
+            : 'pages.admin-modul-pembelajaran';
+
+        return view($viewName, compact(
             'modules',
             'search',
             'level',
@@ -78,7 +77,11 @@ class ModuleController extends Controller
     */
     public function create()
     {
-        return view('pages.admin-modul-form');
+        $viewName = Auth::user()->role === 'tutor' 
+            ? 'pages.tutor-modul-form' 
+            : 'pages.admin-modul-form';
+
+        return view($viewName);
     }
 
     /*
@@ -88,13 +91,16 @@ class ModuleController extends Controller
     */
     public function soal(Module $module)
     {
-        return view('pages.admin-modul-soal', compact('module'));
+        $viewName = Auth::user()->role === 'tutor' 
+            ? 'pages.tutor-modul-soal' 
+            : 'pages.admin-modul-soal';
+
+        return view($viewName, compact('module'));
     }
 
     public function kerjakan($id)
     {
         $module = Module::findOrFail($id);
-
         return view('pages.modul-pembelajaran', compact('module'));
     }
 
@@ -106,51 +112,24 @@ class ModuleController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'judul' => [
-                'required',
-                'string',
-                'max:255',
-            ],
-
-            'deskripsi' => [
-                'required',
-                'string',
-            ],
-
-            'level' => [
-                'required',
-                'in:A1,A2,B1,B2',
-            ],
-
-            'kategori' => [
-                'required',
-                'in:materi,simulasi_horen,simulasi_lesen,simulasi_schreiben,simulasi_sprechen',
-            ],
-
-            'file' => [
-                'nullable',
-                'file',
-                'mimes:pdf',
-                'max:10240',
-                'required_if:kategori,materi',
-            ],
+            'judul' => ['required', 'string', 'max:255'],
+            'deskripsi' => ['required', 'string'],
+            'level' => ['required', 'in:A1,A2,B1,B2'],
+            'kategori' => ['required', 'in:materi,simulasi_horen,simulasi_lesen,simulasi_schreiben,simulasi_sprechen'],
+            'file' => ['nullable', 'file', 'mimes:pdf', 'max:10240', 'required_if:kategori,materi'],
         ]);
 
         $module = new Module;
-
         $module->judul = $validated['judul'];
         $module->deskripsi = $validated['deskripsi'];
         $module->level = $validated['level'];
         $module->kategori = $validated['kategori'];
-
         $module->dibuat_oleh = Auth::id();
         $module->diperbarui_oleh = Auth::id();
 
         if ($request->hasFile('file')) {
             $file = $request->file('file');
-
             $path = $file->store('modules', 'public');
-
             $module->file_path = $path;
             $module->file_type = $file->getMimeType();
         }
@@ -179,41 +158,20 @@ class ModuleController extends Controller
      */
     public function destroy(Module $module)
     {
-        // Simpan informasi untuk activity log sebelum modul dihapus
         $moduleId = $module->id;
         $moduleTitle = $module->judul;
         $moduleKategori = $module->kategori;
         $moduleLevel = $module->level;
 
-        /*
-        |--------------------------------------------------------------------------
-        | Hapus file PDF modul jika ada
-        |--------------------------------------------------------------------------
-        */
         if ($module->file_path) {
             Storage::disk('public')->delete($module->file_path);
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Hapus file yang dimiliki oleh soal
-        |--------------------------------------------------------------------------
-        |
-        | Karena questions/options menggunakan cascadeOnDelete(),
-        | record database akan ikut terhapus ketika module dihapus.
-        |
-        | Tetapi file fisiknya tidak otomatis terhapus oleh database,
-        | sehingga kita hapus manual terlebih dahulu.
-        |
-        */
         foreach ($module->questions()->with('options')->get() as $question) {
-
-            // File gambar/audio pada soal
             if ($question->file_path) {
                 Storage::disk('public')->delete($question->file_path);
             }
 
-            // File pada opsi jawaban
             foreach ($question->options as $option) {
                 if ($option->file_path) {
                     Storage::disk('public')->delete($option->file_path);
@@ -221,22 +179,8 @@ class ModuleController extends Controller
             }
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Hapus modul
-        |--------------------------------------------------------------------------
-        |
-        | questions dan question_options akan ikut terhapus karena
-        | foreign key menggunakan cascadeOnDelete().
-        |
-        */
         $module->delete();
 
-        /*
-        |--------------------------------------------------------------------------
-        | Activity Log
-        |--------------------------------------------------------------------------
-        */
         ActivityLog::create([
             'user_id' => Auth::id(),
             'aksi' => 'hapus',
@@ -249,11 +193,6 @@ class ModuleController extends Controller
             ],
         ]);
 
-        /*
-        |--------------------------------------------------------------------------
-        | Response
-        |--------------------------------------------------------------------------
-        */
         return response()->json([
             'message' => 'Modul "'.$moduleTitle.'" berhasil dihapus.',
         ]);
@@ -261,39 +200,21 @@ class ModuleController extends Controller
 
     public function edit(Module $module)
     {
-        return view('pages.admin-modul-form', compact('module'));
+        $viewName = Auth::user()->role === 'tutor' 
+            ? 'pages.tutor-modul-form' 
+            : 'pages.admin-modul-form';
+
+        return view($viewName, compact('module'));
     }
 
     public function update(Request $request, Module $module)
     {
         $validated = $request->validate([
-            'judul' => [
-                'required',
-                'string',
-                'max:255',
-            ],
-
-            'deskripsi' => [
-                'required',
-                'string',
-            ],
-
-            'level' => [
-                'required',
-                'in:A1,A2,B1,B2',
-            ],
-
-            'kategori' => [
-                'required',
-                'in:materi,simulasi_horen,simulasi_lesen,simulasi_schreiben,simulasi_sprechen',
-            ],
-
-            'file' => [
-                'nullable',
-                'file',
-                'mimes:pdf',
-                'max:10240',
-            ],
+            'judul' => ['required', 'string', 'max:255'],
+            'deskripsi' => ['required', 'string'],
+            'level' => ['required', 'in:A1,A2,B1,B2'],
+            'kategori' => ['required', 'in:materi,simulasi_horen,simulasi_lesen,simulasi_schreiben,simulasi_sprechen'],
+            'file' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
         ]);
 
         if (
@@ -308,38 +229,29 @@ class ModuleController extends Controller
                 ->withInput();
         }
 
-        // Simpan data lama untuk kebutuhan activity log
         $judulLama = $module->judul;
         $levelLama = $module->level;
         $kategoriLama = $module->kategori;
 
-        // Update data utama
         $module->judul = $validated['judul'];
         $module->deskripsi = $validated['deskripsi'];
         $module->level = $validated['level'];
         $module->kategori = $validated['kategori'];
-
         $module->diperbarui_oleh = Auth::id();
 
-        // Jika upload PDF baru
         if ($request->hasFile('file')) {
-
-            // Hapus file lama jika ada
             if ($module->file_path) {
                 Storage::disk('public')->delete($module->file_path);
             }
 
             $file = $request->file('file');
-
             $path = $file->store('modules', 'public');
-
             $module->file_path = $path;
             $module->file_type = $file->getMimeType();
         }
 
         $module->save();
 
-        // Catat aktivitas admin
         ActivityLog::create([
             'user_id' => Auth::id(),
             'aksi' => 'ubah',
@@ -361,24 +273,12 @@ class ModuleController extends Controller
             ->with('success', 'Modul berhasil diperbarui. Silahkan cek soal dan ubah jika diperlukan');
     }
 
-    /**
-     * Siswa mulai mengerjakan modul.
-     */
     public function start(Module $module)
     {
         $user = Auth::user();
-        // Hanya siswa yang boleh mengerjakan modul
         abort_unless($user->role === 'siswa', 403);
-        // Siswa hanya boleh mengerjakan modul sesuai level
         abort_unless($module->level === $user->level, 403);
-        // Siswa hanya boleh mengerjakan modul yang sudah rilis
         abort_unless($module->sudah_rilis === true, 403);
-
-        /*
-        |--------------------------------------------------------------------------
-        | Cek apakah masih ada attempt yang sedang dikerjakan
-        |--------------------------------------------------------------------------
-        */
 
         $attempt = Attempt::query()
             ->where('user_id', $user->id)
@@ -386,12 +286,6 @@ class ModuleController extends Controller
             ->where('status', 'sedang_dikerjakan')
             ->latest('dimulai_pada')
             ->first();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Kalau belum ada, buat attempt baru
-        |--------------------------------------------------------------------------
-        */
 
         if (! $attempt) {
             $attempt = Attempt::create([
@@ -402,44 +296,19 @@ class ModuleController extends Controller
             ]);
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Materi
-        |--------------------------------------------------------------------------
-        */
-
         if ($module->kategori === 'materi') {
             return redirect()->route('modul.kerjakan', $module);
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Simulasi / soal
-        |--------------------------------------------------------------------------
-        */
-
         return redirect()->route('siswa.modul.questions', $module);
     }
 
-    /**
-     * Siswa menyelesaikan pengerjaan modul.
-     */
     public function finishAttempt(Request $request, Module $module)
     {
         $user = Auth::user();
-
         abort_unless($user->role === 'siswa', 403);
-
         abort_unless($module->level === $user->level, 403);
-
-        // Siswa hanya boleh mengerjakan modul yang sudah rilis
         abort_unless($module->sudah_rilis === true, 403);
-
-        /*
-        |--------------------------------------------------------------------------
-        | Validasi jawaban dari browser
-        |--------------------------------------------------------------------------
-        */
 
         $validated = $request->validate([
             'answers' => ['nullable', 'array'],
@@ -448,12 +317,6 @@ class ModuleController extends Controller
 
         $answers = $validated['answers'] ?? [];
         $marked = $validated['marked'] ?? [];
-
-        /*
-        |--------------------------------------------------------------------------
-        | Cari attempt yang sedang dikerjakan
-        |--------------------------------------------------------------------------
-        */
 
         $attempt = Attempt::query()
             ->where('user_id', $user->id)
@@ -464,22 +327,10 @@ class ModuleController extends Controller
 
         abort_unless($attempt, 404);
 
-        /*
-        |--------------------------------------------------------------------------
-        | Ambil semua soal + pilihan jawaban
-        |--------------------------------------------------------------------------
-        */
-
         $questions = $module->questions()
             ->with('options')
             ->orderBy('urutan')
             ->get();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Simpan jawaban + hitung nilai
-        |--------------------------------------------------------------------------
-        */
 
         $correctCount = 0;
         $totalQuestions = $questions->count();
@@ -492,19 +343,10 @@ class ModuleController extends Controller
             &$correctCount,
             $totalQuestions
         ) {
-
             foreach ($questions as $index => $question) {
-
                 $answer = $answers[$index] ?? null;
 
-                /*
-                |--------------------------------------------------------------------------
-                | SCHREIBEN / PARAGRAF
-                |--------------------------------------------------------------------------
-                */
                 if ($question->tipe === 'paragraf') {
-
-                    // Kalau tidak ada jawaban, jangan simpan
                     if ($answer === null || trim((string) $answer) === '') {
                         continue;
                     }
@@ -522,15 +364,7 @@ class ModuleController extends Controller
                     continue;
                 }
 
-
-                /*
-                |--------------------------------------------------------------------------
-                | PILIHAN GANDA — HÖREN / LESEN / MATERI
-                |--------------------------------------------------------------------------
-                */
-
                 $selectedOptionId = $answer;
-
                 if (!$selectedOptionId) {
                     continue;
                 }
@@ -543,7 +377,6 @@ class ModuleController extends Controller
                 }
 
                 $isCorrect = (bool) $selectedOption->is_correct;
-
                 if ($isCorrect) {
                     $correctCount++;
                 }
@@ -559,32 +392,15 @@ class ModuleController extends Controller
                 ]);
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | Hitung nilai
-            |--------------------------------------------------------------------------
-            */
-
             $nilai = null;
-
-            /*
-            * Schreiben dan Sprechen tidak dihitung otomatis.
-            */
             if (! in_array($attempt->module->kategori, [
                 'simulasi_schreiben',
                 'simulasi_sprechen',
             ], true)) {
-
                 $nilai = $totalQuestions > 0
                     ? round(($correctCount / $totalQuestions) * 100)
                     : 0;
             }
-
-            /*
-            |--------------------------------------------------------------------------
-            | Selesaikan attempt
-            |--------------------------------------------------------------------------
-            */
 
             $attempt->update([
                 'status' => 'selesai',
@@ -593,20 +409,10 @@ class ModuleController extends Controller
             ]);
         });
 
-        /*
-        |--------------------------------------------------------------------------
-        | Response
-        |--------------------------------------------------------------------------
-        */
-
         return response()->json([
             'success' => true,
             'message' => 'Pengerjaan modul berhasil diselesaikan.',
             'attempt_id' => $attempt->id,
-
-            /*
-            * Setelah selesai, langsung menuju halaman hasil.
-            */
             'result_url' => route('siswa.modul.hasil', [
                 'module' => $module->id,
                 'attempt' => $attempt->id,
@@ -616,18 +422,13 @@ class ModuleController extends Controller
 
     public function toggleRelease(Module $module)
     {
-        // Balik status rilis saat ini (true jadi false, false jadi true)
         $statusBaru = ! $module->sudah_rilis;
-
-        // Update data modul
         $module->sudah_rilis = $statusBaru;
         $module->diperbarui_oleh = Auth::id();
         $module->save();
 
-        // Tentukan teks status untuk deskripsi log
         $statusTeks = $statusBaru ? 'merilis (publish)' : 'menarik publikasi (unrelease)';
 
-        // Catat aktivitas admin/tutor (menyesuaikan pola activity log Anda)
         ActivityLog::create([
             'user_id' => Auth::id(),
             'aksi' => 'ubah',

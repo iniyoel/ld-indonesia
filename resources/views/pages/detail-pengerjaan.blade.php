@@ -266,62 +266,10 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
 <a href="#mainContent" class="skip-link">Langsung ke konten utama</a>
 <div class="app-shell">
   <div class="backdrop" id="backdrop"></div>
-  <aside class="sidebar" id="sidebar" aria-label="Navigasi utama">
-    <div class="sidebar-brand">
-      <a href="dashboard-siswa.html" style="display:flex;align-items:center;gap:10px;" aria-label="LD Indonesia — Dashboard">
-        <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-          <path d="M24 4c-6 0-10 5-10 5s3 1 4 4c-3-1-6 0-7 3 3 0 5 1 6 3-3 1-5 3-5 6 3-1 5-1 7 0-1 3 0 6 2 8 1-3 2-5 3-6 1 1 2 3 3 6 2-2 3-5 2-8 2-1 4-1 7 0 0-3-2-5-5-6 1-2 3-3 6-3-1-3-4-4-7-3 1-3 4-4 4-4s-4-5-10-5z" fill="var(--maroon)"/>
-          <circle cx="24" cy="17" r="4" fill="var(--gold)"/>
-        </svg>
-        <span class="brand-text"><strong>LD <span>INDONESIA</span></strong><small>Privat Bahasa Jerman</small></span>
-      </a>
-      <button class="sidebar-close" id="sidebarClose" aria-label="Tutup menu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-    <nav class="sidebar-nav">
-      <ul>
-        <li><a href="{{ route('page', ['page' => 'dashboard-siswa']) }}" class="nav-link" id="navDashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>Dashboard</a></li>
-        <li><a href="{{ route('page', ['page' => 'modul-pembelajaran']) }}" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C2 4.7 2.7 4 4.7 4c2.6 0 5.3 1 7.3 2.5C14 4.9 16.7 4 19.3 4c2 0 2.7.7 2.7 1.5v13c0-.8-.7-1.5-2.7-1.5-2.6 0-5.3.9-7.3 2.5-2-1.6-4.7-2.5-7.3-2.5C2.7 17 2 17.7 2 18.5z"/><path d="M12 6.5V20"/></svg>Modul Pembelajaran</a></li>
-        <li><a href="{{ route('page', ['page' => 'performa-siswa']) }}" class="nav-link active" id="navPerforma" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12.5" y="8" width="3" height="10"/><rect x="18" y="5" width="3" height="13"/></svg>Performa Siswa</a></li>
-      </ul>
-    </nav>
-    <div class="sidebar-footer">
-      <form method="POST" action="{{ route('logout') }}">
-          @csrf
-          <button type="submit" class="logout-link" style="width: 100%; text-align: left;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2" stroke-linecap="round"
-                  stroke-linejoin="round" aria-hidden="true">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                  <path d="M16 17l5-5-5-5"/>
-                  <path d="M21 12H9"/>
-              </svg>
-              Keluar
-          </button>
-      </form>
-    </div>
-  </aside>
+  <x-sidebar.siswa />
 
   <div class="main-col">
-    <header class="topbar">
-      <button class="menu-toggle" id="menuToggle" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="sidebar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-      </button>
-      <div class="user-summary">
-        <div class="user-meta">
-          <strong id="userName">{{ Auth::user()->name }}</strong>
-          <span>Siswa</span>
-        </div>
-        <div class="user-avatar" id="userAvatar" aria-hidden="true">
-          @if(Auth::user()->profile_photo_path)
-            <img src="{{ asset('storage/' . Auth::user()->profile_photo_path) }}" alt="{{ Auth::user()->name }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
-          @else
-            {{ Str::upper(Str::substr(Auth::user()->name, 0, 1)) }}
-          @endif
-        </div>
-      </div>
-    </header>
+    <x-header.siswa />
 
     <main class="page-content" id="mainContent">
       <a href="{{ route('page', ['page' => 'performa-siswa']) }}" class="back-link" id="backLink">

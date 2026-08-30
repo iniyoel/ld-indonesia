@@ -266,10 +266,10 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
 <a href="#mainContent" class="skip-link">Langsung ke konten utama</a>
 <div class="app-shell">
   <div class="backdrop" id="backdrop"></div>
-   <x-dashboard-sidebar />
+   <x-sidebar.admin />
 
   <div class="main-col">
-    <x-dashboard-header />
+    <x-header.admin />
 
     <main class="page-content" id="mainContent">
         <a
