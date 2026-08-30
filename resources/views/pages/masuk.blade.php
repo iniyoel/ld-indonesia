@@ -251,17 +251,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   margin-bottom: 22px;
 }
 
-.back-link{
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 700;
-  font-size: 0.88rem;
-  color: var(--navy-soft);
-  margin-bottom: 24px;
-}
-.back-link:hover{ color: var(--pink-dark); }
-
 /* ============ RIGHT PANEL (LOGO GAMBAR KANAN) ============ */
 .auth-right{
   flex: 1 1 52%;
@@ -413,11 +402,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
       <!-- ============ VIEW 2: FORGOT PASSWORD ============ -->
       <div class="auth-view" id="forgotView">
-        <button type="button" class="back-link" id="backToLoginFromForgot">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-          Kembali ke Masuk
-        </button>
-
         <div class="auth-heading">
           <h1>Atur Password Baru</h1>
           <p>Masukkan email yang terdaftar dan buat password baru untuk akun Anda.</p>
@@ -437,6 +421,9 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
             <div class="input-group">
               <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
               <input type="password" id="forgotPassword" name="password" autocomplete="new-password" placeholder="Buat password baru" required style="padding-right:44px;">
+              <button type="button" class="toggle-visibility" data-toggle-for="forgotPassword" aria-label="Tampilkan password">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
             </div>
           </div>
 
@@ -445,12 +432,19 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
             <div class="input-group">
               <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
               <input type="password" id="forgotPasswordConfirmation" name="password_confirmation" autocomplete="new-password" placeholder="Ulangi password baru" required style="padding-right:44px;">
+              <button type="button" class="toggle-visibility" data-toggle-for="forgotPasswordConfirmation" aria-label="Tampilkan password konfirmasi">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
             </div>
           </div>
 
           <button type="submit" class="btn btn-primary" id="forgotSubmit">
             <span class="spinner" aria-hidden="true"></span>
             <span class="btn-label">Simpan Password Baru</span>
+          </button>
+
+          <button type="button" class="btn btn-secondary" id="backToLoginFromForgot">
+            <span class="btn-label">Kembali</span>
           </button>
         </form>
       </div>
@@ -469,7 +463,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
     </div>
   </section>
 
-  <!-- ============ RIGHT: VISUAL (MENGGUNAKAN LOGO public/images/logo-ld.jpeg) ============ -->
+  <!-- ============ RIGHT: VISUAL ============ -->
   <aside class="auth-right" aria-hidden="true">
     <div class="deco-dots top-left"><span></span><span></span><span></span><span></span><span></span><span></span></div>
     <div class="deco-dots bottom-right"><span></span><span></span><span></span><span></span><span></span><span></span></div>
