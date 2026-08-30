@@ -78,4 +78,21 @@
         border: 1.5px solid #f3b7c8;
         border-radius: 50%;
     }
+
+    .menu-toggle { display: none; }
+
+    @media (max-width: 980px) {
+        .menu-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-right: auto;
+            color: var(--navy);
+        }
+    }
 </style>

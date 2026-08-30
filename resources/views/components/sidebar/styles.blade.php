@@ -6,12 +6,13 @@
         min-width: 275px;
         height: 100vh;
         max-height: 100vh;
-        background-color: #fcecef; /* Pink lebih terlihat */
+        background-color: #fcecef;
         overflow: hidden;
         border-right: 1px solid rgba(243, 195, 208, 0.6);
         box-sizing: border-box;
         font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
         z-index: 50;
+        flex-shrink: 0;
     }
 
     /* 2 Siluet Lingkaran Saling Menimpa */
@@ -138,7 +139,6 @@
         color: #b82352;
     }
 
-    /* Active State Pink Pill (Sesuai Gambar Desain) */
     .nav-link.active {
         background-color: #f7d3dd;
         color: #b82352;
@@ -173,5 +173,22 @@
     .logout-btn:hover {
         background-color: rgba(245, 195, 210, 0.45);
         color: #b82352;
+    }
+
+    /* Styling Responsif untuk Sidebar di Handphone & Tablet */
+    @media (max-width: 980px) {
+        .ld-sidebar {
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            transform: translateX(-100%);
+            transition: transform 0.25s ease-in-out;
+            z-index: 70;
+        }
+        
+        .ld-sidebar.open {
+            transform: translateX(0);
+        }
     }
 </style>

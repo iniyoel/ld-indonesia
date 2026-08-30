@@ -74,7 +74,11 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 }
 
 /* ============ APP SHELL ============ */
-.app-shell{ display: flex; min-height: 100vh; }
+.app-shell{ 
+  display: flex; 
+  min-height: 100vh; 
+  width: 100%;
+}
 
 .sidebar{
   width: var(--sidebar-w);
@@ -113,7 +117,12 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
 .sidebar-close{ display: none; }
 
-.main-col{ flex-grow: 1; min-width: 0; display: flex; flex-direction: column; }
+.main-col{ 
+  flex: 1 1 0%; 
+  min-width: 0; 
+  display: flex; 
+  flex-direction: column; 
+}
 
 .topbar{
   height: var(--topbar-h);
@@ -135,10 +144,17 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; color: var(--pink-dark); flex-shrink: 0;
 }
 
-.page-content{ padding: 32px 40px 60px; max-width: 1320px; width: 100%; margin: 0 auto; }
+.page-content{ 
+  padding: 32px 40px 60px; 
+  max-width: 1320px; 
+  width: 100%; 
+  margin: 0 auto; 
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
 
 .back-link{
-  display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px;
   border-radius: var(--radius-pill); border: 1.5px solid var(--pink-light); color: var(--pink-dark);
   font-weight: 700; font-size: 0.9rem; margin-bottom: 18px;
 }
@@ -152,47 +168,57 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 .profile-card{
   background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--gray-100);
   padding: 28px 32px; display: grid; grid-template-columns: 1.4fr 0.75fr 1fr 1fr; gap: 28px; align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 20px; width: 100%; min-width: 0; box-sizing: border-box;
 }
-.profile-identity{ display: flex; align-items: center; gap: 18px; }
+.profile-identity{ display: flex; align-items: center; gap: 18px; min-width: 0; }
 .profile-avatar{
   width: 76px; height: 76px; border-radius: 50%; background: var(--pink-pale); color: var(--pink-dark);
   display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; flex-shrink: 0;
 }
-.profile-name{ font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; color: var(--navy); margin-bottom: 8px; }
-.profile-line{ display: flex; align-items: center; gap: 8px; font-size: 0.86rem; color: var(--gray-600); margin-bottom: 5px; }
+.profile-name{ font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; color: var(--navy); margin-bottom: 8px; word-break: break-word; }
+.profile-line{ display: flex; align-items: center; gap: 8px; font-size: 0.86rem; color: var(--gray-600); margin-bottom: 5px; word-break: break-all; }
 .profile-line svg{ width: 15px; height: 15px; color: var(--gray-400); flex-shrink: 0; }
 
-.profile-stat-group{ border-left: 1px solid var(--gray-100); padding-left: 26px; }
+.profile-stat-group{ border-left: 1px solid var(--gray-100); padding-left: 26px; min-width: 0; }
 .profile-stat{ margin-bottom: 14px; }
 .profile-stat:last-child{ margin-bottom: 0; }
 .profile-stat-label{ font-size: 0.8rem; color: var(--gray-500); font-weight: 600; margin-bottom: 3px; }
 .profile-stat-value{ font-family: var(--font-display); font-weight: 700; font-size: 1.02rem; color: var(--navy); }
 
-.profile-score{ border-left: 1px solid var(--gray-100); padding-left: 26px; }
+.profile-score{ border-left: 1px solid var(--gray-100); padding-left: 26px; min-width: 0; }
 .profile-score-label{ font-size: 0.8rem; color: var(--gray-500); font-weight: 600; margin-bottom: 6px; }
-.profile-score-row{ display: flex; align-items: baseline; gap: 10px; }
+.profile-score-row{ display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .profile-score-value{ font-family: var(--font-display); font-weight: 800; font-size: 2.1rem; color: var(--pink-dark); }
 .profile-score-tag{ font-weight: 700; font-size: 0.94rem; color: var(--navy); }
 .profile-score-sub{ font-size: 0.8rem; color: var(--gray-400); margin-top: 4px; }
 
 /* ============ RINGKASAN KATEGORI ============ */
-.panel{ background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--gray-100); padding: 26px 28px; margin-bottom: 20px; }
+.panel{ 
+  background: var(--white); 
+  border-radius: var(--radius-lg); 
+  box-shadow: var(--shadow-md); 
+  border: 1px solid var(--gray-100); 
+  padding: 26px 28px; 
+  margin-bottom: 20px; 
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
 .panel h2{ font-size: 1.12rem; margin-bottom: 18px; }
 
-.category-grid{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-.category-card{ border: 1px solid var(--gray-100); border-radius: var(--radius-md); padding: 18px 20px; }
+.category-grid{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; width: 100%; min-width: 0; }
+.category-card{ border: 1px solid var(--gray-100); border-radius: var(--radius-md); padding: 18px 20px; min-width: 0; }
 .category-top{ display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
-.category-icon-title{ display: flex; align-items: center; gap: 10px; }
+.category-icon-title{ display: flex; align-items: center; gap: 10px; min-width: 0; }
 .category-icon{ width: 36px; height: 36px; border-radius: 10px; background: var(--pink-pale); color: var(--pink-dark); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .category-icon svg{ width: 17px; height: 17px; }
-.category-title{ font-weight: 700; font-size: 0.9rem; color: var(--navy); }
+.category-title{ font-weight: 700; font-size: 0.9rem; color: var(--navy); word-break: break-word; }
 .category-avg-label{ font-size: 0.76rem; color: var(--gray-400); text-align: right; }
 .category-avg-value{ font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; color: var(--pink-dark); text-align: right; }
 .category-sub{ font-size: 0.82rem; color: var(--gray-500); margin-top: 8px; }
 
 /* ============ RIWAYAT AKTIVITAS ============ */
-.riwayat-head{ display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+.riwayat-head{ display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; width: 100%; }
 .riwayat-filters{ display: flex; gap: 12px; flex-wrap: wrap; }
 
 .select-field{ position: relative; }
@@ -205,29 +231,35 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 .select-field svg{ position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--gray-500); pointer-events: none; }
 
 .btn-export{
-  display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border-radius: var(--radius-sm);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 20px; border-radius: var(--radius-sm);
   background: var(--white); border: 1.5px solid var(--gray-200); color: var(--navy);
-  font-weight: 700; font-size: 0.9rem; white-space: nowrap;
+  font-weight: 700; font-size: 0.9rem; white-space: nowrap; cursor: pointer;
 }
 .btn-export:hover{ background: var(--gray-50); }
 .btn-export:disabled{ opacity: 0.6; cursor: not-allowed; }
 .btn-export svg{ width: 16px; height: 16px; }
 
-.table-scroll{ overflow-x: auto; margin: 0 -28px; padding: 0 28px; }
-table{ width: 100%; border-collapse: collapse; min-width: 760px; }
-thead th{ text-align: left; font-size: 0.85rem; font-weight: 700; color: var(--navy); background: var(--pink-light); padding: 14px 20px; white-space: nowrap; }
+.table-scroll{ 
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto; 
+  -webkit-overflow-scrolling: touch;
+  display: block;
+}
+table{ width: 100%; border-collapse: collapse; min-width: 720px; }
+thead th{ text-align: left; font-size: 0.85rem; font-weight: 700; color: var(--navy); background: var(--pink-light); padding: 14px 18px; white-space: nowrap; }
 thead th:first-child{ border-top-left-radius: 10px; }
 thead th:last-child{ border-top-right-radius: 10px; }
-tbody td{ padding: 16px 20px; font-size: 0.92rem; color: var(--gray-800); border-bottom: 1px solid var(--gray-100); white-space: nowrap; }
+tbody td{ padding: 14px 18px; font-size: 0.9rem; color: var(--gray-800); border-bottom: 1px solid var(--gray-100); white-space: nowrap; vertical-align: middle; }
 tbody tr:last-child td{ border-bottom: none; }
 tbody tr:hover{ background: var(--gray-50); }
-td.col-modul{ font-weight: 600; color: var(--navy); white-space: normal; min-width: 200px; }
+td.col-modul{ font-weight: 600; color: var(--navy); white-space: normal; min-width: 180px; word-break: break-word; }
 td.col-nilai{ font-weight: 800; color: var(--navy); }
 
-.status-pill{ display: inline-block; padding: 6px 14px; border-radius: var(--radius-pill); font-size: 0.8rem; font-weight: 700; background: var(--amber-bg); color: var(--amber); }
+.status-pill{ display: inline-block; padding: 5px 12px; border-radius: var(--radius-pill); font-size: 0.78rem; font-weight: 700; background: var(--amber-bg); color: var(--amber); }
 
-/* ---- Footer & paginasi (tampilan saja) ---- */
-.table-footer{ display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 4px 0; flex-wrap: wrap; }
+/* ---- Footer & paginasi ---- */
+.table-footer{ display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0 0; flex-wrap: wrap; border-top: 1px solid var(--gray-100); margin-top: 14px; }
 .rows-per-page{ display: flex; align-items: center; gap: 10px; font-size: 0.88rem; color: var(--gray-600); font-weight: 600; }
 .rows-per-page select{
   font: inherit; font-weight: 700; color: var(--navy); padding: 7px 30px 7px 12px;
@@ -236,7 +268,7 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
   cursor: pointer;
 }
 .results-count{ font-size: 0.88rem; color: var(--gray-500); }
-.pagination{ display: flex; align-items: center; gap: 8px; }
+.pagination{ display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .page-btn{
   min-width: 34px; height: 34px; padding: 0 8px; border-radius: 8px; border: 1.5px solid var(--gray-200);
   color: var(--navy); font-weight: 700; font-size: 0.86rem; display: flex; align-items: center; justify-content: center; background: var(--white);
@@ -246,12 +278,37 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
 .page-btn:disabled{ opacity: 0.4; cursor: not-allowed; }
 .page-btn svg{ width: 16px; height: 16px; }
 
-/* ============ RESPONSIVE ============ */
+.aksi-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 76px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  border: 1.5px solid var(--pink);
+  color: var(--pink-dark);
+  background: var(--white);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.aksi-btn:hover{
+  background: var(--pink-pale);
+}
+.aksi-btn svg{
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+/* ============ RESPONSIVE BREAKPOINTS ============ */
 @media (max-width: 1180px){
   .profile-card{ grid-template-columns: 1fr 1fr; }
   .profile-score{ grid-column: 1 / -1; border-left: none; border-top: 1px solid var(--gray-100); padding-left: 0; padding-top: 18px; }
   .category-grid{ grid-template-columns: repeat(2, 1fr); }
 }
+
 @media (max-width: 980px){
   .sidebar{ position: fixed; left: 0; top: 0; transform: translateX(-100%); transition: transform 0.22s ease; box-shadow: var(--shadow-md); }
   .sidebar.open{ transform: translateX(0); }
@@ -260,53 +317,68 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
   .sidebar-brand{ justify-content: space-between; }
   .menu-toggle{ display: flex; }
   .topbar{ padding: 0 20px; }
-  .page-content{ padding: 24px 20px 48px; }
+  .page-content{ padding: 24px 16px 48px; }
   .backdrop{ display: none; position: fixed; inset: 0; background: rgba(30,42,71,0.35); z-index: 50; }
   .backdrop.show{ display: block; }
-  .profile-card{ grid-template-columns: 1fr; padding: 22px; }
-  .profile-stat-group{ border-left: none; border-top: 1px solid var(--gray-100); padding-left: 0; padding-top: 18px; }
   .panel{ padding: 20px 18px; }
-  .table-scroll{ margin: 0 -18px; padding: 0 18px; }
+  .riwayat-head{ flex-direction: column; align-items: stretch; }
+  .riwayat-filters{ width: 100%; }
+  .select-field{ flex: 1 1 100%; width: 100%; }
+  .select-field select{ width: 100%; }
+  .btn-export{ width: 100%; justify-content: center; }
 }
+
 @media (max-width: 640px){
-  .user-meta{ display: none; }
-  .category-grid{ grid-template-columns: 1fr; }
-  .table-footer{ flex-direction: column; align-items: flex-start; }
-}
-.aksi-btn{
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  min-width: 86px;
-  padding: 7px 14px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.84rem;
-  border: 1.5px solid var(--pink);
-  color: var(--pink-dark);
-  background: var(--white);
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.aksi-btn:hover{
-  background: var(--pink-pale);
-}
-
-.aksi-btn svg{
-  width: 15px;
-  height: 15px;
-  flex-shrink: 0;
-}
-
-.aksi-btn.is-selesai{
-  border-color: var(--pink);
-  color: var(--pink-dark);
-}
-
-.aksi-btn.is-proses{
-  border-color: var(--pink);
-  color: var(--pink-dark);
+  .page-content{
+    padding: 16px 12px 36px;
+  }
+  .page-heading h1{
+    font-size: 1.35rem;
+  }
+  .profile-card{
+    grid-template-columns: 1fr;
+    padding: 18px 16px;
+    gap: 18px;
+  }
+  .profile-identity{
+    flex-direction: column;
+    text-align: center;
+  }
+  .profile-line{
+    justify-content: center;
+  }
+  .profile-stat-group{
+    border-left: none;
+    border-top: 1px solid var(--gray-100);
+    padding-left: 0;
+    padding-top: 16px;
+  }
+  .category-grid{
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .panel{
+    padding: 16px 14px;
+    border-radius: var(--radius-md);
+  }
+  .table-footer{ 
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: 12px;
+    padding-top: 14px;
+  }
+  .pagination{
+    width: 100%;
+    justify-content: center;
+  }
+  thead th{
+    padding: 12px 14px;
+    font-size: 0.78rem;
+  }
+  tbody td{
+    padding: 12px 14px;
+    font-size: 0.84rem;
+  }
 }
 </style>
 </head>
@@ -316,7 +388,7 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
 <div class="app-shell">
   <div class="backdrop" id="backdrop"></div>
 
-    <x-sidebar.admin />
+  <x-sidebar.admin />
 
   <!-- ============ MAIN ============ -->
   <div class="main-col">
@@ -334,219 +406,116 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
 
       <!-- ============ PROFIL SISWA ============ -->
       <section class="profile-card" aria-label="Profil siswa">
-
           <div class="profile-identity">
-
               <div class="profile-avatar" aria-hidden="true">
                   {{ strtoupper(substr($student->name, 0, 1)) }}
               </div>
 
               <div>
-
                   <div class="profile-name">
                       {{ $student->name }}
                   </div>
 
                   <div class="profile-line">
-                      <svg viewBox="0 0 24 24" fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                           <rect x="2" y="4" width="20" height="16" rx="2"/>
                           <path d="m2 7 10 6 10-6"/>
                       </svg>
-
                       {{ $student->email }}
                   </div>
 
                   <div class="profile-line">
-                      <svg viewBox="0 0 24 24" fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                           <rect x="3" y="4" width="18" height="18" rx="2"/>
                           <path d="M16 2v4M8 2v4M3 10h18"/>
                       </svg>
-
-                      Bergabung:
-                      {{ $student->created_at
-                          ? \Carbon\Carbon::parse($student->created_at)->translatedFormat('d F Y')
-                          : '-' }}
+                      Bergabung: {{ $student->created_at ? \Carbon\Carbon::parse($student->created_at)->translatedFormat('d F Y') : '-' }}
                   </div>
 
                   <div class="profile-line">
-                      <svg viewBox="0 0 24 24" fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                           <circle cx="12" cy="7" r="4"/>
                       </svg>
-
                       Peran: Siswa
                   </div>
-
               </div>
           </div>
-
 
           <div class="profile-stat-group">
-
               <div class="profile-stat">
-                  <div class="profile-stat-label">
-                      Level
-                  </div>
-
-                  <div class="profile-stat-value">
-                      {{ $student->level ?? '-' }}
-                  </div>
+                  <div class="profile-stat-label">Level</div>
+                  <div class="profile-stat-value">{{ $student->level ?? '-' }}</div>
               </div>
 
               <div class="profile-stat">
-                  <div class="profile-stat-label">
-                      Status
-                  </div>
-
-                  <div class="profile-stat-value">
-                      {{ ucfirst($student->status ?? '-') }}
-                  </div>
+                  <div class="profile-stat-label">Status</div>
+                  <div class="profile-stat-value">{{ ucfirst($student->status ?? '-') }}</div>
               </div>
-
           </div>
-
 
           <div class="profile-stat-group">
-
               <div class="profile-stat">
-                  <div class="profile-stat-label">
-                      Total Latihan Selesai
-                  </div>
-
-                  <div class="profile-stat-value">
-                      {{ $totalLatihan }}
-                  </div>
+                  <div class="profile-stat-label">Total Latihan Selesai</div>
+                  <div class="profile-stat-value">{{ $totalLatihan }}</div>
               </div>
 
               <div class="profile-stat">
-                  <div class="profile-stat-label">
-                      Total Simulasi Selesai
-                  </div>
-
-                  <div class="profile-stat-value">
-                      {{ $totalSimulasi }}
-                  </div>
+                  <div class="profile-stat-label">Total Simulasi Selesai</div>
+                  <div class="profile-stat-value">{{ $totalSimulasi }}</div>
               </div>
-
           </div>
-
 
           <div class="profile-score">
-
-              <div class="profile-score-label">
-                  Nilai Rata-rata Keseluruhan
-              </div>
-
+              <div class="profile-score-label">Nilai Rata-rata Keseluruhan</div>
               <div class="profile-score-row">
-
-                  <span class="profile-score-value">
-                      {{ $nilaiRataRata !== null ? $nilaiRataRata : '-' }}
-                  </span>
-
-                  <span class="profile-score-tag">
-                      {{ $nilaiStatus }}
-                  </span>
-
+                  <span class="profile-score-value">{{ $nilaiRataRata !== null ? $nilaiRataRata : '-' }}</span>
+                  <span class="profile-score-tag">{{ $nilaiStatus }}</span>
               </div>
-
-              <div class="profile-score-sub">
-                  Dari {{ $activities->count() }} aktivitas
-              </div>
-
+              <div class="profile-score-sub">Dari {{ $activities->count() }} aktivitas</div>
           </div>
-
       </section>
 
       <!-- ============ RINGKASAN KATEGORI ============ -->
       <section class="panel" aria-label="Ringkasan kategori">
         <h2>Ringkasan Kategori</h2>
         <div class="category-grid">
-
             @foreach($categorySummaries as $kategori => $summary)
-
                 <div class="category-card">
-
                     <div class="category-top">
-
                         <div class="category-icon-title">
-
                             <div class="category-icon">
-                                <svg viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    aria-hidden="true">
-
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     @if($kategori === 'materi')
-
                                         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
                                         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-
                                     @elseif($kategori === 'simulasi_horen')
-
                                         <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
                                         <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/>
                                         <path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
-
                                     @elseif($kategori === 'simulasi_lesen')
-
                                         <path d="M2 5.5C2 4.7 2.7 4 4.7 4c2.6 0 5.3 1 7.3 2.5C14 4.9 16.7 4 19.3 4c2 0 2.7.7 2.7 1.5v13c0-.8-.7-1.5-2.7-1.5-2.6 0-5.3.9-7.3 2.5-2-1.6-4.7-2.5-7.3-2.5C2.7 17 2 17.7 2 18.5z"/>
                                         <path d="M12 6.5V20"/>
-
                                     @else
-
                                         <path d="m12 20 9-9-2-2-9 9-4 4z"/>
                                         <path d="M2 22l3-1 1-3"/>
                                         <path d="m14.5 6.5 3 3"/>
-
                                     @endif
-
                                 </svg>
                             </div>
-
-                            <span class="category-title">
-                                {{ $summary['label'] }}
-                            </span>
-
+                            <span class="category-title">{{ $summary['label'] }}</span>
                         </div>
                       @if(!in_array($kategori, ['simulasi_schreiben', 'simulasi_sprechen']))
                           <div>
-                              <div class="category-avg-label">
-                                  Rata-rata
-                              </div>
-                              <div class="category-avg-value">
-                                  {{ $summary['rata_rata'] !== null ? $summary['rata_rata'] : '-' }}
-                              </div>
+                              <div class="category-avg-label">Rata-rata</div>
+                              <div class="category-avg-value">{{ $summary['rata_rata'] !== null ? $summary['rata_rata'] : '-' }}</div>
                           </div>
                       @endif
                     </div>
 
-
-                    <div class="category-sub">
-                        {{ $summary['selesai'] }} selesai
-                    </div>
-
+                    <div class="category-sub">{{ $summary['selesai'] }} selesai</div>
                 </div>
-
             @endforeach
-
         </div>
       </section>
 
@@ -595,41 +564,24 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
               </tr>
             </thead>
             <tbody id="riwayatBody">
-
                 @forelse($activities as $index => $activity)
-
                     <tr
                         data-category="{{ $activity->kategori ?? '' }}"
                         data-date="{{ $activity->selesai_pada ?? '' }}"
                         data-activity-id="{{ $activity->id ?? '' }}"
                     >
-
-                        <td>
-                            {{ $index + 1 }}
-                        </td>
-
-                        <td class="col-modul">
-                            {{ $activity->judul ?? 'Modul tidak ditemukan' }}
-                        </td>
-
-                        <td>
-                            {{ $categorySummaries[$activity->kategori]['label'] ?? ($activity->kategori ?? '-') }}
-                        </td>
-
+                        <td>{{ $index + 1 }}</td>
+                        <td class="col-modul">{{ $activity->judul ?? 'Modul tidak ditemukan' }}</td>
+                        <td>{{ $categorySummaries[$activity->kategori]['label'] ?? ($activity->kategori ?? '-') }}</td>
                         <td class="col-nilai">
                             @if(in_array($activity->kategori, ['simulasi_schreiben', 'simulasi_sprechen']))
-                                <span style="color: var(--gray-400);">
-                                    —
-                                </span>
+                                <span style="color: var(--gray-400);">—</span>
                             @elseif($activity->nilai !== null)
                                 {{ number_format((float) $activity->nilai, 1) }}
                             @else
-                                <span class="status-pill">
-                                    Belum Dinilai
-                                </span>
+                                <span class="status-pill">Belum Dinilai</span>
                             @endif
                         </td>
-
                         <td>
                             {{ $activity->selesai_pada
                                 ? \Carbon\Carbon::parse($activity->selesai_pada)->format('d M Y, H:i')
@@ -644,13 +596,7 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
                                 title="Lihat hasil pengerjaan"
                                 aria-label="Lihat hasil pengerjaan {{ $activity->judul ?? 'Modul' }}"
                             >
-                                <svg viewBox="0 0 24 24"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      stroke-width="2"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                       <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/>
                                       <circle cx="12" cy="12" r="2.5"/>
                                 </svg>
@@ -660,41 +606,27 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" style="text-align:center;padding:30px;">
+                        <td colspan="6" style="text-align:center;padding:30px;">
                             Belum ada aktivitas siswa.
                         </td>
                     </tr>
-
                 @endforelse
-
             </tbody>
           </table>
         </div>
 
-        <!-- Catatan: paginasi di bawah ini baru tampilan (belum fungsional). -->
         <div class="table-footer">
-
             <div class="rows-per-page">
                 Rows per page
-
                 <select id="rowsPerPage" aria-label="Jumlah baris per halaman">
                     <option value="5" selected>5</option>
                     <option value="10">10</option>
                     <option value="25">25</option>
                 </select>
-
-                <span class="results-count" id="resultsCount">
-                    0–0 of 0 aktivitas
-                </span>
+                <span class="results-count" id="resultsCount">0–0 of 0 aktivitas</span>
             </div>
 
-            <nav
-                class="pagination"
-                id="pagination"
-                aria-label="Navigasi halaman"
-            >
-            </nav>
-
+            <nav class="pagination" id="pagination" aria-label="Navigasi halaman"></nav>
         </div>
       </section>
     </main>
@@ -705,618 +637,297 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
 (function(){
   "use strict";
 
-  /* ==================================================================
-     CATATAN INTEGRASI BACKEND
-     - Seluruh data di halaman ini (profil, ringkasan kategori, dan
-       riwayat aktivitas) masih data contoh statis untuk satu siswa
-       ("Maria Sitanggang"). Saat backend siap, ambil siswa yang tepat
-       berdasarkan parameter ?id= pada URL, mis.
-       fetch('/api/admin/siswa/' + id).
-     - Baris dengan nilai "Belum Dinilai" merepresentasikan soal
-       Simulasi Schreiben yang belum diperiksa tutor (lihat juga
-       detail-pengerjaan-schreiben.html untuk alur penilaian tutor).
-     - Filter Kategori & Waktu, serta paginasi, masih tampilan saja
-       (belum fungsional).
-     - Tombol "Ekspor" SUDAH fungsional (mengunduh riwayat aktivitas
-       sebagai file .xlsx asli memakai SheetJS), sama seperti pada
-       halaman Performa Siswa.
-  ================================================================== */
-
-
   var tbody = document.getElementById('riwayatBody');
+  var rowsPerPageSelect = document.getElementById('rowsPerPage');
+  var resultsCount = document.getElementById('resultsCount');
+  var pagination = document.getElementById('pagination');
 
-/* ============================================================
-   PAGINATION RIWAYAT AKTIVITAS
-   ============================================================ */
+  var currentPage = 1;
+  var rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 5;
 
-var rowsPerPageSelect = document.getElementById('rowsPerPage');
-var resultsCount = document.getElementById('resultsCount');
-var pagination = document.getElementById('pagination');
+  var allRows = Array.from(
+      tbody.querySelectorAll('tr[data-category]')
+  );
 
-var currentPage = 1;
-var rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 5;
+  var filteredRows = allRows.slice();
 
+  function renderPagination() {
+      var totalRows = filteredRows.length;
+      var totalPages = Math.ceil(totalRows / rowsPerPage);
 
-/*
- * Mengambil semua baris aktivitas asli.
- * Baris "Belum ada aktivitas" tidak dihitung.
- */
-var allRows = Array.from(
-    tbody.querySelectorAll('tr[data-category]')
-);
+      if (totalPages === 0) {
+          currentPage = 1;
+      } else if (currentPage > totalPages) {
+          currentPage = totalPages;
+      }
 
+      allRows.forEach(function(row) {
+          row.style.display = 'none';
+      });
 
-/*
- * Baris yang sedang lolos filter.
- */
-var filteredRows = allRows.slice();
+      var startIndex = (currentPage - 1) * rowsPerPage;
+      var endIndex = Math.min(
+          startIndex + rowsPerPage,
+          totalRows
+      );
 
+      for (var i = startIndex; i < endIndex; i++) {
+          filteredRows[i].style.display = '';
+          var numberCell = filteredRows[i].querySelector('td:first-child');
+          if (numberCell) {
+              numberCell.textContent = i + 1;
+          }
+      }
 
-function renderPagination() {
+      if (totalRows === 0) {
+          resultsCount.textContent = '0–0 of 0 aktivitas';
+      } else {
+          resultsCount.textContent =
+              (startIndex + 1) +
+              '–' +
+              endIndex +
+              ' of ' +
+              totalRows +
+              ' aktivitas';
+      }
 
-    var totalRows = filteredRows.length;
+      pagination.innerHTML = '';
 
-    var totalPages = Math.ceil(totalRows / rowsPerPage);
+      var previousButton = document.createElement('button');
+      previousButton.type = 'button';
+      previousButton.className = 'page-btn';
+      previousButton.setAttribute('aria-label', 'Halaman sebelumnya');
+      previousButton.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M15 18l-6-6 6-6"/>
+          </svg>
+      `;
 
-    /*
-     * Kalau filter menyebabkan halaman aktif tidak ada,
-     * kembali ke halaman terakhir yang tersedia.
-     */
-    if (totalPages === 0) {
+      previousButton.disabled = currentPage <= 1 || totalPages === 0;
+
+      previousButton.addEventListener('click', function() {
+          if (currentPage > 1) {
+              currentPage--;
+              renderPagination();
+          }
+      });
+
+      pagination.appendChild(previousButton);
+
+      if (totalPages > 0) {
+          var maxVisiblePages = 5;
+          var startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+          var endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+          if (endPage - startPage + 1 < maxVisiblePages) {
+              startPage = Math.max(1, endPage - maxVisiblePages + 1);
+          }
+
+          if (startPage > 1) {
+              createPageButton(1);
+              if (startPage > 2) {
+                  createEllipsis();
+              }
+          }
+
+          for (var page = startPage; page <= endPage; page++) {
+              createPageButton(page);
+          }
+
+          if (endPage < totalPages) {
+              if (endPage < totalPages - 1) {
+                  createEllipsis();
+              }
+              createPageButton(totalPages);
+          }
+      }
+
+      var nextButton = document.createElement('button');
+      nextButton.type = 'button';
+      nextButton.className = 'page-btn';
+      nextButton.setAttribute('aria-label', 'Halaman berikutnya');
+      nextButton.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M9 6l6 6-6 6"/>
+          </svg>
+      `;
+
+      nextButton.disabled = currentPage >= totalPages || totalPages === 0;
+
+      nextButton.addEventListener('click', function() {
+          if (currentPage < totalPages) {
+              currentPage++;
+              renderPagination();
+          }
+      });
+
+      pagination.appendChild(nextButton);
+  }
+
+  function createPageButton(page) {
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'page-btn';
+      button.textContent = page;
+      button.setAttribute('aria-label', 'Halaman ' + page);
+
+      if (page === currentPage) {
+          button.classList.add('active');
+          button.setAttribute('aria-current', 'page');
+      }
+
+      button.addEventListener('click', function() {
+          currentPage = page;
+          renderPagination();
+      });
+
+      pagination.appendChild(button);
+  }
+
+  function createEllipsis() {
+      var span = document.createElement('span');
+      span.textContent = '…';
+      span.setAttribute('aria-hidden', 'true');
+      span.style.display = 'flex';
+      span.style.alignItems = 'center';
+      span.style.justifyContent = 'center';
+      span.style.minWidth = '24px';
+      span.style.height = '34px';
+      span.style.color = 'var(--gray-400)';
+      span.style.fontWeight = '700';
+
+      pagination.appendChild(span);
+  }
+
+  if (rowsPerPageSelect) {
+    rowsPerPageSelect.addEventListener('change', function() {
+        rowsPerPage = parseInt(this.value, 10) || 5;
         currentPage = 1;
-    } else if (currentPage > totalPages) {
-        currentPage = totalPages;
-    }
-
-
-    /*
-     * Sembunyikan semua row terlebih dahulu.
-     */
-    allRows.forEach(function(row) {
-        row.style.display = 'none';
-    });
-
-
-    /*
-     * Tentukan row yang harus ditampilkan.
-     */
-    var startIndex = (currentPage - 1) * rowsPerPage;
-    var endIndex = Math.min(
-        startIndex + rowsPerPage,
-        totalRows
-    );
-
-
-    for (var i = startIndex; i < endIndex; i++) {
-
-        filteredRows[i].style.display = '';
-
-        var numberCell =
-            filteredRows[i].querySelector('td:first-child');
-
-        if (numberCell) {
-            numberCell.textContent =
-                i + 1;
-        }
-    }
-
-
-    /*
-     * Update teks:
-     *
-     * 1–5 of 30 aktivitas
-     */
-    if (totalRows === 0) {
-
-        resultsCount.textContent = '0–0 of 0 aktivitas';
-
-    } else {
-
-        resultsCount.textContent =
-            (startIndex + 1) +
-            '–' +
-            endIndex +
-            ' of ' +
-            totalRows +
-            ' aktivitas';
-    }
-
-
-    /*
-     * Buat tombol pagination.
-     */
-    pagination.innerHTML = '';
-
-
-    /*
-     * Tombol PREVIOUS
-     */
-    var previousButton = document.createElement('button');
-
-    previousButton.type = 'button';
-    previousButton.className = 'page-btn';
-    previousButton.setAttribute(
-        'aria-label',
-        'Halaman sebelumnya'
-    );
-
-    previousButton.innerHTML = `
-        <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.4"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-        >
-            <path d="M15 18l-6-6 6-6"/>
-        </svg>
-    `;
-
-    previousButton.disabled =
-        currentPage <= 1 || totalPages === 0;
-
-    previousButton.addEventListener('click', function() {
-
-        if (currentPage > 1) {
-
-            currentPage--;
-
-            renderPagination();
-        }
-
-    });
-
-    pagination.appendChild(previousButton);
-
-
-    /*
-     * Kalau tidak ada data, tidak perlu membuat
-     * tombol halaman.
-     */
-    if (totalPages > 0) {
-
-        /*
-         * Maksimal tampilkan 5 nomor halaman sekaligus.
-         *
-         * Contoh:
-         *
-         * 1 2 3 4 5
-         *
-         * atau ketika sudah jauh:
-         *
-         * 3 4 5 6 7
-         */
-        var maxVisiblePages = 5;
-
-        var startPage = Math.max(
-            1,
-            currentPage - Math.floor(maxVisiblePages / 2)
-        );
-
-        var endPage = Math.min(
-            totalPages,
-            startPage + maxVisiblePages - 1
-        );
-
-        /*
-         * Jika berada dekat akhir, geser range
-         * agar tetap memiliki maksimal 5 tombol.
-         */
-        if (
-            endPage - startPage + 1 < maxVisiblePages
-        ) {
-            startPage = Math.max(
-                1,
-                endPage - maxVisiblePages + 1
-            );
-        }
-
-
-        /*
-         * Jika halaman 1 tidak masuk range,
-         * tampilkan tombol 1 + ...
-         */
-        if (startPage > 1) {
-
-            createPageButton(1);
-
-            if (startPage > 2) {
-                createEllipsis();
-            }
-        }
-
-
-        /*
-         * Nomor halaman.
-         */
-        for (
-            var page = startPage;
-            page <= endPage;
-            page++
-        ) {
-
-            createPageButton(page);
-        }
-
-
-        /*
-         * Jika halaman terakhir belum masuk range,
-         * tampilkan ... + halaman terakhir.
-         */
-        if (endPage < totalPages) {
-
-            if (endPage < totalPages - 1) {
-                createEllipsis();
-            }
-
-            createPageButton(totalPages);
-        }
-    }
-
-
-    /*
-     * Tombol NEXT
-     */
-    var nextButton = document.createElement('button');
-
-    nextButton.type = 'button';
-    nextButton.className = 'page-btn';
-
-    nextButton.setAttribute(
-        'aria-label',
-        'Halaman berikutnya'
-    );
-
-    nextButton.innerHTML = `
-        <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.4"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-        >
-            <path d="M9 6l6 6-6 6"/>
-        </svg>
-    `;
-
-    nextButton.disabled =
-        currentPage >= totalPages ||
-        totalPages === 0;
-
-    nextButton.addEventListener('click', function() {
-
-        if (currentPage < totalPages) {
-
-            currentPage++;
-
-            renderPagination();
-        }
-
-    });
-
-    pagination.appendChild(nextButton);
-}
-
-
-/*
- * Membuat tombol nomor halaman.
- */
-function createPageButton(page) {
-
-    var button = document.createElement('button');
-
-    button.type = 'button';
-    button.className = 'page-btn';
-
-    button.textContent = page;
-
-    button.setAttribute(
-        'aria-label',
-        'Halaman ' + page
-    );
-
-    if (page === currentPage) {
-
-        button.classList.add('active');
-
-        button.setAttribute(
-            'aria-current',
-            'page'
-        );
-    }
-
-
-    button.addEventListener('click', function() {
-
-        currentPage = page;
-
         renderPagination();
     });
+  }
 
+  renderPagination();
 
-    pagination.appendChild(button);
-}
+  var kategoriFilter = document.getElementById('kategoriFilter');
+  var waktuFilter = document.getElementById('waktuFilter');
 
+  function applyFilters() {
+      var selectedCategory = kategoriFilter.value;
+      var selectedTime = waktuFilter.value;
+      var now = new Date();
 
-/*
- * Membuat tanda "..."
- */
-function createEllipsis() {
+      filteredRows = allRows.filter(function(row) {
+          var category = row.dataset.category || '';
+          var dateString = row.dataset.date || '';
 
-    var span = document.createElement('span');
+          if (selectedCategory && getCategoryLabel(category) !== selectedCategory) {
+              return false;
+          }
 
-    span.textContent = '…';
+          if (selectedTime && dateString) {
+              var activityDate = new Date(dateString.replace(' ', 'T'));
+              if (!isNaN(activityDate.getTime())) {
+                  var diff = now.getTime() - activityDate.getTime();
+                  var diffHours = diff / (1000 * 60 * 60);
 
-    span.setAttribute(
-        'aria-hidden',
-        'true'
-    );
+                  if (selectedTime === '24jam' && diffHours > 24) return false;
+                  if (selectedTime === '1minggu' && diffHours > 24 * 7) return false;
+                  if (selectedTime === '1bulan' && diffHours > 24 * 30) return false;
+              }
+          }
+          return true;
+      });
 
-    span.style.display = 'flex';
-    span.style.alignItems = 'center';
-    span.style.justifyContent = 'center';
-    span.style.minWidth = '24px';
-    span.style.height = '34px';
-    span.style.color = 'var(--gray-400)';
-    span.style.fontWeight = '700';
+      currentPage = 1;
+      renderPagination();
+  }
 
-    pagination.appendChild(span);
-}
+  function getCategoryLabel(category) {
+      var labels = {
+          'materi': 'Materi',
+          'simulasi_horen': 'Simulasi Hören',
+          'simulasi_lesen': 'Simulasi Lesen',
+          'simulasi_schreiben': 'Simulasi Schreiben',
+          'simulasi_sprechen': 'Simulasi Sprechen'
+      };
+      return labels[category] || category;
+  }
 
+  if (kategoriFilter) kategoriFilter.addEventListener('change', applyFilters);
+  if (waktuFilter) waktuFilter.addEventListener('change', applyFilters);
 
-/*
- * Ketika jumlah row per page diubah.
- */
-rowsPerPageSelect.addEventListener(
-    'change',
-    function() {
-
-        rowsPerPage =
-            parseInt(this.value, 10) || 5;
-
-        /*
-         * Kembali ke halaman pertama agar UX
-         * tidak membingungkan.
-         */
-        currentPage = 1;
-
-        renderPagination();
-    }
-);
-
-
-/*
- * Render awal.
- */
-renderPagination();
-
-/* ============================================================
-   FILTER KATEGORI & WAKTU
-   ============================================================ */
-
-var kategoriFilter =
-    document.getElementById('kategoriFilter');
-
-var waktuFilter =
-    document.getElementById('waktuFilter');
-
-
-function applyFilters() {
-
-    var selectedCategory =
-        kategoriFilter.value;
-
-    var selectedTime =
-        waktuFilter.value;
-
-
-    var now = new Date();
-
-
-    filteredRows = allRows.filter(function(row) {
-
-        var category =
-            row.dataset.category || '';
-
-        var dateString =
-            row.dataset.date || '';
-
-
-        /*
-         * -------------------------
-         * FILTER KATEGORI
-         * -------------------------
-         */
-
-        if (
-            selectedCategory &&
-            getCategoryLabel(category) !== selectedCategory
-        ) {
-            return false;
-        }
-
-
-        /*
-         * -------------------------
-         * FILTER WAKTU
-         * -------------------------
-         */
-
-        if (selectedTime && dateString) {
-
-            var activityDate =
-                new Date(
-                    dateString.replace(' ', 'T')
-                );
-
-
-            /*
-             * Kalau tanggal tidak valid,
-             * jangan langsung menghilangkan data.
-             */
-            if (!isNaN(activityDate.getTime())) {
-
-                var diff =
-                    now.getTime() -
-                    activityDate.getTime();
-
-
-                var diffHours =
-                    diff / (1000 * 60 * 60);
-
-
-                if (
-                    selectedTime === '24jam' &&
-                    diffHours > 24
-                ) {
-                    return false;
-                }
-
-
-                if (
-                    selectedTime === '1minggu' &&
-                    diffHours > 24 * 7
-                ) {
-                    return false;
-                }
-
-
-                if (
-                    selectedTime === '1bulan' &&
-                    diffHours > 24 * 30
-                ) {
-                    return false;
-                }
-            }
-        }
-
-
-        return true;
-    });
-
-
-    /*
-     * Filter berubah → kembali ke halaman 1.
-     */
-    currentPage = 1;
-
-    renderPagination();
-}
-
-
-/*
- * Konversi key kategori database
- * menjadi label yang digunakan dropdown.
- */
-function getCategoryLabel(category) {
-
-    var labels = {
-        'materi': 'Materi',
-        'simulasi_horen': 'Simulasi Hören',
-        'simulasi_lesen': 'Simulasi Lesen',
-        'simulasi_schreiben': 'Simulasi Schreiben',
-        'simulasi_sprechen': 'Simulasi Sprechen'
-    };
-
-    return labels[category] || category;
-}
-
-
-kategoriFilter.addEventListener(
-    'change',
-    applyFilters
-);
-
-waktuFilter.addEventListener(
-    'change',
-    applyFilters
-);
-
-  /* ---- Ekspor ke Excel (.xlsx) — fungsional, memakai SheetJS ---- */
   var exportBtn = document.getElementById('exportBtn');
   var exportBtnLabel = document.getElementById('exportBtnLabel');
 
-  exportBtn.addEventListener('click', function(){
+  if (exportBtn) {
+    exportBtn.addEventListener('click', function(){
+        if (typeof XLSX === 'undefined') {
+            alert('Gagal memuat pustaka ekspor. Periksa koneksi internet Anda lalu coba lagi.');
+            return;
+        }
 
-      if (typeof XLSX === 'undefined') {
-          alert('Gagal memuat pustaka ekspor. Periksa koneksi internet Anda lalu coba lagi.');
-          return;
-      }
+        exportBtn.disabled = true;
+        if (exportBtnLabel) exportBtnLabel.textContent = 'Mengekspor…';
 
-      exportBtn.disabled = true;
-      exportBtnLabel.textContent = 'Mengekspor…';
+        var rows = [];
 
-      var rows = [];
+        document.querySelectorAll('#riwayatBody tr[data-category]').forEach(function(row){
+            if (row.style.display === 'none') return;
+            var cells = row.querySelectorAll('td');
+            if (cells.length < 5) return;
 
-      document.querySelectorAll('#riwayatBody tr').forEach(function(row){
+            rows.push({
+                'No': cells[0].innerText.trim(),
+                'Modul': cells[1].innerText.trim(),
+                'Kategori': cells[2].innerText.trim(),
+                'Nilai': cells[3].innerText.trim(),
+                'Tanggal & Waktu': cells[4].innerText.trim()
+            });
+        });
 
-          var cells = row.querySelectorAll('td');
+        var worksheet = XLSX.utils.json_to_sheet(rows);
+        worksheet['!cols'] = [
+            { wch: 8 },
+            { wch: 35 },
+            { wch: 25 },
+            { wch: 15 },
+            { wch: 25 }
+        ];
 
-          if (cells.length < 5) {
-              return;
-          }
+        var workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Riwayat Aktivitas');
 
-          rows.push({
-              'No': cells[0].innerText.trim(),
-              'Modul': cells[1].innerText.trim(),
-              'Kategori': cells[2].innerText.trim(),
-              'Nilai': cells[3].innerText.trim(),
-              'Tanggal & Waktu': cells[4].innerText.trim()
-          });
+        var studentName = @json($student->name);
+        var safeName = studentName.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+        var today = new Date().toISOString().slice(0, 10);
 
-      });
+        XLSX.writeFile(workbook, 'riwayat-' + safeName + '-' + today + '.xlsx');
 
-      var worksheet = XLSX.utils.json_to_sheet(rows);
-
-      worksheet['!cols'] = [
-          { wch: 8 },
-          { wch: 35 },
-          { wch: 25 },
-          { wch: 15 },
-          { wch: 25 }
-      ];
-
-      var workbook = XLSX.utils.book_new();
-
-      XLSX.utils.book_append_sheet(
-          workbook,
-          worksheet,
-          'Riwayat Aktivitas'
-      );
-
-      var studentName = @json($student->name);
-
-      var safeName = studentName
-          .replace(/[^a-z0-9]/gi, '-')
-          .toLowerCase();
-
-      var today = new Date()
-          .toISOString()
-          .slice(0, 10);
-
-      XLSX.writeFile(
-          workbook,
-          'riwayat-' + safeName + '-' + today + '.xlsx'
-      );
-
-      exportBtn.disabled = false;
-      exportBtnLabel.textContent = 'Ekspor';
-
-  });
+        exportBtn.disabled = false;
+        if (exportBtnLabel) exportBtnLabel.textContent = 'Ekspor';
+    });
+  }
 
   var sidebar = document.getElementById('sidebar');
   var menuToggle = document.getElementById('menuToggle');
   var sidebarClose = document.getElementById('sidebarClose');
   var backdrop = document.getElementById('backdrop');
-  function openSidebar(){ sidebar.classList.add('open'); backdrop.classList.add('show'); menuToggle.setAttribute('aria-expanded', 'true'); }
-  function closeSidebar(){ sidebar.classList.remove('open'); backdrop.classList.remove('show'); menuToggle.setAttribute('aria-expanded', 'false'); }
-  menuToggle.addEventListener('click', openSidebar);
-  sidebarClose.addEventListener('click', closeSidebar);
-  backdrop.addEventListener('click', closeSidebar);
+
+  function openSidebar(){ 
+    if (sidebar) sidebar.classList.add('open'); 
+    if (backdrop) backdrop.classList.add('show'); 
+    if (menuToggle) menuToggle.setAttribute('aria-expanded', 'true'); 
+  }
+  function closeSidebar(){ 
+    if (sidebar) sidebar.classList.remove('open'); 
+    if (backdrop) backdrop.classList.remove('show'); 
+    if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false'); 
+  }
+
+  if (menuToggle) menuToggle.addEventListener('click', openSidebar);
+  if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
+  if (backdrop) backdrop.addEventListener('click', closeSidebar);
 })();
 </script>
 </body>
