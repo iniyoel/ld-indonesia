@@ -654,9 +654,9 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--navy); font-weig
     <nav class="main-nav" id="mainNav" aria-label="Navigasi utama">
       <ul>
         <li><a href="#beranda" class="active" data-nav>Beranda</a></li>
-        <li><a href="#paket" data-nav>Paket</a></li>
-        <li><a href="#tutor" data-nav>Tutor</a></li>
         <li><a href="#fasilitas" data-nav>Fasilitas</a></li>
+        <li><a href="#tutor" data-nav>Tutor</a></li>
+        <li><a href="#paket" data-nav>Paket</a></li>     
       </ul>
     </nav>
 
