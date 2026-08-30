@@ -506,7 +506,7 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
                       </td>
                       <td>
                           <a class="action-btn"
-                            href="{{ route('page', ['page' => 'hasil-pengerjaan']) }}?id={{ $attempt->id }}&from=dashboard"
+                            href="{{ route('siswa.modul.hasil', ['module' => $attempt->module_id, 'attempt' => $attempt->id]) }}"
                             aria-label="Lihat detail pengerjaan {{ $attempt->module->judul ?? 'modul' }}">
                               <svg
                                   viewBox="0 0 24 24"
