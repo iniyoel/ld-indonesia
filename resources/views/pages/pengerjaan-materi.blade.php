@@ -24,6 +24,8 @@
   --purple: #7C6FE0;
   --gold: #D4A017;
   --maroon: #5C3620;
+  --amber: #C98A1A;
+  --amber-bg: #FCEBCF;
   --gray-50: #FAF9F7;
   --gray-100: #F3F1EE;
   --gray-200: #E7E4E0;
@@ -68,8 +70,12 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
 
-/* ============ APP SHELL (konsisten dengan halaman lain) ============ */
-.app-shell{ display: flex; min-height: 100vh; }
+/* ============ APP SHELL ============ */
+.app-shell{ 
+  display: flex; 
+  min-height: 100vh; 
+  width: 100%;
+}
 
 .sidebar{
   width: var(--sidebar-w);
@@ -108,7 +114,12 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
 .sidebar-close{ display: none; }
 
-.main-col{ flex-grow: 1; min-width: 0; display: flex; flex-direction: column; }
+.main-col{ 
+  flex: 1 1 0%; 
+  min-width: 0; 
+  display: flex; 
+  flex-direction: column; 
+}
 
 .topbar{
   height: var(--topbar-h);
@@ -130,11 +141,18 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; color: var(--pink-dark); flex-shrink: 0;
 }
 
-.page-content{ padding: 32px 40px 60px; max-width: 1180px; width: 100%; margin: 0 auto; }
+.page-content{ 
+  padding: 32px 40px 60px; 
+  max-width: 1180px; 
+  width: 100%; 
+  margin: 0 auto; 
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
 
 /* ============ KEMBALI ============ */
 .back-link{
-  display: inline-flex; align-items: center; gap: 8px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: 10px 18px;
   border-radius: var(--radius-pill);
   border: 1.5px solid var(--pink-light);
@@ -153,9 +171,12 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   box-shadow: var(--shadow-md);
   border: 1px solid var(--gray-100);
   padding: 30px 32px 32px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
-.materi-panel h1{ font-size: 1.5rem; margin-bottom: 8px; }
-.materi-desc{ color: var(--gray-500); font-size: 0.94rem; margin-bottom: 24px; }
+.materi-panel h1{ font-size: 1.5rem; margin-bottom: 8px; word-break: break-word; }
+.materi-desc{ color: var(--gray-500); font-size: 0.94rem; margin-bottom: 24px; word-break: break-word; }
 
 /* ---- PDF viewer mock ---- */
 .pdf-viewer{
@@ -163,6 +184,8 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   border-radius: var(--radius-md);
   overflow: hidden;
   background: var(--pink-pale);
+  width: 100%;
+  box-sizing: border-box;
 }
 .pdf-toolbar{
   display: flex;
@@ -170,6 +193,8 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   gap: 18px;
   padding: 12px 20px;
   flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 .pdf-toolbar-group{ display: flex; align-items: center; gap: 8px; }
 .pdf-tool-btn{
@@ -177,68 +202,37 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
   color: var(--navy-soft);
+  cursor: pointer;
 }
 .pdf-tool-btn:hover{ background: rgba(255,255,255,0.7); color: var(--navy); }
 .pdf-tool-btn svg{ width: 18px; height: 18px; }
 .pdf-toolbar-label{ font-size: 0.86rem; color: var(--gray-600); font-weight: 600; }
-.pdf-page-input{
-  width: 40px;
-  text-align: center;
-  font: inherit;
-  font-weight: 700;
-  font-size: 0.86rem;
-  color: var(--navy);
-  border: 1px solid var(--gray-200);
-  border-radius: 6px;
-  padding: 5px 4px;
-  background: var(--white);
-}
-.pdf-zoom-label{
-  font-size: 0.84rem;
-  font-weight: 700;
-  color: var(--navy);
-  background: var(--white);
-  border: 1px solid var(--gray-200);
-  border-radius: 8px;
-  padding: 6px 14px;
-}
 .pdf-toolbar-spacer{ flex-grow: 1; }
 
 .pdf-page-area{
   background: var(--pink-light);
-  padding: 28px;
+  padding: 0;
   position: relative;
+  width: 100%;
 }
-.pdf-page{
-  background: var(--white);
-  max-width: 760px;
-  margin: 0 auto;
-  min-height: 420px;
-  border-radius: 6px;
-  box-shadow: 0 8px 24px rgba(30,42,71,0.10);
-  padding: 44px 52px;
-  position: relative;
-}
-.pdf-page h2{ font-size: 2rem; margin-bottom: 18px; }
-.pdf-page h3{ font-family: var(--font-display); font-size: 1.15rem; margin-bottom: 14px; color: var(--gray-800); font-weight: 700; }
-.pdf-page .subhead-pink{ color: var(--pink-dark); font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; margin: 22px 0 12px; }
-.pdf-page p{ color: var(--gray-800); font-size: 1.02rem; line-height: 1.65; }
-.pdf-scrollbar{
-  position: absolute;
-  right: 8px; top: 28px;
-  width: 6px; height: 130px;
-  border-radius: 4px;
-  background: var(--gray-300);
+.pdf-page-area iframe{
+  width: 100%;
+  height: 750px;
+  border: none;
+  display: block;
+  background: white;
 }
 
 .materi-footer{
   display: flex;
   justify-content: flex-end;
   margin-top: 26px;
+  width: 100%;
 }
 .btn-continue{
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 13px 26px;
   border-radius: var(--radius-pill);
@@ -248,11 +242,12 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   font-size: 0.94rem;
   box-shadow: 0 12px 28px rgba(236,78,140,0.22);
   transition: transform 0.18s ease;
+  cursor: pointer;
 }
 .btn-continue:hover{ transform: translateY(-2px); }
 .btn-continue svg{ width: 17px; height: 17px; }
 
-/* ============ RESPONSIVE ============ */
+/* ============ RESPONSIVE BREAKPOINTS ============ */
 @media (max-width: 980px){
   .sidebar{ position: fixed; left: 0; top: 0; transform: translateX(-100%); transition: transform 0.22s ease; box-shadow: var(--shadow-md); }
   .sidebar.open{ transform: translateX(0); }
@@ -261,16 +256,39 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   .sidebar-brand{ justify-content: space-between; }
   .menu-toggle{ display: flex; }
   .topbar{ padding: 0 20px; }
-  .page-content{ padding: 24px 20px 48px; }
+  .page-content{ padding: 24px 16px 48px; }
   .backdrop{ display: none; position: fixed; inset: 0; background: rgba(30,42,71,0.35); z-index: 50; }
   .backdrop.show{ display: block; }
   .materi-panel{ padding: 22px 18px 26px; }
-  .pdf-page{ padding: 30px 24px; }
 }
+
 @media (max-width: 640px){
-  .user-meta{ display: none; }
-  .pdf-toolbar{ gap: 10px; }
-  .pdf-toolbar-label{ display: none; }
+  .page-content{
+    padding: 16px 12px 36px;
+  }
+  .materi-panel{
+    padding: 18px 14px;
+    border-radius: var(--radius-md);
+  }
+  .materi-panel h1{
+    font-size: 1.3rem;
+  }
+  .pdf-toolbar{ 
+    gap: 10px; 
+    padding: 10px 14px;
+  }
+  .pdf-toolbar-label{ 
+    display: none; 
+  }
+  .pdf-page-area iframe{
+    height: 480px;
+  }
+  .materi-footer{
+    flex-direction: column;
+  }
+  .btn-continue{
+    width: 100%;
+  }
 }
 </style>
 </head>
@@ -302,7 +320,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
           >
               <path d="M15 18l-6-6 6-6"/>
           </svg>
-
           Kembali
       </a>
 
@@ -321,7 +338,6 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
               {{ $module->deskripsi }}
           </p>
 
-
           {{-- ==============================
               KATEGORI
           =============================== --}}
@@ -337,9 +353,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
               font-size: .82rem;
               font-weight: 700;
           ">
-
               @switch($module->kategori)
-
                   @case('materi')
                       Materi
                       @break
@@ -362,28 +376,20 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 
                   @default
                       {{ $module->kategori }}
-
               @endswitch
-
           </div>
-
 
           {{-- =====================================================
               JIKA MATERI → TAMPILKAN PDF
               JIKA SIMULASI → TIDAK TAMPILKAN PDF
           ====================================================== --}}
-
           @if($module->kategori === 'materi')
-
               @if($module->file_path)
-
                   <div class="pdf-viewer">
-
                       {{-- ==============================
                           PDF TOOLBAR
                       =============================== --}}
                       <div class="pdf-toolbar">
-
                           <span class="pdf-toolbar-label">
                               Dokumen Materi
                           </span>
@@ -434,9 +440,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
                                   <path d="M5 21h14"/>
                               </svg>
                           </a>
-
                       </div>
-
 
                       {{-- ==============================
                           PDF ASLI DARI DATABASE
@@ -448,17 +452,9 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
                               background: var(--gray-100);
                           "
                       >
-
                           <iframe
                               src="{{ asset('storage/' . $module->file_path) }}"
                               title="PDF {{ $module->judul }}"
-                              style="
-                                  width: 100%;
-                                  height: 750px;
-                                  border: none;
-                                  display: block;
-                                  background: white;
-                              "
                           ></iframe>
                       </div>
                   </div>
@@ -479,7 +475,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
                   HANYA JUDUL + DESKRIPSI
               ================================================== --}}
               <div style="
-                  padding: 28px;
+                  padding: 24px;
                   border-radius: var(--radius-md);
                   background: var(--pink-pale);
                   border: 1px solid var(--pink-light);
@@ -533,7 +529,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
                       </div>
                   </div>
                   <p style="
-                      color: var(--gray-700, #3A362F);
+                      color: var(--gray-800);
                       line-height: 1.7;
                       margin: 0;
                   ">
@@ -541,6 +537,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
                   </p>
               </div>
           @endif
+
         <div class="materi-footer">
           <a
               class="btn-continue"
@@ -572,11 +569,21 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   var menuToggle = document.getElementById('menuToggle');
   var sidebarClose = document.getElementById('sidebarClose');
   var backdrop = document.getElementById('backdrop');
-  function openSidebar(){ sidebar.classList.add('open'); backdrop.classList.add('show'); menuToggle.setAttribute('aria-expanded', 'true'); }
-  function closeSidebar(){ sidebar.classList.remove('open'); backdrop.classList.remove('show'); menuToggle.setAttribute('aria-expanded', 'false'); }
-  menuToggle.addEventListener('click', openSidebar);
-  sidebarClose.addEventListener('click', closeSidebar);
-  backdrop.addEventListener('click', closeSidebar);
+
+  function openSidebar(){ 
+    if (sidebar) sidebar.classList.add('open'); 
+    if (backdrop) backdrop.classList.add('show'); 
+    if (menuToggle) menuToggle.setAttribute('aria-expanded', 'true'); 
+  }
+  function closeSidebar(){ 
+    if (sidebar) sidebar.classList.remove('open'); 
+    if (backdrop) backdrop.classList.remove('show'); 
+    if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false'); 
+  }
+
+  if (menuToggle) menuToggle.addEventListener('click', openSidebar);
+  if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
+  if (backdrop) backdrop.addEventListener('click', closeSidebar);
 })();
 </script>
 </body>

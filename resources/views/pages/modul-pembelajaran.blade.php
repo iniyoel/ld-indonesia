@@ -73,10 +73,75 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
 
-.app-shell{ display: flex; min-height: 100vh; }
-.main-col{ flex-grow: 1; min-width: 0; display: flex; flex-direction: column; }
+/* ============ APP SHELL ============ */
+.app-shell{ 
+  display: flex; 
+  min-height: 100vh; 
+  width: 100%;
+}
 
-.page-content{ padding: 36px 40px 60px; max-width: 1280px; width: 100%; margin: 0 auto; }
+.sidebar{
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: linear-gradient(180deg, var(--pink-pale) 0%, #FDF1F6 100%);
+  border-right: 1px solid var(--gray-200);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: 60;
+}
+.sidebar-brand{ display: flex; align-items: center; gap: 10px; padding: 26px 24px; border-bottom: 1px solid rgba(30,42,71,0.06); }
+.brand-mark{ width: 40px; height: 40px; flex-shrink: 0; }
+.brand-text{ display: flex; flex-direction: column; line-height: 1.15; }
+.brand-text strong{ font-family: var(--font-display); font-weight: 800; font-size: 1.02rem; color: var(--navy); }
+.brand-text strong span{ color: var(--pink); }
+.brand-text small{ font-size: 0.66rem; color: var(--gray-600); font-weight: 500; }
+
+.sidebar-nav{ flex-grow: 1; padding: 20px 16px; }
+.sidebar-nav ul{ list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.nav-link{
+  display: flex; align-items: center; gap: 14px; padding: 13px 16px;
+  border-radius: var(--radius-sm); font-weight: 700; font-size: 0.96rem; color: var(--navy-soft);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.nav-link svg{ width: 21px; height: 21px; flex-shrink: 0; }
+.nav-link:hover{ background: rgba(236,78,140,0.08); color: var(--pink-dark); }
+.nav-link.active{ background: var(--white); color: var(--pink-dark); box-shadow: var(--shadow-sm); }
+
+.sidebar-footer{ padding: 20px 16px 26px; border-top: 1px solid rgba(30,42,71,0.06); }
+.logout-link{ display: flex; align-items: center; gap: 14px; padding: 13px 16px; border-radius: var(--radius-sm); font-weight: 700; font-size: 0.96rem; color: var(--navy-soft); }
+.logout-link:hover{ background: rgba(224,72,63,0.08); color: #C8392F; }
+.logout-link svg{ width: 21px; height: 21px; }
+
+.sidebar-close{ display: none; }
+
+.main-col{ 
+  flex: 1 1 0%; 
+  min-width: 0; 
+  display: flex; 
+  flex-direction: column; 
+}
+
+.topbar{
+  height: var(--topbar-h);
+  display: flex; align-items: center; justify-content: flex-end; gap: 16px;
+  padding: 0 40px;
+  background: linear-gradient(115deg, #FCEFD9 0%, #FDE4EE 55%, #FBCFE0 100%);
+  position: sticky; top: 0; z-index: 40;
+}
+.menu-toggle{ display: none; width: 40px; height: 40px; align-items: center; justify-content: center; border-radius: var(--radius-sm); margin-right: auto; color: var(--navy); }
+.menu-toggle:hover{ background: rgba(255,255,255,0.5); }
+
+.page-content{ 
+  padding: 36px 40px 60px; 
+  max-width: 1280px; 
+  width: 100%; 
+  margin: 0 auto; 
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
 .page-heading{ margin-bottom: 22px; }
 .page-heading h1{ font-size: 1.7rem; }
 
@@ -86,6 +151,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   gap: 14px;
   margin-bottom: 22px;
   flex-wrap: wrap;
+  width: 100%;
 }
 .search-field{
   flex: 1 1 320px;
@@ -143,40 +209,48 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   border: 1px solid var(--gray-100);
-  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
-.table-scroll{ overflow-x: auto; }
-table{ width: 100%; border-collapse: collapse; min-width: 900px; }
+.table-scroll{ 
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto; 
+  -webkit-overflow-scrolling: touch;
+  display: block;
+}
+table{ width: 100%; border-collapse: collapse; min-width: 780px; }
 thead th{
   text-align: left;
   font-size: 0.85rem;
   font-weight: 700;
   color: var(--navy);
   background: var(--pink-light);
-  padding: 15px 24px;
+  padding: 15px 20px;
   white-space: nowrap;
 }
-thead th:first-child{ padding-left: 28px; width: 60px; }
+thead th:first-child{ padding-left: 24px; width: 60px; }
 tbody td{
-  padding: 17px 24px;
+  padding: 15px 20px;
   font-size: 0.92rem;
   color: var(--gray-800);
   border-bottom: 1px solid var(--gray-100);
   vertical-align: middle;
   white-space: nowrap;
 }
-tbody td:first-child{ padding-left: 28px; }
+tbody td:first-child{ padding-left: 24px; }
 tbody tr:last-child td{ border-bottom: none; }
 tbody tr:hover{ background: var(--gray-50); }
 td.col-num{ color: var(--gray-500); font-weight: 600; }
-td.col-modul{ font-weight: 600; color: var(--navy); white-space: normal; min-width: 220px; }
+td.col-modul{ font-weight: 600; color: var(--navy); white-space: normal; min-width: 200px; word-break: break-word; }
 td.empty-state{ text-align: center; padding: 40px 20px; color: var(--gray-500); font-weight: 500; }
 
 .status-pill{
   display: inline-block;
-  padding: 7px 16px;
+  padding: 6px 14px;
   border-radius: var(--radius-pill);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -190,10 +264,10 @@ td.empty-state{ text-align: center; padding: 40px 20px; color: var(--gray-500); 
   justify-content: center;
   gap: 7px;
   min-width: 86px;
-  padding: 7px 14px;
+  padding: 6px 14px;
   border-radius: 8px;
   font-weight: 600;
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   border: 1.5px solid var(--pink);
   color: var(--pink-dark);
   background: var(--white);
@@ -208,7 +282,7 @@ td.empty-state{ text-align: center; padding: 40px 20px; color: var(--gray-500); 
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 18px 28px;
+  padding: 18px 24px;
   flex-wrap: wrap;
   border-top: 1px solid var(--gray-100);
 }
@@ -227,7 +301,7 @@ td.empty-state{ text-align: center; padding: 40px 20px; color: var(--gray-500); 
 }
 .results-count{ font-size: 0.88rem; color: var(--gray-500); }
 
-.pagination{ display: flex; align-items: center; gap: 8px; }
+.pagination{ display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .page-btn{
   min-width: 34px; height: 34px;
   padding: 0 8px;
@@ -244,8 +318,54 @@ td.empty-state{ text-align: center; padding: 40px 20px; color: var(--gray-500); 
 .page-btn:disabled{ opacity: 0.4; cursor: not-allowed; }
 .page-btn svg{ width: 16px; height: 16px; }
 
+/* ============ RESPONSIVE BREAKPOINTS ============ */
+@media (max-width: 980px){
+  .sidebar{ position: fixed; left: 0; top: 0; transform: translateX(-100%); transition: transform 0.22s ease; box-shadow: var(--shadow-md); }
+  .sidebar.open{ transform: translateX(0); }
+  .sidebar-close{ display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 8px; margin-left: auto; color: var(--navy); }
+  .sidebar-close:hover{ background: rgba(30,42,71,0.06); }
+  .sidebar-brand{ justify-content: space-between; }
+  .menu-toggle{ display: flex; }
+  .topbar{ padding: 0 20px; }
+  .page-content{ padding: 24px 16px 48px; }
+  .backdrop{ display: none; position: fixed; inset: 0; background: rgba(30,42,71,0.35); z-index: 50; }
+  .backdrop.show{ display: block; }
+  .panel{ padding: 0; }
+  .filter-bar{ flex-direction: column; align-items: stretch; gap: 10px; }
+  .search-field, .select-field{ flex: 1 1 100%; width: 100%; }
+}
+
 @media (max-width: 640px){
-  .table-footer{ flex-direction: column; align-items: flex-start; }
+  .page-content{
+    padding: 16px 12px 36px;
+  }
+  .page-heading h1{
+    font-size: 1.35rem;
+  }
+  .table-footer{ 
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: 12px;
+    padding: 14px 16px;
+  }
+  .pagination{
+    width: 100%;
+    justify-content: center;
+  }
+  thead th{
+    padding: 12px 14px;
+    font-size: 0.78rem;
+  }
+  thead th:first-child{
+    padding-left: 14px;
+  }
+  tbody td{
+    padding: 12px 14px;
+    font-size: 0.84rem;
+  }
+  tbody td:first-child{
+    padding-left: 14px;
+  }
 }
 </style>
 </head>
@@ -253,6 +373,8 @@ td.empty-state{ text-align: center; padding: 40px 20px; color: var(--gray-500); 
 <a href="#mainContent" class="skip-link">Langsung ke konten utama</a>
 
 <div class="app-shell">
+  <div class="backdrop" id="backdrop"></div>
+
   <!-- ============ SIDEBAR ============ -->
   <x-sidebar.siswa />
 
@@ -267,7 +389,6 @@ td.empty-state{ text-align: center; padding: 40px 20px; color: var(--gray-500); 
 
       <!-- ============ FILTER BAR FORM ============ -->
       <form method="GET" action="{{ url()->current() }}" id="filterForm" class="filter-bar">
-        {{-- Pertahankan per_page jika ada --}}
         @if(request('per_page'))
           <input type="hidden" name="per_page" value="{{ request('per_page') }}">
         @endif
@@ -408,7 +529,6 @@ td.empty-state{ text-align: center; padding: 40px 20px; color: var(--gray-500); 
         @if($modules->total() > 0)
           <div class="table-footer">
               <form method="GET" action="{{ url()->current() }}" class="rows-per-page">
-                  {{-- Pertahankan filter search, level, dan kategori saat ganti jumlah rows --}}
                   @if(request('search'))
                     <input type="hidden" name="search" value="{{ request('search') }}">
                   @endif
@@ -423,9 +543,9 @@ td.empty-state{ text-align: center; padding: 40px 20px; color: var(--gray-500); 
 
                   <select name="per_page" id="rowsPerPage" aria-label="Jumlah baris per halaman" onchange="this.form.submit()">
                       <option value="5" {{ request('per_page', 5) == 5 ? 'selected' : '' }}>5</option>
-                      <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                      <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
-                      <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                      <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
+                      <option value="15" {{ request('per_page', 15) == 15 ? 'selected' : '' }}>15</option>
+                      <option value="25" {{ request('per_page', 25) == 25 ? 'selected' : '' }}>25</option>
                   </select>
 
                   <span class="results-count">
@@ -478,7 +598,6 @@ td.empty-state{ text-align: center; padding: 40px 20px; color: var(--gray-500); 
 (function(){
   "use strict";
 
-  // Debounce otomatis untuk search input (submit saat berhenti mengetik 500ms)
   const searchInput = document.getElementById('searchInput');
   const filterForm = document.getElementById('filterForm');
   let searchTimer;
@@ -489,6 +608,27 @@ td.empty-state{ text-align: center; padding: 40px 20px; color: var(--gray-500); 
           filterForm.submit();
       }, 500);
   });
+
+  const sidebar = document.getElementById('sidebar');
+  const menuToggle = document.getElementById('menuToggle');
+  const sidebarClose = document.getElementById('sidebarClose');
+  const backdrop = document.getElementById('backdrop');
+
+  function openSidebar(){ 
+    if (sidebar) sidebar.classList.add('open'); 
+    if (backdrop) backdrop.classList.add('show'); 
+    if (menuToggle) menuToggle.setAttribute('aria-expanded', 'true'); 
+  }
+
+  function closeSidebar(){ 
+    if (sidebar) sidebar.classList.remove('open'); 
+    if (backdrop) backdrop.classList.remove('show'); 
+    if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false'); 
+  }
+
+  if (menuToggle) menuToggle.addEventListener('click', openSidebar);
+  if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
+  if (backdrop) backdrop.addEventListener('click', closeSidebar);
 })();
 </script>
 </body>

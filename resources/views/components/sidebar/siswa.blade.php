@@ -1,11 +1,11 @@
-<aside class="ld-sidebar">
+<aside class="ld-sidebar" id="sidebar">
     <div class="sidebar-silhouettes" aria-hidden="true">
         <div class="circle circle-1"></div>
         <div class="circle circle-2"></div>
     </div>
 
     <div class="sidebar-inner">
-        <!-- Logo -->
+        <!-- Logo Header -->
         <div class="brand-header">
             <a href="{{ url('/dashboard') }}" class="brand-link">
                 <img src="{{ asset('images/logo-ld.jpeg') }}" alt="Logo LD Indonesia" class="brand-logo-img">

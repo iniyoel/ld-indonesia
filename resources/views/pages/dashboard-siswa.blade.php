@@ -12,7 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-/* ============ RESET & TOKENS (konsisten dengan landing & login) ============ */
+/* ============ RESET & TOKENS ============ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root{
@@ -75,7 +75,11 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 }
 
 /* ============ APP SHELL ============ */
-.app-shell{ display: flex; min-height: 100vh; }
+.app-shell{ 
+  display: flex; 
+  min-height: 100vh; 
+  width: 100%;
+}
 
 /* ---- Sidebar ---- */
 .sidebar{
@@ -137,7 +141,12 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 .sidebar-close{ display: none; }
 
 /* ---- Main column ---- */
-.main-col{ flex-grow: 1; min-width: 0; display: flex; flex-direction: column; }
+.main-col{ 
+  flex: 1 1 0%; 
+  min-width: 0; 
+  display: flex; 
+  flex-direction: column; 
+}
 
 .topbar{
   height: var(--topbar-h);
@@ -178,7 +187,14 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   flex-shrink: 0;
 }
 
-.page-content{ padding: 36px 40px 60px; max-width: 1240px; width: 100%; margin: 0 auto; }
+.page-content{ 
+  padding: 36px 40px 60px; 
+  max-width: 1240px; 
+  width: 100%; 
+  margin: 0 auto; 
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
 
 .page-heading{ margin-bottom: 26px; }
 .page-heading h1{ font-size: 1.7rem; margin-bottom: 6px; }
@@ -191,7 +207,9 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   box-shadow: var(--shadow-md);
   border: 1px solid var(--gray-100);
   margin-bottom: 28px;
-  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 .panel-head{
   display: flex;
@@ -200,6 +218,7 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
   gap: 16px;
   padding: 24px 28px;
   flex-wrap: wrap;
+  width: 100%;
 }
 .panel-head-left{ display: flex; align-items: center; gap: 14px; }
 .panel-icon{
@@ -226,7 +245,13 @@ h1, h2 { font-family: var(--font-display); color: var(--navy); font-weight: 700;
 .panel-link svg{ width: 16px; height: 16px; }
 
 /* ---- Table ---- */
-.table-scroll{ overflow-x: auto; }
+.table-scroll{ 
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto; 
+  -webkit-overflow-scrolling: touch;
+  display: block;
+}
 table{ width: 100%; border-collapse: collapse; min-width: 720px; }
 thead th{
   text-align: left;
@@ -234,28 +259,30 @@ thead th{
   font-weight: 700;
   color: var(--navy);
   background: var(--pink-light);
-  padding: 15px 28px;
+  padding: 14px 20px;
   white-space: nowrap;
 }
-thead th:first-child{ padding-left: 28px; width: 64px; }
+thead th:first-child{ padding-left: 24px; width: 64px; }
 tbody td{
-  padding: 18px 28px;
+  padding: 15px 20px;
   font-size: 0.92rem;
   color: var(--gray-800);
   border-bottom: 1px solid var(--gray-100);
   vertical-align: middle;
+  white-space: nowrap;
 }
+tbody td:first-child{ padding-left: 24px; }
 tbody tr:last-child td{ border-bottom: none; }
 tbody tr:hover{ background: var(--gray-50); }
 td.col-num{ color: var(--gray-500); font-weight: 600; }
-td.col-modul{ font-weight: 600; color: var(--navy); }
+td.col-modul{ font-weight: 600; color: var(--navy); white-space: normal; min-width: 200px; word-break: break-word; }
 td.col-nilai{ font-weight: 800; color: var(--navy); }
 
 .status-pill{
   display: inline-block;
-  padding: 7px 16px;
+  padding: 6px 14px;
   border-radius: var(--radius-pill);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -277,7 +304,7 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
 
 .empty-state{ padding: 48px 28px; text-align: center; color: var(--gray-500); font-size: 0.92rem; }
 
-/* ============ RESPONSIVE ============ */
+/* ============ RESPONSIVE BREAKPOINTS ============ */
 @media (max-width: 980px){
   .sidebar{
     position: fixed;
@@ -299,7 +326,7 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
   .sidebar-brand{ justify-content: space-between; }
   .menu-toggle{ display: flex; }
   .topbar{ padding: 0 20px; }
-  .page-content{ padding: 26px 20px 48px; }
+  .page-content{ padding: 24px 16px 48px; }
   .backdrop{
     display: none;
     position: fixed; inset: 0;
@@ -308,9 +335,53 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
   }
   .backdrop.show{ display: block; }
 }
+
 @media (max-width: 640px){
-  .user-meta{ display: none; }
-  .panel-head{ align-items: flex-start; }
+  .page-content{
+    padding: 16px 12px 36px;
+  }
+  .page-heading h1{
+    font-size: 1.35rem;
+  }
+  .panel{
+    margin-bottom: 20px;
+    border-radius: var(--radius-md);
+  }
+  .panel-head{
+    padding: 16px 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .panel-head-left{
+    gap: 10px;
+  }
+  .panel-icon{
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+  }
+  .panel-icon svg{
+    width: 18px;
+    height: 18px;
+  }
+  .panel-head h2{
+    font-size: 1rem;
+  }
+  thead th{
+    padding: 12px 14px;
+    font-size: 0.78rem;
+  }
+  thead th:first-child{
+    padding-left: 14px;
+  }
+  tbody td{
+    padding: 12px 14px;
+    font-size: 0.84rem;
+  }
+  tbody td:first-child{
+    padding-left: 14px;
+  }
 }
 </style>
 </head>
@@ -360,7 +431,7 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
                 <th scope="col">Tanggal &amp; Waktu</th>
               </tr>
             </thead>
-              <tbody id="todoTableBody">
+            <tbody id="todoTableBody">
               @forelse($modulesTodo ?? [] as $index => $module)
                   @php
                       $attempt = $module->attempts->first();
@@ -428,7 +499,7 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
                       </td>
                   </tr>
               @endforelse
-              </tbody>
+            </tbody>
           </table>
         </div>
       </section>
@@ -532,7 +603,6 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
                           </div>
                       </td>
                   </tr>
-
               @endforelse
             </tbody>
           </table>
@@ -545,17 +615,26 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
 <script>
 (function(){
   "use strict";
-  renderUserIdentity('{{ Auth::user()->name }}');
 
   var sidebar = document.getElementById('sidebar');
   var menuToggle = document.getElementById('menuToggle');
   var sidebarClose = document.getElementById('sidebarClose');
   var backdrop = document.getElementById('backdrop');
-  function openSidebar(){ sidebar.classList.add('open'); backdrop.classList.add('show'); menuToggle.setAttribute('aria-expanded', 'true'); }
-  function closeSidebar(){ sidebar.classList.remove('open'); backdrop.classList.remove('show'); menuToggle.setAttribute('aria-expanded', 'false'); }
-  menuToggle.addEventListener('click', openSidebar);
-  sidebarClose.addEventListener('click', closeSidebar);
-  backdrop.addEventListener('click', closeSidebar);
+
+  function openSidebar(){ 
+    if (sidebar) sidebar.classList.add('open'); 
+    if (backdrop) backdrop.classList.add('show'); 
+    if (menuToggle) menuToggle.setAttribute('aria-expanded', 'true'); 
+  }
+  function closeSidebar(){ 
+    if (sidebar) sidebar.classList.remove('open'); 
+    if (backdrop) backdrop.classList.remove('show'); 
+    if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false'); 
+  }
+
+  if (menuToggle) menuToggle.addEventListener('click', openSidebar);
+  if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
+  if (backdrop) backdrop.addEventListener('click', closeSidebar);
 })();
 </script>
 </body>
