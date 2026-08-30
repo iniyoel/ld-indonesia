@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LD Indonesia</title>
+<link rel="icon" type="image/jpeg" href="{{ asset('images/logo-ld.jpeg') }}">
 <meta name="description" content="LD Indonesia adalah bimbingan belajar bahasa Jerman online untuk persiapan ujian A1, A2, B1, dan B2 (Goethe/ASM). Belajar bersama tutor berpengalaman, modul lengkap, latihan soal, dan grup belajar.">
 <meta name="robots" content="index, follow">
 

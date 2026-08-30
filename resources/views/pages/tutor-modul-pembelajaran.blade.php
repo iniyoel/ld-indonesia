@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LD Indonesia</title>
+<link rel="icon" type="image/jpeg" href="{{ asset('images/logo-ld.jpeg') }}">
 <meta name="description" content="Kelola modul pembelajaran dan simulasi LD Indonesia — tambah, ubah, dan rilis modul.">
 <meta name="robots" content="noindex, nofollow">
 <meta name="csrf-token" content="{{ csrf_token() }}">

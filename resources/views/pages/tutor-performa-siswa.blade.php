@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LD Indonesia - Performa Siswa</title>
+<title>LD Indonesia</title>
+<link rel="icon" type="image/jpeg" href="{{ asset('images/logo-ld.jpeg') }}">
 <meta name="description" content="Ringkasan performa seluruh siswa LD Indonesia untuk tutor.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
