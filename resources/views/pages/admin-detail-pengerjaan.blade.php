@@ -266,14 +266,22 @@ h1, h2{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
 <a href="#mainContent" class="skip-link">Langsung ke konten utama</a>
 <div class="app-shell">
   <div class="backdrop" id="backdrop"></div>
-   <x-sidebar.admin />
+    @if(Auth::user()->role === 'tutor')
+        <x-sidebar.tutor />
+    @else
+        <x-sidebar.admin />
+    @endif
 
   <div class="main-col">
-    <x-header.admin />
+    @if(Auth::user()->role === 'tutor')
+        <x-header.tutor />
+    @else
+        <x-header.admin />
+    @endif
 
     <main class="page-content" id="mainContent">
         <a
-            href="{{ route('admin.siswa.detail', $student->id) }}"
+            href="{{ Auth::user()->role === 'tutor' ? route('tutor.siswa.detail', $student->id) : route('admin.siswa.detail', $student->id) }}"
             class="back-link"
         >
             <svg

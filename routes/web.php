@@ -307,6 +307,36 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
+    | Performa Siswa — Tutor
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/tutor-siswa-detail/{user}', [PageController::class, 'tutorSiswaDetail'])
+        ->name('tutor.siswa.detail')
+        ->middleware('can:manage-modules');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Detail Performa Siswa — Tutor
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/tutor-siswa-detail/{user}', [PageController::class, 'tutorSiswaDetail'])
+        ->name('tutor.siswa.detail');
+
+    Route::get('/tutor-siswa-detail/{user}/hasil/{attempt}', [AdminPerformanceController::class, 'showAttempt'])
+        ->name('tutor.siswa.hasil')
+        ->middleware('can:manage-modules');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Halaman Generik (Harus selalu di bawah route-route spesifik)
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/{page}', [PageController::class, 'show'])
+        ->where('page', '[A-Za-z0-9\-]+')
+        ->name('page');
+
+    /*
+    |--------------------------------------------------------------------------
     | Logout
     |--------------------------------------------------------------------------
     */

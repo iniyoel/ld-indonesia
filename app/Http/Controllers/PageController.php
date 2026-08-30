@@ -179,6 +179,70 @@ class PageController extends Controller
             $viewData['recentActivities'] = $recentActivities;
         }
 
+        if ($page === 'tutor-performa-siswa' || $page === 'admin-performa-siswa') {
+            $search  = trim((string) $request->query('search', ''));
+            $level   = $request->query('level', '');
+            $perPage = (int) $request->query('per_page', 10);
+
+            if (!in_array($perPage, [5, 10, 15, 25, 50], true)) {
+                $perPage = 10;
+            }
+
+            $studentsQuery = \App\Models\User::query()
+                ->where('role', 'siswa')
+                ->when($search !== '', function ($q) use ($search) {
+                    $q->where(function ($sub) use ($search) {
+                        $sub->where('name', 'like', '%' . $search . '%')
+                            ->orWhere('email', 'like', '%' . $search . '%');
+                    });
+                })
+                ->when(in_array($level, ['A1', 'A2', 'B1', 'B2'], true), function ($q) use ($level) {
+                    $q->where('level', $level);
+                })
+                ->with(['attempts' => function ($q) {
+                    $q->where('status', 'selesai')->with('module');
+                }])
+                ->orderBy('name', 'asc');
+
+            $students = $studentsQuery
+                ->paginate($perPage)
+                ->withQueryString();
+
+            // Hitung statistik latihan, simulasi, dan rata-rata nilai tiap siswa
+            $students->getCollection()->transform(function ($student) {
+                $completedAttempts = $student->attempts->filter(function ($att) {
+                    return $att->module !== null;
+                });
+
+                // Latihan (kategori materi)
+                $student->latihan_count = $completedAttempts->filter(function ($att) {
+                    return $att->module->kategori === 'materi';
+                })->count();
+
+                // Simulasi (kategori selain materi)
+                $simulasiAttempts = $completedAttempts->filter(function ($att) {
+                    return $att->module->kategori !== 'materi';
+                });
+                $student->simulasi_count = $simulasiAttempts->count();
+
+                // Rata-rata nilai (abaikan sprechen & null)
+                $gradedAttempts = $completedAttempts->filter(function ($att) {
+                    return $att->nilai !== null && $att->module->kategori !== 'simulasi_sprechen';
+                });
+
+                $student->avg_nilai = $gradedAttempts->count() > 0 
+                    ? round($gradedAttempts->avg('nilai')) 
+                    : null;
+
+                return $student;
+            });
+
+            $viewData['students'] = $students;
+            $viewData['search']   = $search;
+            $viewData['level']    = $level;
+            $viewData['perPage']  = $perPage;
+        }
+
         if ($page === 'modul-pembelajaran') {
             $user = $request->user();
 
@@ -714,6 +778,108 @@ class PageController extends Controller
             'module' => $module,
             'attempt' => $attempt,
             'questions' => $questions,
+        ]);
+    }
+
+    /**
+     * Menampilkan detail performa siswa untuk Tutor.
+     */
+    public function tutorSiswaDetail(Request $request, User $user): View
+    {
+        abort_unless($user->role === 'siswa', 404);
+
+        $kategori = $request->query('kategori', '');
+        $waktu    = $request->query('waktu', '');
+        $perPage  = (int) $request->query('per_page', 5);
+
+        if (!in_array($perPage, [5, 10, 25, 50], true)) {
+            $perPage = 5;
+        }
+
+        $attemptsQuery = Attempt::query()
+            ->where('user_id', $user->id)
+            ->where('status', 'selesai')
+            ->with('module')
+            ->whereHas('module', function ($q) use ($kategori) {
+                if ($kategori !== '') {
+                    $q->where('kategori', $kategori);
+                }
+            });
+
+        if ($waktu === '24jam') {
+            $attemptsQuery->where('selesai_pada', '>=', now()->subDay());
+        } elseif ($waktu === '1minggu') {
+            $attemptsQuery->where('selesai_pada', '>=', now()->subWeek());
+        } elseif ($waktu === '1bulan') {
+            $attemptsQuery->where('selesai_pada', '>=', now()->subMonth());
+        }
+
+        $attempts = $attemptsQuery
+            ->latest('selesai_pada')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        // Ringkasan Kategori
+        $kategoriList = [
+            'materi'             => 'Materi',
+            'simulasi_lesen'     => 'Simulasi Lesen',
+            'simulasi_horen'     => 'Simulasi Hören',
+            'simulasi_schreiben' => 'Simulasi Schreiben',
+            'simulasi_sprechen'  => 'Simulasi Sprechen',
+        ];
+
+        $summary = [];
+        foreach ($kategoriList as $katKey => $label) {
+            $query = Attempt::query()
+                ->where('user_id', $user->id)
+                ->where('status', 'selesai')
+                ->whereHas('module', function ($q) use ($katKey) {
+                    $q->where('kategori', $katKey);
+                });
+
+            $selesai = (clone $query)->count();
+            $rataRata = in_array($katKey, ['simulasi_schreiben', 'simulasi_sprechen'], true)
+                ? null
+                : (clone $query)->whereNotNull('nilai')->avg('nilai');
+
+            $summary[$katKey] = [
+                'label'     => $label,
+                'selesai'   => $selesai,
+                'rata_rata' => $rataRata !== null ? round($rataRata) : null,
+            ];
+        }
+
+        $allCompleted = Attempt::query()
+            ->where('user_id', $user->id)
+            ->where('status', 'selesai')
+            ->with('module')
+            ->whereHas('module')
+            ->get();
+
+        $totalLatihan = $allCompleted->filter(fn($a) => $a->module->kategori === 'materi')->count();
+        $totalSimulasi = $allCompleted->filter(fn($a) => $a->module->kategori !== 'materi')->count();
+        $totalAktivitas = $allCompleted->count();
+
+        $graded = $allCompleted->filter(fn($a) => $a->nilai !== null && !in_array($a->module->kategori, ['simulasi_schreiben', 'simulasi_sprechen'], true));
+        $overallAvg = $graded->count() > 0 ? round($graded->avg('nilai')) : null;
+
+        $overallPredikat = '—';
+        if ($overallAvg !== null) {
+            $overallPredikat = $overallAvg >= 85 ? 'Sangat Baik' : ($overallAvg >= 75 ? 'Baik' : 'Cukup');
+        }
+
+        return view('pages.tutor-siswa-detail', [
+            'student'          => $user,
+            'attempts'         => $attempts,
+            'summary'          => $summary,
+            'totalLatihan'     => $totalLatihan,
+            'totalSimulasi'    => $totalSimulasi,
+            'totalAktivitas'   => $totalAktivitas,
+            'overallAvg'       => $overallAvg,
+            'overallPredikat'  => $overallPredikat,
+            'selectedKategori' => $kategori,
+            'selectedWaktu'    => $waktu,
+            'perPage'          => $perPage,
         ]);
     }
 }

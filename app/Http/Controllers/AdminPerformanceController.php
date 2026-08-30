@@ -257,47 +257,37 @@ class AdminPerformanceController extends Controller
         ]);
     }
 
-    public function showAttempt(
-        Request $request,
-        User $user,
-        Attempt $attempt
-    ): View {
-        abort_unless($request->user()?->role === 'admin', 403);
+    public function showAttempt(Request $request, User $user, Attempt $attempt)
+    {
+        $currentUser = $request->user();
 
-        // Pastikan attempt memang milik siswa yang dipilih.
+        // Izinkan jika user adalah admin ATAU tutor
+        abort_unless(in_array($currentUser->role, ['admin', 'tutor'], true), 403);
+
+        // Pastikan attempt tersebut milik siswa yang dimaksud
         abort_unless($attempt->user_id === $user->id, 404);
 
-        // Hanya hasil pengerjaan yang sudah selesai yang boleh dilihat.
-        abort_unless($attempt->status === 'selesai', 404);
-
         $module = $attempt->module;
-
-        abort_unless($module !== null, 404);
-
-        // Ambil semua soal modul beserta pilihan jawabannya.
+        
         $questions = $module->questions()
             ->with('options')
             ->orderBy('urutan')
             ->get();
 
-        // Ambil jawaban siswa untuk attempt tersebut.
         $answers = $attempt->answers()
-            ->with([
-                'selectedOption',
-                'question',
-            ])
+            ->with(['selectedOption', 'question'])
             ->get()
             ->keyBy('question_id');
 
-        // Pasangkan jawaban siswa ke setiap soal.
         $questions->each(function ($question) use ($answers) {
             $question->studentAnswer = $answers->get($question->id);
         });
 
+        // Menggunakan view pengerjaan detail admin/tutor
         return view('pages.admin-detail-pengerjaan', [
-            'student' => $user,
-            'module' => $module,
-            'attempt' => $attempt,
+            'student'   => $user,
+            'module'    => $module,
+            'attempt'   => $attempt,
             'questions' => $questions,
         ]);
     }

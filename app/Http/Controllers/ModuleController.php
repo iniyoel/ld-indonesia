@@ -20,19 +20,26 @@ class ModuleController extends Controller
     */
     public function index(Request $request)
     {
-        $search = $request->input('search');
-        $level = $request->input('level');
-        $sort = $request->input('sort', 'updated_at');
+        $search    = $request->input('search');
+        $level     = $request->input('level');
+        $kategori  = $request->input('kategori');
+        $sort      = $request->input('sort', 'updated_at');
         $direction = $request->input('direction', 'desc');
+        $perPage   = (int) $request->input('per_page', 10);
+
+        if (!in_array($perPage, [5, 10, 15, 25, 50], true)) {
+            $perPage = 10;
+        }
 
         $allowedSorts = [
             'judul',
             'level',
             'kategori',
             'updated_at',
+            'created_at'
         ];
 
-        if (!in_array($sort, $allowedSorts)) {
+        if (!in_array($sort, $allowedSorts, true)) {
             $sort = 'updated_at';
         }
 
@@ -43,18 +50,20 @@ class ModuleController extends Controller
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('judul', 'like', '%' . $search . '%')
-                    ->orWhere('level', 'like', '%' . $search . '%')
-                    ->orWhere('kategori', 'like', '%' . $search . '%')
-                    ->orWhereHas('creator', function ($creatorQuery) use ($search) {
-                        $creatorQuery->where('name', 'like', '%' . $search . '%');
-                    });
+                      ->orWhere('deskripsi', 'like', '%' . $search . '%')
+                      ->orWhereHas('creator', function ($creatorQuery) use ($search) {
+                          $creatorQuery->where('name', 'like', '%' . $search . '%');
+                      });
                 });
             })
             ->when($level, function ($query) use ($level) {
                 $query->where('level', $level);
             })
+            ->when($kategori, function ($query) use ($kategori) {
+                $query->where('kategori', $kategori);
+            })
             ->orderBy($sort, $direction)
-            ->paginate(7)
+            ->paginate($perPage)
             ->withQueryString();
 
         $viewName = Auth::user()->role === 'tutor' 
@@ -65,8 +74,10 @@ class ModuleController extends Controller
             'modules',
             'search',
             'level',
+            'kategori',
             'sort',
-            'direction'
+            'direction',
+            'perPage'
         ));
     }
 
