@@ -360,7 +360,7 @@ td.col-nilai{ font-weight: 800; color: var(--navy); }
               </tr>
             </thead>
               <tbody id="todoTableBody">
-              @forelse($modulesTodo as $index => $module)
+              @forelse($modulesTodo ?? [] as $index => $module)
                   @php
                       $attempt = $module->attempts->first();
 

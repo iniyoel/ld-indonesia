@@ -182,13 +182,12 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Dashboard — Admin & Tutor
+    | Dashboard 
     |--------------------------------------------------------------------------
     */
 
     Route::get('/dashboard', [PageController::class, 'dashboard'])
-        ->name('dashboard.admin')
-        ->middleware('can:manage-modules');
+        ->name('dashboard');
 
     // ------------------------------------------------------------------
     // Modul — Admin & Tutor

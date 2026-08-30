@@ -24,15 +24,13 @@ class PageController extends Controller
 
             case 'tutor':
                 return view(
-                    'pages.dashboard-admin',
+                    'pages.dashboard-tutor',
                     $this->buildDashboardData()
                 );
 
             case 'siswa':
-                return view(
-                    'pages.dashboard-siswa',
-                    $this->buildDashboardData()
-                );
+                // Kirimkan $request sebagai parameter pertama
+                return $this->show($request, 'dashboard-siswa');
 
             default:
                 abort(403, 'Role pengguna tidak dikenali.');
@@ -186,30 +184,45 @@ class PageController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | Filter modul
+            | Filter parameter dari Request
             |--------------------------------------------------------------------------
             */
-
             $search = trim((string) $request->query('search', ''));
             $level = $request->query('level', '');
             $kategori = $request->query('kategori', '');
+            
+            // Ambil jumlah baris per halaman dari request (default 5)
+            $perPage = (int) $request->query('per_page', 5);
+            if (!in_array($perPage, [5, 10, 15, 25], true)) {
+                $perPage = 5;
+            }
 
             /*
             |--------------------------------------------------------------------------
-            | Query modul
+            | Query modul yang sudah rilis
             |--------------------------------------------------------------------------
             */
-
             $modulesQuery = Module::query()
-                ->released() // Hanya mengirim modul yang sudah rilis
-                ->where('level', $user->level);
+                ->released(); // Hanya modul yang sudah rilis
 
             /*
             |--------------------------------------------------------------------------
-            | Search berdasarkan judul modul
+            | Filter Level:
+            | Jika dropdown level dipilih, gunakan level tersebut.
+            | Jika dropdown kosong, defaultkan ke level siswa (jika ada).
             |--------------------------------------------------------------------------
             */
+            if (in_array($level, ['A1', 'A2', 'B1', 'B2'], true)) {
+                $modulesQuery->where('level', $level);
+            } elseif (!empty($user->level)) {
+                $modulesQuery->where('level', $user->level);
+            }
 
+            /*
+            |--------------------------------------------------------------------------
+            | Search berdasarkan judul atau deskripsi modul
+            |--------------------------------------------------------------------------
+            */
             if ($search !== '') {
                 $modulesQuery->where(function ($query) use ($search) {
                     $query->where('judul', 'like', '%'.$search.'%')
@@ -219,23 +232,9 @@ class PageController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | Filter level
-            |--------------------------------------------------------------------------
-            |
-            | Siswa tetap tidak boleh melihat level di luar levelnya.
-            |
-            */
-
-            if (in_array($level, ['A1', 'A2', 'B1', 'B2'], true)) {
-                $modulesQuery->where('level', $level);
-            }
-
-            /*
-            |--------------------------------------------------------------------------
             | Filter kategori
             |--------------------------------------------------------------------------
             */
-
             if (in_array($kategori, [
                 'materi',
                 'simulasi_horen',
@@ -248,14 +247,13 @@ class PageController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | Pagination
+            | Pagination dinamis sesuai per_page yang dipilih
             |--------------------------------------------------------------------------
             */
-
             $modules = $modulesQuery
                 ->withCount('questions')
                 ->orderByDesc('created_at')
-                ->paginate(5)
+                ->paginate($perPage)
                 ->withQueryString();
 
             /*
@@ -263,7 +261,6 @@ class PageController extends Controller
             | Ambil attempt milik siswa yang sedang login
             |--------------------------------------------------------------------------
             */
-
             $attempts = Attempt::query()
                 ->where('user_id', $user->id)
                 ->whereIn('module_id', $modules->pluck('id'))
@@ -276,7 +273,6 @@ class PageController extends Controller
             | Pasangkan attempt terbaru ke masing-masing modul
             |--------------------------------------------------------------------------
             */
-
             $modules->getCollection()->transform(function ($module) use ($attempts) {
                 $module->attempt = $attempts
                     ->get($module->id, collect())
@@ -290,11 +286,11 @@ class PageController extends Controller
             | Kirim data ke Blade
             |--------------------------------------------------------------------------
             */
-
             $viewData['modules'] = $modules;
             $viewData['search'] = $search;
             $viewData['selectedLevel'] = $level;
             $viewData['selectedKategori'] = $kategori;
+            $viewData['perPage'] = $perPage;
         }
 
         if ($page === 'performa-siswa') {
@@ -302,49 +298,83 @@ class PageController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | Riwayat pengerjaan siswa
+            | Filter parameter dari Request
             |--------------------------------------------------------------------------
-            | Hanya mengambil attempt milik siswa yang sedang login
-            | dan sudah selesai.
             */
-            $attempts = Attempt::query()
+            $search   = trim((string) $request->query('search', ''));
+            $kategori = $request->query('kategori', '');
+            $waktu    = $request->query('waktu', '');
+            $perPage  = (int) $request->query('per_page', 10);
+
+            if (!in_array($perPage, [5, 10, 15, 25], true)) {
+                $perPage = 10;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Query Riwayat Pengerjaan Siswa (Attempt Selesai)
+            |--------------------------------------------------------------------------
+            */
+            $attemptsQuery = Attempt::query()
                 ->where('user_id', $user->id)
                 ->where('status', 'selesai')
                 ->with('module')
-                ->whereHas('module')
+                ->whereHas('module', function ($q) use ($search, $kategori) {
+                    // Filter Search judul modul
+                    if ($search !== '') {
+                        $q->where('judul', 'like', '%' . $search . '%');
+                    }
+                    // Filter Kategori
+                    if ($kategori !== '') {
+                        $q->where('kategori', $kategori);
+                    }
+                });
+
+            /*
+            |--------------------------------------------------------------------------
+            | Filter Waktu
+            |--------------------------------------------------------------------------
+            */
+            if ($waktu === '7hari') {
+                $attemptsQuery->where('selesai_pada', '>=', now()->subDays(7));
+            } elseif ($waktu === '30hari') {
+                $attemptsQuery->where('selesai_pada', '>=', now()->subDays(30));
+            } elseif ($waktu === 'bulanini') {
+                $attemptsQuery->whereMonth('selesai_pada', now()->month)
+                              ->whereYear('selesai_pada', now()->year);
+            }
+
+            $attempts = $attemptsQuery
                 ->latest('selesai_pada')
-                ->paginate(10)
+                ->paginate($perPage)
                 ->withQueryString();
 
             /*
             |--------------------------------------------------------------------------
-            | Ringkasan performa berdasarkan kategori
+            | Ringkasan Performa Berdasarkan Kategori (Total Card Atas)
             |--------------------------------------------------------------------------
             */
             $kategoriList = [
-                'materi' => 'Materi',
-                'simulasi_lesen' => 'Simulasi Lesen',
-                'simulasi_horen' => 'Simulasi Hören',
+                'materi'             => 'Materi',
+                'simulasi_lesen'     => 'Simulasi Lesen',
+                'simulasi_horen'     => 'Simulasi Hören',
                 'simulasi_schreiben' => 'Simulasi Schreiben',
-                'simulasi_sprechen' => 'Simulasi Sprechen',
+                'simulasi_sprechen'  => 'Simulasi Sprechen',
             ];
 
             $summary = [];
 
-            foreach ($kategoriList as $kategori => $label) {
+            foreach ($kategoriList as $katKey => $label) {
                 $query = Attempt::query()
                     ->where('user_id', $user->id)
                     ->where('status', 'selesai')
-                    ->whereHas('module', function ($query) use ($kategori) {
-                        $query->where('kategori', $kategori);
+                    ->whereHas('module', function ($q) use ($katKey) {
+                        $q->where('kategori', $katKey);
                     });
 
                 $selesai = (clone $query)->count();
 
-                /*
-                * Sprechen tidak menggunakan nilai angka.
-                */
-                if ($kategori === 'simulasi_sprechen') {
+                if ($katKey === 'simulasi_sprechen') {
                     $rataRata = null;
                 } else {
                     $rataRata = (clone $query)
@@ -352,15 +382,19 @@ class PageController extends Controller
                         ->avg('nilai');
                 }
 
-                $summary[$kategori] = [
-                    'label' => $label,
-                    'selesai' => $selesai,
+                $summary[$katKey] = [
+                    'label'     => $label,
+                    'selesai'   => $selesai,
                     'rata_rata' => $rataRata,
                 ];
             }
 
             $viewData['attempts'] = $attempts;
-            $viewData['summary'] = $summary;
+            $viewData['summary']  = $summary;
+            $viewData['search']   = $search;
+            $viewData['kategori'] = $kategori;
+            $viewData['waktu']    = $waktu;
+            $viewData['perPage']  = $perPage;
         }
 
         return view($view, $viewData);
